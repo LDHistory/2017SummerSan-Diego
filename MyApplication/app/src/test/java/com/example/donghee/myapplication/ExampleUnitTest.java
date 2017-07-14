@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.donghee.myapplication;
 
 import org.junit.Test;
 
