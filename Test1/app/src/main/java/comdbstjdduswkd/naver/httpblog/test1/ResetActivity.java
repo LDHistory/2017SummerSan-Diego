@@ -31,7 +31,7 @@ public class ResetActivity extends AppCompatActivity {
         resetCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent resetCancel = new Intent(ResetActivity.this, LoginActivity.class);
+                Intent resetCancel = new Intent(ResetActivity.this, MainActivity.class);
                 startActivity(resetCancel);
             }
         });

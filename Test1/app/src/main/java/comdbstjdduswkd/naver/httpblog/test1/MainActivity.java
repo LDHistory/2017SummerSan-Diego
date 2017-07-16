@@ -1,9 +1,7 @@
 package comdbstjdduswkd.naver.httpblog.test1;
 
+import android.app.FragmentManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,8 +15,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
-    protected void onCreate(Bundle saveasddInstanceState) {
-        super.onCreate(saveasddInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -71,12 +69,13 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        FragmentManager manager = getFragmentManager();
         if (id == R.id.nav_map) { // Handle the map action
-
+            manager.beginTransaction().replace(R.id.content_main, new MapActivity()).commit(); //if push the button, change the frame
         } else if (id == R.id.nav_chart) {
-
+            manager.beginTransaction().replace(R.id.content_main, new HistoryActivity()).commit();
         } else if (id == R.id.nav_heart) {
-
+            manager.beginTransaction().replace(R.id.content_main, new HeartActivity()).commit();
         } else if (id == R.id.nav_logout) {
 
         } else if (id == R.id.nav_dereg) {

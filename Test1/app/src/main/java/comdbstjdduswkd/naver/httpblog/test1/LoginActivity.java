@@ -12,7 +12,6 @@ public class LoginActivity extends AppCompatActivity {
     private Button reg;
     private Button reset;
     private Button login;
-    private  Button test;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +22,6 @@ public class LoginActivity extends AppCompatActivity {
         reg = (Button)findViewById(R.id.register);
         reset = (Button)findViewById(R.id.pwreset);
         login = (Button)findViewById(R.id.login);
-        test = (Button)findViewById(R.id.test);
         //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         //++++++++++++++++++++OnclickListner+++++++++++++++++++++++++
@@ -48,14 +46,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent login = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(login);
-            }
-        });
-
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent test = new Intent(LoginActivity.this, AnimActivity.class);
-                startActivity(test);
             }
         });
         //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
