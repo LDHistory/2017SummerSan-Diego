@@ -32,7 +32,7 @@ public class RegActivity extends AppCompatActivity {
         Regcancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent regCancel = new Intent(RegActivity.this, MainActivity.class);
+                Intent regCancel = new Intent(RegActivity.this, LoginActivity.class);
                 startActivity(regCancel);
             }
         });
