@@ -1,5 +1,6 @@
 package comdbstjdduswkd.naver.httpblog.test1;
 
+import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.YAxis;
@@ -21,9 +23,30 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import java.util.ArrayList;
 import java.util.Date;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class HistoryActivity extends Fragment {
     View view;
     LineChart chart;
+    Calendar Begindate = Calendar.getInstance();
+    Calendar Enddate = Calendar.getInstance();
+
+    DatePickerDialog.OnDateSetListener d1 = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            Begindate.set(Calendar.YEAR, year);
+            Begindate.set(Calendar.MONTH, monthOfYear);
+            Begindate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        }
+    };
+
+    DatePickerDialog.OnDateSetListener d2 = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            Enddate.set(Calendar.YEAR, year);
+            Enddate.set(Calendar.MONTH, monthOfYear);
+            Enddate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        }
+    };
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -68,15 +91,15 @@ public class HistoryActivity extends Fragment {
         valsComp[2].add(new Entry(65.0f, 5));
         valsComp[2].add(new Entry(98.0f, 6));
 
-        LineDataSet setComp1 = new LineDataSet(valsComp[0], "User A"); //파랑
+        LineDataSet setComp1 = new LineDataSet(valsComp[0], "CO"); //파랑
         setComp1.setAxisDependency(YAxis.AxisDependency.LEFT); //파랑
 
-        LineDataSet setComp2 = new LineDataSet(valsComp[1], "User B"); //빨강
+        LineDataSet setComp2 = new LineDataSet(valsComp[1], "SO2"); //빨강
         setComp2.setAxisDependency(YAxis.AxisDependency.LEFT ); //빨강
         setComp2.setColor(Color.RED);setComp2.setValueTextColor(Color.RED);
         setComp2.setFillColor(Color.RED);setComp2.setCircleColor(Color.RED);
 
-        LineDataSet setComp3 = new LineDataSet(valsComp[2], "User C"); //빨강
+        LineDataSet setComp3 = new LineDataSet(valsComp[2], "NO2"); //빨강
         setComp3.setAxisDependency(YAxis.AxisDependency.LEFT ); //빨강
         setComp3.setColor(Color.GREEN);setComp3.setValueTextColor(Color.GREEN);
         setComp3.setFillColor(Color.GREEN);setComp3.setCircleColor(Color.GREEN);
@@ -108,4 +131,5 @@ public class HistoryActivity extends Fragment {
         chart.invalidate();
         return view;
     }
+
 }

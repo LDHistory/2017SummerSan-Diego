@@ -1,8 +1,9 @@
 <resources>
-    <string name="app_name">Test1</string>
+    <string name="app_name">Team B Sample</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
+    <string name="tab1">Map</string>
+    <string name="tab2">Graph</string>
     <string name="action_settings">Settings</string>
 </resources>
