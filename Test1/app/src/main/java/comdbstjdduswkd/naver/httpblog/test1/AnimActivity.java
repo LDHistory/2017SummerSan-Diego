@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
-import com.felipecsl.gifimageview.library.GifImageView;
 
 import org.w3c.dom.Text;
 
@@ -34,6 +33,10 @@ public class AnimActivity extends AppCompatActivity {
         heartTartget = new GlideDrawableImageViewTarget(heart);
         heartBitget = new GlideDrawableImageViewTarget(heartbit);
 
+        HeartThread heartnumber = new HeartThread();
+        Thread heartchange = new Thread(heartnumber);
+        heartchange.start();
+
         //handelr
         handler = new Handler(){
             public void handleMessage(android.os.Message msg){
@@ -51,7 +54,7 @@ public class AnimActivity extends AppCompatActivity {
         Glide.with(this).load(R.raw.heartbit).into(heartBitget);
     }
 
-    protected void onStart(){
+    /*protected void onStart(){
         super.onStart();
         Thread ChangeHeart = new Thread(new Runnable() {
             @Override
@@ -69,5 +72,22 @@ public class AnimActivity extends AppCompatActivity {
             }
         });
         ChangeHeart.start();
+    }*/
+
+    class HeartThread implements Runnable{
+
+        @Override
+        public void run() {
+            while(true){
+                try {
+                    for(int i = 0; i < 100; i++) {
+                        handler.sendEmptyMessage(i);
+                        Thread.sleep(100);
+                    }
+                }catch (Throwable t){
+
+                }
+            }
+        }
     }
 }

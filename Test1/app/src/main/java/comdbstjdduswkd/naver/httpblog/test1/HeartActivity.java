@@ -31,6 +31,7 @@ public class HeartActivity extends Fragment {
         heart =  (ImageView)view.findViewById(R.id.heart);
         heartbit = (ImageView)view.findViewById(R.id.heartbit);
 
+
         //GIF File Object
         heartTartget = new GlideDrawableImageViewTarget(heart);
         heartBitget = new GlideDrawableImageViewTarget(heartbit);
@@ -40,11 +41,11 @@ public class HeartActivity extends Fragment {
             public void handleMessage(android.os.Message msg){
                 heartText.setText(""+msg.what);
                 if(msg.what >= 70)
-                    Glide.with(HeartActivity.this).load(R.raw.human_fast2).into(heartTartget);
+                    heart.setImageResource(R.drawable.human_fast2);
                 else if(msg.what >= 50)
-                    Glide.with(HeartActivity.this).load(R.raw.human_nomal2).into(heartTartget);
+                    heart.setImageResource(R.drawable.human_nomal2);
                 else
-                    Glide.with(HeartActivity.this).load(R.raw.human_slow2).into(heartTartget);
+                    heart.setImageResource(R.drawable.human_slow2);
             }
         };
 
@@ -63,8 +64,8 @@ public class HeartActivity extends Fragment {
                             handler.sendEmptyMessage(i);
                             Thread.sleep(100);
                         }
-                    }catch (Throwable t){
-
+                    }catch (InterruptedException e){
+                        e.printStackTrace();
                     }
                 }
             }
