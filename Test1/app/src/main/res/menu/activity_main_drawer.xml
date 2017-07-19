@@ -5,11 +5,11 @@
         <item
             android:id="@+id/nav_map"
             android:icon="@drawable/map_icon"
-            android:title="Map" />
+            android:title="Real-Time Data" />
         <item
             android:id="@+id/nav_chart"
             android:icon="@drawable/chart_icon"
-            android:title="HistoryValue" />
+            android:title="History Data" />
         <item
             android:id="@+id/nav_heart"
             android:icon="@drawable/heart_icon"
@@ -25,7 +25,7 @@
             <item
                 android:id="@+id/nav_dereg"
                 android:icon="@drawable/deregi"
-                android:title="Deregistration" />ic_menu_share
+                android:title="Cancel ID" />ic_menu_share
         </menu>
     </item>
 

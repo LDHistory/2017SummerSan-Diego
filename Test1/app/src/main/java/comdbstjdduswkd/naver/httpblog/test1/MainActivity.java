@@ -10,10 +10,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
+    FragmentManager manager = getFragmentManager();
+    int i=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +31,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        manager.beginTransaction().replace(R.id.content_main, new MapActivity()).commit(); //if push the button, change the frame
     }
 
     @Override
@@ -56,7 +59,16 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+
+        if (id == R.id.Bt_connect && i==0) {
+            i=1;
+            Toast.makeText(this, "Bluetooth is connected!!", Toast.LENGTH_SHORT).show();
+            item.setIcon(R.drawable.bt_able);
+            return true;
+        }else if(id == R.id.Bt_connect && i==1){
+            i=0;
+            Toast.makeText(this, "Disconnect the Bluetooth connection..", Toast.LENGTH_SHORT).show();
+            item.setIcon(R.drawable.bt_disable);
             return true;
         }
 
@@ -69,7 +81,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        FragmentManager manager = getFragmentManager();
+
+
         if (id == R.id.nav_map) { // Handle the map action
             manager.beginTransaction().replace(R.id.content_main, new MapActivity()).commit(); //if push the button, change the frame
         } else if (id == R.id.nav_chart) {
