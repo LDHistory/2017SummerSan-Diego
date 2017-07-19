@@ -95,7 +95,6 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
 
         if (id == R.id.Bt_connect && i==0) {
-
             if (!mBluetoothAdapter.isEnabled()) {
                 Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
@@ -105,17 +104,20 @@ public class MainActivity extends AppCompatActivity
                 //setupChat(); 보류
             }
 
+            i = 1;
+            Toast.makeText(this, "Bluetooth is connected!!", Toast.LENGTH_SHORT).show();
+            item.setIcon(R.drawable.bt_able);
             // Launch the DeviceListActivity to see devices and do scan
             Intent serverIntent = new Intent(this, DeviceListActivity.class);
             startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
-            i=1;
-            Toast.makeText(this, "Bluetooth is connected!!", Toast.LENGTH_SHORT).show();
-            item.setIcon(R.drawable.bt_able);
+
             return true;
         }else if(id == R.id.Bt_connect && i==1){
             i=0;
-            mBluetoothAdapter.disable();
-            Toast.makeText(this, "Disconnect the Bluetooth connection..", Toast.LENGTH_SHORT).show();
+            if(mBluetoothAdapter.isEnabled()) {
+                mBluetoothAdapter.disable();
+                Toast.makeText(this, "Disconnect the Bluetooth connection..", Toast.LENGTH_SHORT).show();
+            }
             item.setIcon(R.drawable.bt_disable);
             return true;
         }
