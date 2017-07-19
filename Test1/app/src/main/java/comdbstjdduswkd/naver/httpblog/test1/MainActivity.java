@@ -1,8 +1,11 @@
 package comdbstjdduswkd.naver.httpblog.test1;
 
 import android.app.FragmentManager;
+import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -14,8 +17,18 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
     FragmentManager manager = getFragmentManager();
     int i=0;
+
+    // Intent request codes
+    private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
+    private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
+    private static final int REQUEST_ENABLE_BT = 3;
+    private BluetoothAdapter mBluetoothAdapter = null;
+    //Member object for the chat services
+    private BluetoothChatService mChatService = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +45,27 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         manager.beginTransaction().replace(R.id.content_main, new MapActivity()).commit(); //if push the button, change the frame
+
+        // Get local Bluetooth adapter
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        // If the adapter is null, then Bluetooth is not supported
+        if (mBluetoothAdapter == null) {
+            FragmentActivity activity = MainActivity.this;
+            Toast.makeText(activity, "Bluetooth is not available", Toast.LENGTH_LONG).show();
+            activity.finish();
+        }
+        // If BT is not on, request that it be enabled.
+        // setupChat() will then be called during onActivityResult
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+            // Otherwise, setup the chat session
+        } else if (mChatService == null) {
+            //이상이 없으면 채팅세션을 설정한다.
+            //setupChat(); 보류
+            Toast.makeText(this, "Ready for chat ! :)",Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -61,6 +95,10 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
 
         if (id == R.id.Bt_connect && i==0) {
+
+            // Launch the DeviceListActivity to see devices and do scan
+            Intent serverIntent = new Intent(this, DeviceListActivity.class);
+            startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
             i=1;
             Toast.makeText(this, "Bluetooth is connected!!", Toast.LENGTH_SHORT).show();
             item.setIcon(R.drawable.bt_able);
