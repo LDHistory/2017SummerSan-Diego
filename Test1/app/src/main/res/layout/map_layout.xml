@@ -9,12 +9,13 @@
         android:id="@+id/tabHost1"
         android:layout_width="0dp"
         android:layout_height="685dp"
-        app:layout_constraintHorizontal_bias="1.0"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/tabHost2"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/tabHost2">
+        app:layout_constraintVertical_bias="0.0">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -24,7 +25,7 @@
             <TabWidget
                 android:id="@android:id/tabs"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="65dp" />
 
             <FrameLayout
                 android:id="@android:id/tabcontent"
@@ -37,74 +38,132 @@
                     android:layout_height="631dp"
                     android:orientation="vertical">
 
-                    <TabHost
-                        android:id="@+id/tabHost2"
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="255dp"
-                        android:visibility="visible"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent">
+                        android:layout_height="match_parent">
 
-                        <LinearLayout
+                        <TabHost
+                            android:id="@+id/tabHost2"
                             android:layout_width="match_parent"
-                            android:layout_height="250dp"
-                            android:orientation="vertical">
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="255dp"
+                            android:visibility="visible"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent">
 
-                            <TabWidget
-                                android:id="@android:id/tabs"
-                                style="@android:style/Widget.Holo.TabWidget"
+                            <LinearLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="44dp"
-                                android:background="@android:color/holo_blue_light" />
+                                android:layout_height="250dp"
+                                android:orientation="vertical">
 
-                            <FrameLayout
-                                android:id="@android:id/tabcontent"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent">
-
-                                <LinearLayout
-                                    android:id="@+id/tab1"
+                                <TabWidget
+                                    android:id="@android:id/tabs"
+                                    style="@android:style/Widget.Holo.TabWidget"
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:orientation="vertical">
+                                    android:layout_height="44dp"
+                                    android:background="@android:color/holo_blue_light" />
 
-                                    <com.google.android.gms.maps.MapView
-                                        android:id="@+id/map"
-                                        android:name="com.google.android.gms.maps.MapFragment"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="245dp"
-                                        android:layout_alignParentStart="true"
-                                        android:layout_alignParentTop="true" />
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:id="@+id/tab2"
+                                <FrameLayout
+                                    android:id="@android:id/tabcontent"
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:orientation="vertical">
+                                    android:layout_height="match_parent">
 
-                                    <com.github.mikephil.charting.charts.LineChart
-                                        android:id="@+id/map_chart"
+                                    <LinearLayout
+                                        android:id="@+id/tab1"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:layout_alignParentStart="true"
-                                        android:layout_centerVertical="true"
-                                        android:layout_marginBottom="8dp"
-                                        android:layout_marginLeft="8dp"
-                                        android:layout_marginRight="8dp"
-                                        android:layout_marginTop="8dp"
-                                        app:layout_constraintBottom_toBottomOf="@+id/parent"
-                                        app:layout_constraintLeft_toLeftOf="parent"
-                                        app:layout_constraintRight_toRightOf="parent"
-                                        app:layout_constraintTop_toTopOf="parent" />
-                                </LinearLayout>
+                                        android:orientation="vertical">
 
-                            </FrameLayout>
-                        </LinearLayout>
-                    </TabHost>
+                                        <com.google.android.gms.maps.MapView
+                                            android:id="@+id/map"
+                                            android:name="com.google.android.gms.maps.MapFragment"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="245dp"
+                                            android:layout_alignParentStart="true"
+                                            android:layout_alignParentTop="true" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:id="@+id/tab2"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="vertical">
+
+                                        <com.github.mikephil.charting.charts.LineChart
+                                            android:id="@+id/map_chart"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_alignParentStart="true"
+                                            android:layout_centerVertical="true"
+                                            android:layout_marginBottom="8dp"
+                                            android:layout_marginLeft="8dp"
+                                            android:layout_marginRight="8dp"
+                                            android:layout_marginTop="8dp"
+                                            app:layout_constraintBottom_toBottomOf="@+id/parent"
+                                            app:layout_constraintLeft_toLeftOf="parent"
+                                            app:layout_constraintRight_toRightOf="parent"
+                                            app:layout_constraintTop_toTopOf="parent" />
+                                    </LinearLayout>
+
+                                </FrameLayout>
+                            </LinearLayout>
+                        </TabHost>
+
+                        <ImageView
+                            android:id="@+id/imageView12"
+                            android:layout_width="110dp"
+                            android:layout_height="80dp"
+                            android:layout_alignTop="@+id/imageView11"
+                            android:layout_centerHorizontal="true"
+                            app:srcCompat="@drawable/no2" />
+
+                        <ImageView
+                            android:id="@+id/imageView11"
+                            android:layout_width="110dp"
+                            android:layout_height="80dp"
+                            android:layout_marginStart="18dp"
+                            android:layout_marginTop="32dp"
+                            app:srcCompat="@drawable/co"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentStart="true" />
+
+                        <ImageView
+                            android:id="@+id/imageView13"
+                            android:layout_width="110dp"
+                            android:layout_height="80dp"
+                            android:layout_marginEnd="17dp"
+                            app:srcCompat="@drawable/so2"
+                            android:layout_alignTop="@+id/imageView12"
+                            android:layout_alignParentEnd="true" />
+
+                        <ImageView
+                            android:id="@+id/imageView14"
+                            android:layout_width="110dp"
+                            android:layout_height="80dp"
+                            android:layout_marginTop="39dp"
+                            app:srcCompat="@drawable/o3"
+                            android:layout_below="@+id/imageView11"
+                            android:layout_alignStart="@+id/imageView11" />
+
+                        <ImageView
+                            android:id="@+id/imageView15"
+                            android:layout_width="110dp"
+                            android:layout_height="80dp"
+                            app:srcCompat="@drawable/pm25"
+                            android:layout_alignTop="@+id/imageView14"
+                            android:layout_alignStart="@+id/imageView12" />
+
+                        <ImageView
+                            android:id="@+id/imageView17"
+                            android:layout_width="110dp"
+                            android:layout_height="80dp"
+                            app:srcCompat="@drawable/temp"
+                            android:layout_alignTop="@+id/imageView15"
+                            android:layout_alignStart="@+id/imageView13" />
+                    </RelativeLayout>
+
                 </LinearLayout>
 
                 <LinearLayout
