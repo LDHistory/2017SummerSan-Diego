@@ -1,22 +1,24 @@
 package comdbstjdduswkd.naver.httpblog.test1;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentTabHost;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -44,6 +46,12 @@ public class MapActivity extends Fragment implements OnMapReadyCallback{
     private GoogleMap googleMap = null;
     private MapView mapView = null;
 
+    //새로 추가된 부분
+    TextView heartText;
+    ImageView heart, heartbit;
+    Handler handler;
+    GlideDrawableImageViewTarget heartTartget, heartBitget;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
     @Override
@@ -52,6 +60,7 @@ public class MapActivity extends Fragment implements OnMapReadyCallback{
 
         mapView = (MapView)view.findViewById(R.id.map);
         mapView.getMapAsync(this);
+
         TabHost tabHost = (TabHost)view.findViewById(R.id.tabHost2);
         tabHost.setup();
 
@@ -72,6 +81,29 @@ public class MapActivity extends Fragment implements OnMapReadyCallback{
                 .setContent(R.id.tab4).setIndicator("Heart");
         tabHost1.addTab(spec4);
 
+        //새로 추가된 부분
+        heartText = (TextView)view.findViewById(R.id.heartValue);
+        heart =  (ImageView)view.findViewById(R.id.heart);
+        heartbit = (ImageView)view.findViewById(R.id.heartbit);
+        //GIF File Object
+        heartTartget = new GlideDrawableImageViewTarget(heart);
+        heartBitget = new GlideDrawableImageViewTarget(heartbit);
+
+        //handelr
+        handler = new Handler(){
+            public void handleMessage(android.os.Message msg){
+                heartText.setText(""+msg.what);
+                if(msg.what >= 70)
+                    heart.setImageResource(R.drawable.human_fast2);
+                else if(msg.what >= 50)
+                    heart.setImageResource(R.drawable.human_nomal2);
+                else
+                    heart.setImageResource(R.drawable.human_slow2);
+            }
+        };
+
+        //HeartBit GIF
+        Glide.with(this).load(R.raw.heartbit).into(heartBitget);
 
         mchart = (LineChart)view.findViewById(R.id.map_chart);
         SimpleDateFormat SimFormat = new SimpleDateFormat("MM-dd");
@@ -163,6 +195,23 @@ public class MapActivity extends Fragment implements OnMapReadyCallback{
     public void onStart() {
         super.onStart();
         mapView.onStart();
+        //새로 추가된 부분
+        Thread ChangeHeart = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
+                    try {
+                        for(int i = 0; i < 100; i++) {
+                            handler.sendEmptyMessage(i);
+                            Thread.sleep(100);
+                        }
+                    }catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        ChangeHeart.start();
     }
 
     @Override

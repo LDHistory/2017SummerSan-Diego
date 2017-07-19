@@ -20,14 +20,18 @@ public class HeartActivity extends Fragment {
 
     View view; //The varivable to use View before inflation
 
-    @Override
+    public HeartActivity(){}
+
+    /*@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
+    }*/
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //View File Object
-        view = inflater.inflate(R.layout.activity_heart, container, false);
+        //view = inflater.inflate(R.layout.activity_heart, container, false);
+
         heartText = (TextView)view.findViewById(R.id.heartValue);
         heart =  (ImageView)view.findViewById(R.id.heart);
         heartbit = (ImageView)view.findViewById(R.id.heartbit);
@@ -50,7 +54,8 @@ public class HeartActivity extends Fragment {
 
         //HeartBit GIF
         Glide.with(this).load(R.raw.heartbit).into(heartBitget);
-        return view;
+        //return view;
+        return inflater.inflate(R.layout.fragment_heart, container, false);
     }
     public void onStart(){
         super.onStart();

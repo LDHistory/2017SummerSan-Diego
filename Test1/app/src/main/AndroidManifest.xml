@@ -29,7 +29,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBZ_MXs2yRdDq9qXU-LYBFzRbctDOOnN5E" />
 
-        <activity android:name=".AirGraph"></activity>
     </application>
 
 </manifest>
