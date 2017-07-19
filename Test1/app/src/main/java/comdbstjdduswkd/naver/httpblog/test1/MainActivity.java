@@ -1,18 +1,26 @@
 package comdbstjdduswkd.naver.httpblog.test1;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
@@ -28,6 +36,10 @@ public class MainActivity extends AppCompatActivity
     private BluetoothAdapter mBluetoothAdapter = null;
     //Member object for the chat services
     private BluetoothChatService mChatService = null;
+    //Name of the connected device
+    private String mConnectedDeviceName = null;
+     //Array adapter for the conversation thread
+    private ArrayAdapter<String> mConversationArrayAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +58,11 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         manager.beginTransaction().replace(R.id.content_main, new RealTimeActivity()).commit(); //if push the button, change the frame
 
+        if (savedInstanceState == null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.commit();
+        }
+
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -57,6 +74,7 @@ public class MainActivity extends AppCompatActivity
         }
         // If BT is not on, request that it be enabled.
         // setupChat() will then be called during onActivityResult
+        mChatService = new BluetoothChatService(this, mHandler);
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
@@ -64,6 +82,7 @@ public class MainActivity extends AppCompatActivity
         } else if (mChatService == null) {
             //이상이 없으면 채팅세션을 설정한다.
             //setupChat(); 보류
+            mChatService = new BluetoothChatService(this, mHandler); //setupChat에서 일부 발췌
             Toast.makeText(this, "Ready for chat ! :)",Toast.LENGTH_SHORT).show();
         }
     }
@@ -77,7 +96,50 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_CONNECT_DEVICE_SECURE:
+                // When DeviceListActivity returns with a device to connect
+                if (resultCode == Activity.RESULT_OK) {
+                    connectDevice(data, true);
+                }
+                break;
+            case REQUEST_CONNECT_DEVICE_INSECURE:
+                // When DeviceListActivity returns with a device to connect
+                if (resultCode == Activity.RESULT_OK) {
+                    connectDevice(data, false);
+                }
+                break;
+            case REQUEST_ENABLE_BT:
+                // When the request to enable Bluetooth returns
+                if (resultCode == Activity.RESULT_OK) {
+                    // Bluetooth is now enabled, so set up a chat session
+                    //setupChat();
+                    mChatService = new BluetoothChatService(this, mHandler);
+                } else {
+                    // User did not enable Bluetooth or an error occurred
+                    Log.d("Main", "BT not enabled");
+                    Toast.makeText(this, "Bluetooth was not enabled. Leaving this APP",
+                            Toast.LENGTH_SHORT).show();
+                    this.finish();
+                }
+        }
+    }
+    /**
+     * Establish connection with other device
+     *
+     * @param data   An {@link Intent} with {@link DeviceListActivity#EXTRA_DEVICE_ADDRESS} extra.
+     * @param secure Socket Security type - Secure (true) , Insecure (false)
+     */
+    private void connectDevice(Intent data, boolean secure) {
+        // Get the device MAC address
+        String address = data.getExtras()
+                .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+        // Get the BluetoothDevice object
+        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+        // Attempt to connect to the device
+        mChatService.connect(device, secure);
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -95,6 +157,13 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
 
         if (id == R.id.Bt_connect && i==0) {
+            i = 1;
+            Toast.makeText(this, "Bluetooth is connected!!", Toast.LENGTH_SHORT).show();
+            item.setIcon(R.drawable.bt_able);
+            // Launch the DeviceListActivity to see devices and do scan
+            Intent serverIntent = new Intent(this, DeviceListActivity.class);
+            startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
+
             if (!mBluetoothAdapter.isEnabled()) {
                 Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
@@ -103,14 +172,6 @@ public class MainActivity extends AppCompatActivity
                 //이상이 없으면 채팅세션을 설정한다.
                 //setupChat(); 보류
             }
-
-            i = 1;
-            Toast.makeText(this, "Bluetooth is connected!!", Toast.LENGTH_SHORT).show();
-            item.setIcon(R.drawable.bt_able);
-            // Launch the DeviceListActivity to see devices and do scan
-            Intent serverIntent = new Intent(this, DeviceListActivity.class);
-            startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
-
             return true;
         }else if(id == R.id.Bt_connect && i==1){
             i=0;
@@ -131,8 +192,6 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-
-
         if (id == R.id.nav_map) { // Handle the map action
             manager.beginTransaction().replace(R.id.content_main, new RealTimeActivity()).commit(); //if push the button, change the frame
         } else if (id == R.id.nav_chart) {
@@ -147,4 +206,53 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+    /**
+     * The Handler that gets information back from the BluetoothChatService
+     */
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            FragmentActivity activity = MainActivity.this;
+            switch (msg.what) {
+                case Constants.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case BluetoothChatService.STATE_CONNECTED:
+                            break;
+                        case BluetoothChatService.STATE_CONNECTING:
+                            break;
+                        case BluetoothChatService.STATE_LISTEN:
+                        case BluetoothChatService.STATE_NONE:
+                            break;
+                    }
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    mConversationArrayAdapter.add("Me:  " + writeMessage);
+                    break;
+                case Constants.MESSAGE_READ:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    Toast.makeText(MainActivity.this,""+mConnectedDeviceName + ":  " + readMessage,Toast.LENGTH_LONG).show();
+                    //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                    break;
+                case Constants.MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                    if (null != activity) {
+                        Toast.makeText(activity, "Connected to "
+                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case Constants.MESSAGE_TOAST:
+                    if (null != activity) {
+                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+        }
+    };
 }
