@@ -96,6 +96,15 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.Bt_connect && i==0) {
 
+            if (!mBluetoothAdapter.isEnabled()) {
+                Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+                // Otherwise, setup the chat session
+            } else if (mChatService == null) {
+                //이상이 없으면 채팅세션을 설정한다.
+                //setupChat(); 보류
+            }
+
             // Launch the DeviceListActivity to see devices and do scan
             Intent serverIntent = new Intent(this, DeviceListActivity.class);
             startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
@@ -105,6 +114,7 @@ public class MainActivity extends AppCompatActivity
             return true;
         }else if(id == R.id.Bt_connect && i==1){
             i=0;
+            mBluetoothAdapter.disable();
             Toast.makeText(this, "Disconnect the Bluetooth connection..", Toast.LENGTH_SHORT).show();
             item.setIcon(R.drawable.bt_disable);
             return true;
