@@ -8,7 +8,7 @@
     <TabHost
         android:id="@+id/tabHost1"
         android:layout_width="0dp"
-        android:layout_height="430dp"
+        android:layout_height="685dp"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -29,7 +29,7 @@
             <FrameLayout
                 android:id="@android:id/tabcontent"
                 android:layout_width="match_parent"
-                android:layout_height="633dp">
+                android:layout_height="match_parent">
 
                 <LinearLayout
                     android:id="@+id/tab3"
@@ -41,7 +41,7 @@
                         android:id="@+id/tabHost2"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:rotationX=
+                        android:layout_marginTop="255dp"
                         android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintHorizontal_bias="0.0"
