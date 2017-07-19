@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        manager.beginTransaction().replace(R.id.content_main, new MapActivity()).commit(); //if push the button, change the frame
+        manager.beginTransaction().replace(R.id.content_main, new RealTimeActivity()).commit(); //if push the button, change the frame
 
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -122,11 +122,9 @@ public class MainActivity extends AppCompatActivity
 
 
         if (id == R.id.nav_map) { // Handle the map action
-            manager.beginTransaction().replace(R.id.content_main, new MapActivity()).commit(); //if push the button, change the frame
+            manager.beginTransaction().replace(R.id.content_main, new RealTimeActivity()).commit(); //if push the button, change the frame
         } else if (id == R.id.nav_chart) {
             manager.beginTransaction().replace(R.id.content_main, new HistoryActivity()).commit();
-        } else if (id == R.id.nav_heart) {
-            manager.beginTransaction().replace(R.id.content_main, new HeartActivity()).commit();
         } else if (id == R.id.nav_logout) {
 
         } else if (id == R.id.nav_dereg) {

@@ -54,8 +54,8 @@ public class HeartActivity extends Fragment {
 
         //HeartBit GIF
         Glide.with(this).load(R.raw.heartbit).into(heartBitget);
-        //return view;
-        return inflater.inflate(R.layout.fragment_heart, container, false);
+        return view;
+        //return inflater.inflate(R.layout.fragment_heart, container, false);
     }
     public void onStart(){
         super.onStart();

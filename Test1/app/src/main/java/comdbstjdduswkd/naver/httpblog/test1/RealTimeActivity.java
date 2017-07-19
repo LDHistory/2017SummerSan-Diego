@@ -1,6 +1,5 @@
 package comdbstjdduswkd.naver.httpblog.test1;
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.FragmentTabHost;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +38,7 @@ import java.util.Date;
  * Created by USER on 2017-07-14.
  */
 
-public class MapActivity extends Fragment implements OnMapReadyCallback{
+public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
     View view;
     LineChart mchart;
     private GoogleMap googleMap = null;
@@ -56,7 +54,7 @@ public class MapActivity extends Fragment implements OnMapReadyCallback{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.map_layout, container, false);
+        view = inflater.inflate(R.layout.realtime_layout, container, false);
 
         mapView = (MapView)view.findViewById(R.id.map);
         mapView.getMapAsync(this);

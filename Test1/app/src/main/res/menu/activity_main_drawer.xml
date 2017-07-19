@@ -10,10 +10,6 @@
             android:id="@+id/nav_chart"
             android:icon="@drawable/chart_icon"
             android:title="History Data" />
-        <item
-            android:id="@+id/nav_heart"
-            android:icon="@drawable/heart_icon"
-            android:title="HeartRate" />
     </group>
 
     <item android:title="User Account">
