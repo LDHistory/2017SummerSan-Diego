@@ -5,6 +5,7 @@ import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
@@ -43,12 +44,37 @@ public class MapActivity extends Fragment implements OnMapReadyCallback{
     LineChart mchart;
     private GoogleMap googleMap = null;
     private MapView mapView = null;
+    TextView CO, NO2, SO2, O3, PM25, TEMP;
+
+    Bundle bundle = new Bundle();
+    String id;
+    Handler handler;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.map_layout, container, false);
+
+        CO = (TextView)view.findViewById(R.id.co_text);
+        NO2 = (TextView)view.findViewById(R.id.no2_text);
+        SO2 = (TextView)view.findViewById(R.id.so2_text);
+        O3 = (TextView)view.findViewById(R.id.o3_text);
+        PM25 = (TextView)view.findViewById(R.id.pm25);
+        TEMP = (TextView)view.findViewById(R.id.temp_text);
+
+        handler = new Handler(){
+            public void handleMessage(android.os.Message msg){
+                if(msg.what == 0) {
+                    CO.setText("" + msg.what);
+                    NO2.setText("" + msg.what);
+                    SO2.setText("" + msg.what);
+                    O3.setText("" + msg.what);
+                    PM25.setText("" + msg.what);
+                    TEMP.setText("" + msg.what);
+                }
+            }
+        };
 
         mapView = (MapView)view.findViewById(R.id.map);
         mapView.getMapAsync(this);
@@ -161,8 +187,19 @@ public class MapActivity extends Fragment implements OnMapReadyCallback{
 
     @Override
     public void onStart() {
+
         super.onStart();
         mapView.onStart();
+        Thread changeValue = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
+                    id = bundle.getString("res");
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        });
+        changeValue.start();
     }
 
     @Override
@@ -210,4 +247,6 @@ public class MapActivity extends Fragment implements OnMapReadyCallback{
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(Atkinson));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(13));
     }
+
+
 }

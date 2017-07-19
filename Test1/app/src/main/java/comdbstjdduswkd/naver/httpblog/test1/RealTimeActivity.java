@@ -30,6 +30,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -45,7 +47,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
     private MapView mapView = null;
 
     //새로 추가된 부분
-    TextView heartText;
+    TextView heartText, CO, NO2, SO2, O3, PM25, TEMP;
     ImageView heart, heartbit;
     Handler handler;
     GlideDrawableImageViewTarget heartTartget, heartBitget;

@@ -5,7 +5,6 @@ import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,12 +20,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     FragmentManager manager = getFragmentManager();
+    MapActivity map = new MapActivity();
+    Bundle bundle = new Bundle();
+
     int i=0;
 
     // Intent request codes
@@ -47,6 +50,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -209,6 +213,8 @@ public class MainActivity extends AppCompatActivity
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
+
+    //블루투스 채팅 핸들러 메인 부분
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -225,17 +231,22 @@ public class MainActivity extends AppCompatActivity
                             break;
                     }
                     break;
+                //메시지를 쓰는 부분
                 case Constants.MESSAGE_WRITE:
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
                     mConversationArrayAdapter.add("Me:  " + writeMessage);
                     break;
+                //메시지를 읽는 부분
                 case Constants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     Toast.makeText(MainActivity.this,""+mConnectedDeviceName + ":  " + readMessage,Toast.LENGTH_LONG).show();
+                    bundle.putString("res", readMessage);
+                    map.setArguments(bundle);
+                    //센서값 출력
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
