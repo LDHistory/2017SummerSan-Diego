@@ -26,12 +26,11 @@ public class HeartActivity extends Fragment {
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        //View File Object
         view = inflater.inflate(R.layout.activity_heart, container, false);
         heartText = (TextView)view.findViewById(R.id.heartValue);
         heart =  (ImageView)view.findViewById(R.id.heart);
         heartbit = (ImageView)view.findViewById(R.id.heartbit);
-
-
         //GIF File Object
         heartTartget = new GlideDrawableImageViewTarget(heart);
         heartBitget = new GlideDrawableImageViewTarget(heartbit);

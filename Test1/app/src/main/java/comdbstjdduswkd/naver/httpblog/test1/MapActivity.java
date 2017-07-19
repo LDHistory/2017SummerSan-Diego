@@ -62,6 +62,17 @@ public class MapActivity extends Fragment implements OnMapReadyCallback{
                 .setContent(R.id.tab2).setIndicator(getString(R.string.tab2));
         tabHost.addTab(spec2);
 
+        TabHost tabHost1 = (TabHost)view.findViewById(R.id.tabHost1);
+        tabHost1.setup();
+
+        TabHost.TabSpec spec3 = tabHost1.newTabSpec("Air")
+                .setContent(R.id.tab3).setIndicator("Air");
+        tabHost1.addTab(spec3);
+        TabHost.TabSpec spec4 = tabHost1.newTabSpec("Heart")
+                .setContent(R.id.tab4).setIndicator("Heart");
+        tabHost1.addTab(spec4);
+
+
         mchart = (LineChart)view.findViewById(R.id.map_chart);
         SimpleDateFormat SimFormat = new SimpleDateFormat("MM-dd");
         Calendar calendar = Calendar.getInstance();
