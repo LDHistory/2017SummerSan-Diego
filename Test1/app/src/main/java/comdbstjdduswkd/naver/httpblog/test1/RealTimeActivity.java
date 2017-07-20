@@ -6,17 +6,16 @@ import android.icu.util.Calendar;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -30,27 +29,25 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Date;
+
+import static comdbstjdduswkd.naver.httpblog.test1.R.id.map;
 
 
 /**
  * Created by USER on 2017-07-14.
  */
 
-public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
+public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Runnable{
     View view;
     LineChart mchart;
-    private GoogleMap googleMap = null;
     private MapView mapView = null;
+    TextView CO, NO2, SO2, O3, PM25, TEMP;
 
-    //새로 추가된 부분
-    TextView heartText, CO, NO2, SO2, O3, PM25, TEMP;
-    ImageView heart, heartbit;
+    Bundle bundle = new Bundle();
+    String id;
     Handler handler;
-    GlideDrawableImageViewTarget heartTartget, heartBitget;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
@@ -58,9 +55,15 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.realtime_layout, container, false);
 
-        mapView = (MapView)view.findViewById(R.id.map);
-        mapView.getMapAsync(this);
+        CO = (TextView)view.findViewById(R.id.co_text);
+        NO2 = (TextView)view.findViewById(R.id.no2_text);
+        SO2 = (TextView)view.findViewById(R.id.so2_text);
+        O3 = (TextView)view.findViewById(R.id.o3_text);
+        PM25 = (TextView)view.findViewById(R.id.pm25);
+        TEMP = (TextView)view.findViewById(R.id.temp_text);
 
+        mapView = (MapView)view.findViewById(map);
+        mapView.getMapAsync(this);
         TabHost tabHost = (TabHost)view.findViewById(R.id.tabHost2);
         tabHost.setup();
 
@@ -81,29 +84,17 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
                 .setContent(R.id.tab4).setIndicator("Heart");
         tabHost1.addTab(spec4);
 
-        //새로 추가된 부분
-        heartText = (TextView)view.findViewById(R.id.heartValue);
-        heart =  (ImageView)view.findViewById(R.id.heart);
-        heartbit = (ImageView)view.findViewById(R.id.heartbit);
-        //GIF File Object
-        heartTartget = new GlideDrawableImageViewTarget(heart);
-        heartBitget = new GlideDrawableImageViewTarget(heartbit);
-
-        //handelr
-        handler = new Handler(){
-            public void handleMessage(android.os.Message msg){
-                heartText.setText(""+msg.what);
-                if(msg.what >= 70)
-                    heart.setImageResource(R.drawable.human_fast2);
-                else if(msg.what >= 50)
-                    heart.setImageResource(R.drawable.human_nomal2);
-                else
-                    heart.setImageResource(R.drawable.human_slow2);
+        handler = new Handler() {
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                Bundle bundle = msg.getData();
+                if(!msg.equals(null)) {
+                    Log.v("핸들러","ㄴㅁㅁ니아러");
+                    CO.setText(bundle.getString("res").toString());
+                    Log.v("핸들러",""+bundle.getString("res").toString());
+                }
             }
         };
-
-        //HeartBit GIF
-        Glide.with(this).load(R.raw.heartbit).into(heartBitget);
 
         mchart = (LineChart)view.findViewById(R.id.map_chart);
         SimpleDateFormat SimFormat = new SimpleDateFormat("MM-dd");
@@ -115,8 +106,6 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
         calendar2.add(Calendar.DAY_OF_MONTH, -7);
         Date date = calendar2.getTime();
         String lastday = new SimpleDateFormat("yyyy-MM-dd").format(date); //7일전 날짜
-
-
 
         ArrayList<Entry> valsComp[] = new ArrayList[3]; //파랑 값 담는 리스트
         valsComp[0] = new ArrayList<Entry>();valsComp[1] = new ArrayList<Entry>();valsComp[2] = new ArrayList<Entry>();
@@ -189,29 +178,14 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
         mapView.onStart();
-        //새로 추가된 부분
-        Thread ChangeHeart = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true){
-                    try {
-                        for(int i = 0; i < 100; i++) {
-                            handler.sendEmptyMessage(i);
-                            Thread.sleep(100);
-                        }
-                    }catch (InterruptedException e){
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        ChangeHeart.start();
     }
 
     @Override
@@ -258,5 +232,25 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
         googleMap.addMarker(markerOptions);
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(Atkinson));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+    }
+
+
+    @Override
+    public void run() {
+        while(true) {
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                final String categoryNumber = bundle.getString("res");
+                if (categoryNumber != null) {
+                    Message m = new Message(); //메시지 객체 m을 생성
+                    Log.d("받은 값", "받은 값 : " + String.valueOf(categoryNumber));
+                    m.setData(bundle); //메시지 객체에다가 번들객체를 넣음
+                    Log.d("발",m.getData().toString());
+                    handler.sendMessage(m); //핸들러에다가 메시지객체의 내용을 전달
+                } else {
+                    Log.d("TAG", "값이 넘어오지 않음. NULL!!!!");
+                }
+            }
+        }
     }
 }

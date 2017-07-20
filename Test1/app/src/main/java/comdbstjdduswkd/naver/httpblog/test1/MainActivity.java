@@ -20,14 +20,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     FragmentManager manager = getFragmentManager();
-    MapActivity map = new MapActivity();
+    RealTimeActivity map = new RealTimeActivity();
     Bundle bundle = new Bundle();
 
     int i=0;
@@ -51,6 +50,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Thread th = new Thread(map);
+        th.start();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity
             //이상이 없으면 채팅세션을 설정한다.
             //setupChat(); 보류
             mChatService = new BluetoothChatService(this, mHandler); //setupChat에서 일부 발췌
-            Toast.makeText(this, "Ready for chat ! :)",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Ready for chat ! :)", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -233,10 +234,6 @@ public class MainActivity extends AppCompatActivity
                     break;
                 //메시지를 쓰는 부분
                 case Constants.MESSAGE_WRITE:
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    // construct a string from the buffer
-                    String writeMessage = new String(writeBuf);
-                    mConversationArrayAdapter.add("Me:  " + writeMessage);
                     break;
                 //메시지를 읽는 부분
                 case Constants.MESSAGE_READ:
