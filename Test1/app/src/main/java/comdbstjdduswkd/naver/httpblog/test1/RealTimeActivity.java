@@ -39,7 +39,7 @@ import static comdbstjdduswkd.naver.httpblog.test1.R.id.map;
  * Created by USER on 2017-07-14.
  */
 
-public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Runnable{
+public class RealTimeActivity extends Fragment implements OnMapReadyCallback {
     View view;
     LineChart mchart;
     private MapView mapView = null;
@@ -47,7 +47,13 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Ru
 
     Bundle bundle = new Bundle();
     String id;
-    Handler handler;
+
+    public void setCo(String co){
+        if(CO!=null)
+            CO.setText(co);
+        else
+            Log.e("RealTimeActivity", "setCo CO: "+CO);
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
@@ -83,18 +89,6 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Ru
         TabHost.TabSpec spec4 = tabHost1.newTabSpec("Heart")
                 .setContent(R.id.tab4).setIndicator("Heart");
         tabHost1.addTab(spec4);
-
-        handler = new Handler() {
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                Bundle bundle = msg.getData();
-                if(!msg.equals(null)) {
-                    Log.v("핸들러","ㄴㅁㅁ니아러");
-                    CO.setText(bundle.getString("res").toString());
-                    Log.v("핸들러",""+bundle.getString("res").toString());
-                }
-            }
-        };
 
         mchart = (LineChart)view.findViewById(R.id.map_chart);
         SimpleDateFormat SimFormat = new SimpleDateFormat("MM-dd");
@@ -232,25 +226,5 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Ru
         googleMap.addMarker(markerOptions);
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(Atkinson));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(13));
-    }
-
-
-    @Override
-    public void run() {
-        while(true) {
-            Bundle bundle = getArguments();
-            if (bundle != null) {
-                final String categoryNumber = bundle.getString("res");
-                if (categoryNumber != null) {
-                    Message m = new Message(); //메시지 객체 m을 생성
-                    Log.d("받은 값", "받은 값 : " + String.valueOf(categoryNumber));
-                    m.setData(bundle); //메시지 객체에다가 번들객체를 넣음
-                    Log.d("발",m.getData().toString());
-                    handler.sendMessage(m); //핸들러에다가 메시지객체의 내용을 전달
-                } else {
-                    Log.d("TAG", "값이 넘어오지 않음. NULL!!!!");
-                }
-            }
-        }
     }
 }

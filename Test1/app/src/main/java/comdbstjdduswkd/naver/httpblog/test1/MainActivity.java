@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     FragmentManager manager = getFragmentManager();
-    RealTimeActivity map = new RealTimeActivity();
+    RealTimeActivity map;
     Bundle bundle = new Bundle();
 
     int i=0;
@@ -50,9 +50,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Thread th = new Thread(map);
-        th.start();
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -61,7 +58,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        manager.beginTransaction().replace(R.id.content_main, new RealTimeActivity()).commit(); //if push the button, change the frame
+        map = new RealTimeActivity();
+        manager.beginTransaction().replace(R.id.content_main, map).commit(); //if push the button, change the frame
 
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -242,7 +240,9 @@ public class MainActivity extends AppCompatActivity
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     Toast.makeText(MainActivity.this,""+mConnectedDeviceName + ":  " + readMessage,Toast.LENGTH_LONG).show();
                     bundle.putString("res", readMessage);
-                    map.setArguments(bundle);
+                    //map.setArguments(bundle);
+                    Log.e("MainActivity", "readMessage: "+readMessage);
+                    map.setCo(readMessage);
                     //센서값 출력
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
                     break;
