@@ -50,9 +50,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //Thread th = new Thread(map);
-        //th.start();
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -120,7 +117,6 @@ public class MainActivity extends AppCompatActivity
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
-                    //setupChat();
                     mChatService = new BluetoothChatService(this, mHandler);
                 } else {
                     // User did not enable Bluetooth or an error occurred
@@ -241,9 +237,9 @@ public class MainActivity extends AppCompatActivity
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    Toast.makeText(MainActivity.this,""+mConnectedDeviceName + ":  " + readMessage,Toast.LENGTH_LONG).show();
-                    map.setCo(readMessage);
-                    //센서값 출력
+                    map.setAQI(readMessage);
+                    map.addEntry(readMessage);
+                    //print the sensor data
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
