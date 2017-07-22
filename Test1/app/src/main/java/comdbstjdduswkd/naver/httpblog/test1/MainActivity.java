@@ -239,6 +239,7 @@ public class MainActivity extends AppCompatActivity
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     map.setAQI(readMessage);
+                    map.addEntry(readMessage);
                     //print the sensor data
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
                     break;

@@ -56,7 +56,6 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
     ImageView heart, heartbit, hearticon;
     Handler handler;
     GlideDrawableImageViewTarget heartTartget, heartBitget;
-    Button addbtn;
 
     public void setAQI(String values){
         try {
@@ -82,15 +81,6 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.realtime_layout, container, false);
-
-        addbtn = (Button)view.findViewById(R.id.add);
-
-        addbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addEntry();
-            }
-        });
 
         mapView = (MapView)view.findViewById(R.id.map);
         mapView.getMapAsync(this);
@@ -273,10 +263,10 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(13));
     }
 
-    public void addEntry() {
+    public void addEntry(String val) {
         try {
             String messageArray[] = null;
-            //messageArray = val.split(";");
+            messageArray = val.split(";");
             LineData data = mChart.getData();
 
             if (data != null) {
@@ -289,8 +279,8 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
                     data.addDataSet(set);
                 }
 
-                data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 40) + 30f), 0);
-                //data.addEntry(new Entry(set.getEntryCount(), 10), 0);
+                //data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 40) + 30f), 0);
+                data.addEntry(new Entry(set.getEntryCount(), Integer.parseInt(messageArray[0])), 0);
                 data.notifyDataChanged();
 
                 // let the chart know it's data has changed
