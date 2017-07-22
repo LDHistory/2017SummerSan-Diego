@@ -1,23 +1,20 @@
 package comdbstjdduswkd.naver.httpblog.test1;
 import android.app.Fragment;
 import android.graphics.Color;
-import android.graphics.Typeface;
-import android.icu.text.SimpleDateFormat;
-import android.icu.util.Calendar;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
@@ -50,14 +47,16 @@ import java.util.Date;
 
 public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
     View view;
+
     private LineChart mChart;
     private GoogleMap googleMap = null;
     private MapView mapView = null;
 
     TextView heartText, CO, NO2, SO2, O3, PM25, TEMP;
-    ImageView heart, heartbit;
+    ImageView heart, heartbit, hearticon;
     Handler handler;
     GlideDrawableImageViewTarget heartTartget, heartBitget;
+    Button addbtn;
 
     public void setAQI(String values){
         try {
@@ -84,9 +83,19 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.realtime_layout, container, false);
 
+        addbtn = (Button)view.findViewById(R.id.add);
+
+        addbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addEntry();
+            }
+        });
+
         mapView = (MapView)view.findViewById(R.id.map);
         mapView.getMapAsync(this);
 
+        //하단 TabHost
         TabHost tabHost = (TabHost)view.findViewById(R.id.tabHost2);
         tabHost.setup();
 
@@ -97,6 +106,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
                 .setContent(R.id.tab2).setIndicator(getString(R.string.tab2));
         tabHost.addTab(spec2);
 
+        //상단 TabHost
         TabHost tabHost1 = (TabHost)view.findViewById(R.id.tabHost1);
         tabHost1.setup();
 
@@ -114,6 +124,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
         //GIF File Object
         heartTartget = new GlideDrawableImageViewTarget(heart);
         heartBitget = new GlideDrawableImageViewTarget(heartbit);
+
 
         CO = (TextView)view.findViewById(R.id.co_text);
         NO2 = (TextView)view.findViewById(R.id.no2_text);
@@ -139,11 +150,29 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
         Glide.with(this).load(R.raw.heartbit).into(heartBitget);
 
         mChart = (LineChart) view.findViewById(R.id.map_chart);
+
+        // enable description text
+        mChart.getDescription().setEnabled(true);
+
+        // enable touch gestures
+        mChart.setTouchEnabled(true);
+
+        // enable scaling and dragging
+        mChart.setDragEnabled(true);
+        mChart.setScaleEnabled(true);
+        mChart.setDrawGridBackground(false);
+
+        // if disabled, scaling can be done on x- and y-axis separately
+        mChart.setPinchZoom(true);
+
+        // set an alternative background color
+        mChart.setBackgroundColor(Color.LTGRAY);
+
         LineData data = new LineData();
         data.setValueTextColor(Color.BLACK);
         //add empty data
         mChart.setData(data);
-// get the legend (only possible after setting data)
+        // get the legend (only possible after setting data)
         Legend l = mChart.getLegend();
 
         // modify the legend ...
@@ -158,32 +187,12 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
 
         YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.setTextColor(Color.WHITE);
+        leftAxis.setAxisMaximum(100f);
+        leftAxis.setAxisMinimum(0f);
         leftAxis.setDrawGridLines(true);
 
         YAxis rightAxis = mChart.getAxisRight();
         rightAxis.setEnabled(false);
-        /*
-        ArrayList<Entry> valsComp[] = new ArrayList[3]; //파랑 값 담는 리스트
-        valsComp[0] = new ArrayList<Entry>();
-        ////파랑값 설정
-        valsComp[0].add(new Entry(100.0f, 0));
-        valsComp[0].add(new Entry(50.0f, 1));
-        valsComp[0].add(new Entry(75.0f, 2));
-        valsComp[0].add(new Entry(50.0f, 3));
-        valsComp[0].add(new Entry(50.0f, 4));
-        valsComp[0].add(new Entry(150.0f, 5));
-        valsComp[0].add(new Entry(90.0f, 6));
-
-        LineDataSet setComp1 = new LineDataSet(valsComp[0], "CO"); //파랑
-        setComp1.setAxisDependency(YAxis.AxisDependency.LEFT); //파랑
-
-        ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
-        dataSets.add(setComp1); ////파랑선을 그려준다.
-
-        //데이터 설정 및 새로고침
-        mChart.setData(data);
-        mChart.invalidate();
-*/
         return view;
     }
 
@@ -263,8 +272,43 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(Atkinson));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(13));
     }
-    private LineDataSet createSet() {
 
+    public void addEntry() {
+        try {
+            String messageArray[] = null;
+            //messageArray = val.split(";");
+            LineData data = mChart.getData();
+
+            if (data != null) {
+
+                ILineDataSet set = data.getDataSetByIndex(0);
+                // set.addEntry(...); // can be called as well
+
+                if (set == null) {
+                    set = createSet();
+                    data.addDataSet(set);
+                }
+
+                data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 40) + 30f), 0);
+                //data.addEntry(new Entry(set.getEntryCount(), 10), 0);
+                data.notifyDataChanged();
+
+                // let the chart know it's data has changed
+                mChart.notifyDataSetChanged();
+
+                // limit the number of visible entries
+                mChart.setVisibleXRangeMaximum(120);
+                //mChart.setVisibleYRange(30, AxisDependency.LEFT);
+
+                mChart.moveViewToX(data.getEntryCount());
+            }
+        }catch (Exception e){
+            Log.e("setAQI","value error");
+            e.printStackTrace();
+        }
+    }
+
+    private LineDataSet createSet() {
         LineDataSet set = new LineDataSet(null, "Dynamic Data");
         //set.setAxisDependency(AxisDependency.LEFT);
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
@@ -279,45 +323,5 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
         set.setValueTextSize(9f);
         set.setDrawValues(false);
         return set;
-    }
-    public void addEntry(String val) {
-        try {
-            String messageArray[] = null;
-            messageArray = val.split(";");
-            LineData data = mChart.getData();
-
-            if (data != null) {
-
-                ILineDataSet set = data.getDataSetByIndex(0);
-                // set.addEntry(...); // can be called as well
-
-                if (set == null) {
-                    set = createSet();
-                    data.addDataSet(set);
-                }
-
-                data.addEntry(new Entry(set.getEntryCount(), Integer.parseInt(messageArray[0])), 0);
-                //data.addEntry(new Entry(set.getEntryCount(), 10), 0);
-                data.notifyDataChanged();
-
-                // let the chart know it's data has changed
-                mChart.notifyDataSetChanged();
-
-                // limit the number of visible entries
-                mChart.setVisibleXRangeMaximum(120);
-                //mChart.setVisibleYRange(30, AxisDependency.LEFT);
-
-                // move to the latest entry
-                mChart.moveViewToX(data.getYValCount());
-
-                // this automatically refreshes the chart (calls invalidate())
-                mChart.moveViewTo(data.getXValCount()-7, 55f,
-                        AxisDependency.LEFT);
-            }
-        }catch (Exception e){
-            Log.e("setAQI","value error");
-            e.printStackTrace();
-        }
-
     }
 }

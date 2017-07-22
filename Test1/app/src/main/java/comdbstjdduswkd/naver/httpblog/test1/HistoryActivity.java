@@ -124,11 +124,11 @@ public class HistoryActivity extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        LineData data = new LineData(xVals, dataSets);
+        //LineData data = new LineData(xVals, dataSets);
 
         //데이터 설정 및 새로고침
-        chart.setData(data);
-        chart.invalidate();
+        //chart.setData(data);
+        //chart.invalidate();
         return view;
     }
 
