@@ -177,7 +177,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
 
         YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.setTextColor(Color.WHITE);
-        leftAxis.setAxisMaximum(100f);
+        leftAxis.setAxisMaximum(500f);
         leftAxis.setAxisMinimum(0f);
         leftAxis.setDrawGridLines(true);
 
@@ -280,8 +280,10 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
                 }
 
                 //data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 40) + 30f), 0);
-                data.addEntry(new Entry(set.getEntryCount(), Integer.parseInt(messageArray[0])), 0);
-                data.notifyDataChanged();
+                if(CO != null) {
+                    data.addEntry(new Entry(set.getEntryCount(), Float.parseFloat(messageArray[0])), 0);
+                    data.notifyDataChanged();
+                }
 
                 // let the chart know it's data has changed
                 mChart.notifyDataSetChanged();

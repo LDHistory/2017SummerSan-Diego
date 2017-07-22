@@ -174,31 +174,31 @@
                             android:layout_marginBottom="19dp"
                             android:layout_marginEnd="24dp"
                             android:text="          "
-                            android:textSize="25sp"
+                            android:textSize="20dp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/no2_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="           "
+                            android:textSize="20sp"
+                            android:textStyle="bold"
                             android:layout_alignBaseline="@+id/co_text"
                             android:layout_alignBottom="@+id/co_text"
-                            android:layout_centerHorizontal="true"
-                            android:text="           "
-                            android:textSize="25sp"
-                            android:textStyle="bold" />
+                            android:layout_centerHorizontal="true" />
 
                         <TextView
                             android:id="@+id/so2_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="           "
+                            android:textSize="20sp"
+                            android:textStyle="bold"
                             android:layout_alignBaseline="@+id/no2_text"
                             android:layout_alignBottom="@+id/no2_text"
-                            android:layout_alignStart="@+id/imageView13"
-                            android:layout_marginStart="21dp"
-                            android:text="           "
-                            android:textSize="25sp"
-                            android:textStyle="bold" />
+                            android:layout_alignEnd="@+id/imageView13"
+                            android:layout_marginEnd="25dp" />
 
                         <TextView
                             android:id="@+id/o3_text"
@@ -208,7 +208,7 @@
                             android:layout_alignEnd="@+id/co_text"
                             android:layout_marginBottom="18dp"
                             android:text="           "
-                            android:textSize="25sp"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -219,7 +219,7 @@
                             android:layout_alignEnd="@+id/no2_text"
                             android:layout_alignStart="@+id/no2_text"
                             android:text="           "
-                            android:textSize="25sp"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -230,7 +230,7 @@
                             android:layout_alignEnd="@+id/so2_text"
                             android:layout_alignStart="@+id/so2_text"
                             android:text="           "
-                            android:textSize="25sp"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
                     </RelativeLayout>
