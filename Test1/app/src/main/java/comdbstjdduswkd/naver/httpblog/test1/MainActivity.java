@@ -28,7 +28,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     FragmentManager manager = getFragmentManager();
-    RealTimeActivity map;
+    RealTimeActivity real;
+    HistoryActivity history;
     Bundle bundle = new Bundle();
 
     int i=0;
@@ -66,14 +67,16 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        map = new RealTimeActivity();
+        real = new RealTimeActivity();
+        history = new HistoryActivity();
+
         //manager.beginTransaction().replace(R.id.content_main, map).commit(); //if push the button, change the frame
         changeFragment(0);
 
-        if (savedInstanceState == null) {
+        /*if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.commit();
-        }
+        }*/
 
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -228,7 +231,7 @@ public class MainActivity extends AppCompatActivity
                     manager.beginTransaction().show(manager.findFragmentByTag("a")).commit();
                 } else {
                     //if the fragment does not exist, add it to fragment manager.
-                    manager.beginTransaction().add(R.id.content_main, new RealTimeActivity(), "a").commit();
+                    manager.beginTransaction().add(R.id.content_main, real, "a").commit();
                 }
                 if (manager.findFragmentByTag("b") != null) {
                     //if the other fragment is visible, hide it.
@@ -241,7 +244,7 @@ public class MainActivity extends AppCompatActivity
                     manager.beginTransaction().show(manager.findFragmentByTag("b")).commit();
                 } else {
                     //if the fragment does not exist, add it to fragment manager.
-                    manager.beginTransaction().add(R.id.content_main, new HistoryActivity(), "b").commit();
+                    manager.beginTransaction().add(R.id.content_main, history, "b").commit();
                 }
                 if (manager.findFragmentByTag("a") != null) {
                     //if the other fragment is visible, hide it.
@@ -279,8 +282,8 @@ public class MainActivity extends AppCompatActivity
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    map.setAQI(readMessage);
-                    map.addEntry(readMessage);
+                    real.setAQI(readMessage);
+                    real.addEntry(readMessage);
                     //print the sensor data
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
                     break;

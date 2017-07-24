@@ -68,6 +68,12 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
                 O3.setText(messageArray[3]);
                 PM25.setText(messageArray[4]);
                 TEMP.setText(messageArray[5]);
+                Log.e("test", "" + messageArray[0]);
+                Log.e("test", "" + messageArray[1]);
+                Log.e("test", "" + messageArray[2]);
+                Log.e("test", "" + messageArray[3]);
+                Log.e("test", "" + messageArray[4]);
+                Log.e("test", "" + messageArray[5]);
             } else
                 Log.e("RealTimeActivity", "setCo CO: " + CO);
         }catch (Exception e){
