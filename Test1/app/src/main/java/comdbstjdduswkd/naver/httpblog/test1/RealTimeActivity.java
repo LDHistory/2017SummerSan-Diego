@@ -224,9 +224,9 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        mapView.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
@@ -244,7 +244,6 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         if(mapView != null)
         {
             mapView.onCreate(savedInstanceState);

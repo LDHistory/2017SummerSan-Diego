@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -45,6 +46,12 @@ public class MainActivity extends AppCompatActivity
     private ArrayAdapter<String> mConversationArrayAdapter;
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        // TODO Auto-generated method stub
+        super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -60,7 +67,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         map = new RealTimeActivity();
-        manager.beginTransaction().replace(R.id.content_main, map).commit(); //if push the button, change the frame
+        //manager.beginTransaction().replace(R.id.content_main, map).commit(); //if push the button, change the frame
+        changeFragment(0);
 
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -196,9 +204,11 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_map) { // Handle the map action
-            manager.beginTransaction().replace(R.id.content_main, new RealTimeActivity()).commit(); //if push the button, change the frame
+            //manager.beginTransaction().replace(R.id.content_main, new RealTimeActivity()).commit(); //if push the button, change the frame
+            changeFragment(0);
         } else if (id == R.id.nav_chart) {
-            manager.beginTransaction().replace(R.id.content_main, new HistoryActivity()).commit();
+            //manager.beginTransaction().replace(R.id.content_main, new HistoryActivity()).commit();
+            changeFragment(1);
         } else if (id == R.id.nav_logout) {
 
         } else if (id == R.id.nav_dereg) {
@@ -208,6 +218,37 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void changeFragment(int fNum) {
+        switch (fNum) {
+            case 0:
+                if (manager.findFragmentByTag("a") != null) {
+                    //if the fragment exists, show it.
+                    manager.beginTransaction().show(manager.findFragmentByTag("a")).commit();
+                } else {
+                    //if the fragment does not exist, add it to fragment manager.
+                    manager.beginTransaction().add(R.id.content_main, new RealTimeActivity(), "a").commit();
+                }
+                if (manager.findFragmentByTag("b") != null) {
+                    //if the other fragment is visible, hide it.
+                    manager.beginTransaction().hide(manager.findFragmentByTag("b")).commit();
+                }
+                break;
+            case 1:
+                if (manager.findFragmentByTag("b") != null) {
+                    //if the fragment exists, show it.
+                    manager.beginTransaction().show(manager.findFragmentByTag("b")).commit();
+                } else {
+                    //if the fragment does not exist, add it to fragment manager.
+                    manager.beginTransaction().add(R.id.content_main, new HistoryActivity(), "b").commit();
+                }
+                if (manager.findFragmentByTag("a") != null) {
+                    //if the other fragment is visible, hide it.
+                    manager.beginTransaction().hide(manager.findFragmentByTag("a")).commit();
+                }
+                break;
+        }
     }
     /**
      * The Handler that gets information back from the BluetoothChatService
