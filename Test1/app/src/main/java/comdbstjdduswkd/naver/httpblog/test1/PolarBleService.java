@@ -15,13 +15,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
-import android.widget.SimpleExpandableListAdapter;
 
-import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -29,10 +23,8 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import android.util.Log;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.ucsd.healthware.framework.lib.definitions.HConstants;
 /**
  * Service for managing connection and data communication with a GATT server hosted on a
  * given Bluetooth LE device.
@@ -98,8 +90,8 @@ public class PolarBleService extends Service {
 	public int beatPeriod=400;	//0 for the complete cycle, range 10 - 400;	after the period, oldest item is removed
 	
 	boolean servicediscovered=false;
-		
-	Logger LOG;
+
+    org.slf4j.Logger LOG;
 	boolean runtimeLogging=false;
 	
     private final IBinder mBinder = new LocalBinder();
