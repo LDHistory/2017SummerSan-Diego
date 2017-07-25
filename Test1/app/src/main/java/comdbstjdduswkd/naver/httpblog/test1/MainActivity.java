@@ -4,10 +4,16 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentActivity;
@@ -24,6 +30,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.util.StringTokenizer;
+
+import static android.webkit.ConsoleMessage.MessageLevel.LOG;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -33,7 +43,10 @@ public class MainActivity extends AppCompatActivity
     Bundle bundle = new Bundle();
 
     int i=0;
-
+    private final String TAG = "YourActivity";
+    PolarBleService mPolarBleService;
+    String mpolarBleDeviceAddress;	//need to pass the address (주소를 전달해야한다.)
+    int batteryLevel=0;
     // Intent request codes
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
     private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
@@ -73,11 +86,6 @@ public class MainActivity extends AppCompatActivity
         //manager.beginTransaction().replace(R.id.content_main, map).commit(); //if push the button, change the frame
         changeFragment(0);
 
-        /*if (savedInstanceState == null) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.commit();
-        }*/
-
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -100,6 +108,9 @@ public class MainActivity extends AppCompatActivity
             mChatService = new BluetoothChatService(this, mHandler); //setupChat에서 일부 발췌
             Toast.makeText(this, "Ready for chat ! :)", Toast.LENGTH_SHORT).show();
         }
+
+        Log.w(this.getClass().getName(), "onCreate()");
+        activatePolar();
     }
 
     @Override
@@ -304,4 +315,89 @@ public class MainActivity extends AppCompatActivity
             }
         }
     };
+    protected void activatePolar() {
+        Log.w(this.getClass().getName(), "** activatePolar()");
+        Intent gattactivateClickerServiceIntent = new Intent(this, PolarBleService.class);
+        bindService(gattactivateClickerServiceIntent, mPolarBleServiceConnection, BIND_AUTO_CREATE);
+        registerReceiver(mPolarBleUpdateReceiver, makePolarGattUpdateIntentFilter());
+    }
+
+    protected void deactivatePolar() {
+        Log.w(this.getClass().getName(), "deactivatePolar()");
+        if(mPolarBleService!=null){
+            unbindService(mPolarBleServiceConnection);
+        }
+        unregisterReceiver(mPolarBleUpdateReceiver);
+        mPolarBleService.disconnect();
+    }
+    private final BroadcastReceiver mPolarBleUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context ctx, Intent intent) {
+            final String action = intent.getAction();
+            if (PolarBleService.ACTION_GATT_CONNECTED.equals(action)) {
+            } else if (PolarBleService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                //dataFragPolar.stopAnimation();
+            } else if (PolarBleService.ACTION_HR_DATA_AVAILABLE.equals(action)) {
+                //heartRate+";"+pnnPercentage+";"+pnnCount+";"+rrThreshold+";"+bioHarnessSessionData.totalNN
+                //String data = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);  //-> is it miss type? (i don't need that class)
+                String data = intent.getStringExtra(PolarBleService.EXTRA_DATA);
+                StringTokenizer tokens = new StringTokenizer(data, ";");
+                int hr = Integer.parseInt(tokens.nextToken());
+                int prrPercenteage = Integer.parseInt(tokens.nextToken());
+                int prrCount = Integer.parseInt(tokens.nextToken());
+                int rrThreshold = Integer.parseInt(tokens.nextToken());	//50%, 30%, etc.
+                int rrTotal = Integer.parseInt(tokens.nextToken());
+                int rrValue = Integer.parseInt(tokens.nextToken());
+                long sid = Long.parseLong(tokens.nextToken());
+
+                //dataFragPolar.settvHR(Integer.toString(hr));
+            }else if (PolarBleService.ACTION_BATTERY_DATA_AVAILABLE.equals(action)) {
+                String data = intent.getStringExtra(PolarBleService.EXTRA_DATA);
+                batteryLevel = Integer.parseInt(data);
+            }else if (PolarBleService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                String data = intent.getStringExtra(PolarBleService.EXTRA_DATA);
+                StringTokenizer tokens = new StringTokenizer(data, ";");
+                int totalNN = Integer.parseInt(tokens.nextToken());
+                long lSessionId = Long.parseLong(tokens.nextToken());
+
+                //Enable your UI
+            }
+        }
+    };
+    private static IntentFilter makePolarGattUpdateIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(PolarBleService.ACTION_GATT_CONNECTED);
+        intentFilter.addAction(PolarBleService.ACTION_GATT_DISCONNECTED);
+        intentFilter.addAction(PolarBleService.ACTION_GATT_SERVICES_DISCOVERED);
+        intentFilter.addAction(PolarBleService.ACTION_HR_DATA_AVAILABLE);
+        intentFilter.addAction(PolarBleService.ACTION_BATTERY_DATA_AVAILABLE);
+        return intentFilter;
+    }
+    private final ServiceConnection mPolarBleServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            mPolarBleService = ((PolarBleService.LocalBinder) service).getService();
+            if (!mPolarBleService.initialize()) {
+                Log.e(TAG, "Unable to initialize Bluetooth");
+                finish();
+            }
+
+            mPolarBleService.connect(app.polarBleDeviceAddress, false);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            if(app.runtimeLogging)
+                Log.w("onServiceDisconnected","onServiceDisconnected() ");
+
+            mPolarBleService = null;
+        }
+    };
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.e(this.getClass().getName(), "onDestroy");
+        deactivatePolar();
+    }
 }
