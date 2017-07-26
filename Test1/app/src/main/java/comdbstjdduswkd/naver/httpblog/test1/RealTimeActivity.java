@@ -218,9 +218,6 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
             }
         });
         ChangeHeart.start();
-
-        mapView.onStart();
-        //새로 추가된 부분
     }
 
     @Override

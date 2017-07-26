@@ -606,7 +606,7 @@ public class PolarBleService extends Service {
                 	//return;
                 }
                 
-                if(uuid.compareTo(SampleGattAttributes.BATTERY_LEVEL_UUID)==0){
+                if(uuid.compareTo(String.valueOf(SampleGattAttributes.BATTERY_LEVEL_UUID))==0){
                 	//mNotifyCharacteristic = gattCharacteristic;
                     //setCharacteristicNotification(gattCharacteristic, true);
                 	readCharacteristic(gattCharacteristic);  
