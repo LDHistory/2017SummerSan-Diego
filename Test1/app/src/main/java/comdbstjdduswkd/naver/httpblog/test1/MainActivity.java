@@ -17,7 +17,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -27,12 +26,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.StringTokenizer;
 
-import static android.webkit.ConsoleMessage.MessageLevel.LOG;
+import comdbstjdduswkd.naver.httpblog.test1.UDOO.BluetoothChatService;
+import comdbstjdduswkd.naver.httpblog.test1.UDOO.Constants;
+import comdbstjdduswkd.naver.httpblog.test1.UDOO.DeviceListActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity
     int i=0;
     private final String TAG = "YourActivity";
     PolarBleService mPolarBleService;
-    String mpolarBleDeviceAddress;	//need to pass the address (주소를 전달해야한다.)
+    String mpolarBleDeviceAddress = "00:22:D0:9C:F9:8E";	// your need to pass the address (주소를 전달해야한다.)
     int batteryLevel=0;
     // Intent request codes
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
@@ -318,6 +318,7 @@ public class MainActivity extends AppCompatActivity
     protected void activatePolar() {
         Log.w(this.getClass().getName(), "** activatePolar()");
         Intent gattactivateClickerServiceIntent = new Intent(this, PolarBleService.class);
+        Log.e("ee",""+gattactivateClickerServiceIntent.toString());
         bindService(gattactivateClickerServiceIntent, mPolarBleServiceConnection, BIND_AUTO_CREATE);
         registerReceiver(mPolarBleUpdateReceiver, makePolarGattUpdateIntentFilter());
     }
@@ -334,15 +335,22 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onReceive(Context ctx, Intent intent) {
             final String action = intent.getAction();
+            Log.e("000","시작하는부ㅜㄴ");
             if (PolarBleService.ACTION_GATT_CONNECTED.equals(action)) {
+                Log.e("1111111","mPolarBleService.initialize");
             } else if (PolarBleService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 //dataFragPolar.stopAnimation();
+                Log.e("222","ACTION_GATT_DISCONNECTED");
             } else if (PolarBleService.ACTION_HR_DATA_AVAILABLE.equals(action)) {
+                Log.e("333","ACTION_HR_DATA_AVAILABLE");
                 //heartRate+";"+pnnPercentage+";"+pnnCount+";"+rrThreshold+";"+bioHarnessSessionData.totalNN
                 //String data = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);  //-> is it miss type? (i don't need that class)
                 String data = intent.getStringExtra(PolarBleService.EXTRA_DATA);
+                Log.e("data",""+data);
                 StringTokenizer tokens = new StringTokenizer(data, ";");
                 int hr = Integer.parseInt(tokens.nextToken());
+                Toast.makeText(MainActivity.this, ""+hr,Toast.LENGTH_LONG);
+                Log.e("hr detect",""+hr);
                 int prrPercenteage = Integer.parseInt(tokens.nextToken());
                 int prrCount = Integer.parseInt(tokens.nextToken());
                 int rrThreshold = Integer.parseInt(tokens.nextToken());	//50%, 30%, etc.
@@ -352,9 +360,11 @@ public class MainActivity extends AppCompatActivity
 
                 //dataFragPolar.settvHR(Integer.toString(hr));
             }else if (PolarBleService.ACTION_BATTERY_DATA_AVAILABLE.equals(action)) {
+                Log.e("444","ACTION_BATTERY_DATA_AVAILABLE");
                 String data = intent.getStringExtra(PolarBleService.EXTRA_DATA);
                 batteryLevel = Integer.parseInt(data);
             }else if (PolarBleService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                Log.e("555","ACTION_GATT_SERVICES_DISCOVERED");
                 String data = intent.getStringExtra(PolarBleService.EXTRA_DATA);
                 StringTokenizer tokens = new StringTokenizer(data, ";");
                 int totalNN = Integer.parseInt(tokens.nextToken());
@@ -382,13 +392,13 @@ public class MainActivity extends AppCompatActivity
                 Log.e(TAG, "Unable to initialize Bluetooth");
                 finish();
             }
-
-            //mPolarBleService.connect(app.polarBleDeviceAddress, false);
+            /////////mPolarBleService.connect(app.mpolarBleDeviceAddress, false);
+            // mPolarBleService.connect("00:22:D0:9C:F9:8E", false);
+            Log.e("mPolarBleService.init",": Sucscc");
         }
-
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            //if(app.runtimeLogging)
+            /////////if(app.runtimeLogging)
                 Log.w("onServiceDisconnected","onServiceDisconnected() ");
 
             mPolarBleService = null;

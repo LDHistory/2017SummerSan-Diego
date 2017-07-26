@@ -20,10 +20,13 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 import android.util.Log;
 import org.slf4j.LoggerFactory;
+
+import comdbstjdduswkd.naver.httpblog.test1.PolarHealth.HConstants;
+import comdbstjdduswkd.naver.httpblog.test1.PolarHealth.SampleGattAttributes;
+import comdbstjdduswkd.naver.httpblog.test1.PolarHealth.SensorCache;
 
 /**
  * Service for managing connection and data communication with a GATT server hosted on a
