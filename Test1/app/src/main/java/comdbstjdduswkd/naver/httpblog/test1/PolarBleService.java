@@ -109,7 +109,7 @@ public class PolarBleService extends Service {
     public IBinder onBind(Intent intent) {
     	Log.e(TAG, "#### onBind()");
         if(runtimeLogging)
-		    LOG.warning("----onBind() sid: "+bioHarnessSessionData.sessionId);
+		    LOG.warn("----onBind() sid: "+bioHarnessSessionData.sessionId);
 
         return mBinder;
     }

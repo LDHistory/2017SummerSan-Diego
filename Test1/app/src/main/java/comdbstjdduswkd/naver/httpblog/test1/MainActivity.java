@@ -383,12 +383,12 @@ public class MainActivity extends AppCompatActivity
                 finish();
             }
 
-            mPolarBleService.connect(app.polarBleDeviceAddress, false);
+            //mPolarBleService.connect(app.polarBleDeviceAddress, false);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            if(app.runtimeLogging)
+            //if(app.runtimeLogging)
                 Log.w("onServiceDisconnected","onServiceDisconnected() ");
 
             mPolarBleService = null;

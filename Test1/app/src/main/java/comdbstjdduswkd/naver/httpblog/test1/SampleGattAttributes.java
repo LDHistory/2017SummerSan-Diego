@@ -1,23 +1,6 @@
-/*
- * Copyright (C) 2013 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package comdbstjdduswkd.naver.httpblog.test1;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 /**
  * This class includes a small subset of standard GATT attributes for demonstration purposes.
@@ -25,9 +8,16 @@ import java.util.UUID;
 public class SampleGattAttributes {
     private static HashMap<String, String> attributes = new HashMap();
     public static String HEART_RATE_MEASUREMENT = "00002a37-0000-1000-8000-00805f9b34fb";
+    //public static String CLICKER_INDICATE_CHARACTERISTIC = "00002a1c-0000-1000-8000-00805f9b34fb";
+    public static String CLICKER_INDICATE_CHARACTERISTIC = "df342b03-53f9-43b4-acb6-62a63ca0615a";
+    public static String CLICKER_WRITE_CHARACTERISTIC = "e4c937b3-7f6d-41f9-b997-40c561f4453b";
+
     public static String CLIENT_CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
-    public static final UUID BATTERY_SERVICE_UUID = UUID.fromString("0000180F-0000-1000-8000-00805f9b34fb");
-    public static final UUID BATTERY_LEVEL_UUID = UUID.fromString("00002A19-0000-1000-8000-00805f9b34fb");
+
+    public static String BATTERY_SERVICE_UUID = "0000180F-0000-1000-8000-00805f9b34fb";
+    public static String BATTERY_LEVEL_UUID = "00002a19-0000-1000-8000-00805f9b34fb";
+
+    //public static String HEART_RATE_MEASUREMENT = "2A37";
 
     static {
         // Sample Services.
