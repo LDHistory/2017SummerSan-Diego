@@ -1,5 +1,17 @@
 [
     {
+        "merged": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\raw\\human_slow.png",
+        "source": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\src\\main\\res\\raw\\human_slow.png"
+    },
+    {
+        "merged": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\raw\\human_nomal.png",
+        "source": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\src\\main\\res\\raw\\human_nomal.png"
+    },
+    {
+        "merged": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\raw\\heartbit.gif",
+        "source": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\src\\main\\res\\raw\\heartbit.gif"
+    },
+    {
         "merged": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\raw\\human_nomal.png",
         "source": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\src\\main\\res\\raw\\human_nomal.png"
     },
@@ -16,6 +28,18 @@
         "source": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\src\\main\\res\\raw\\human_slow2.png"
     },
     {
+        "merged": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\raw\\human_nomal2.png",
+        "source": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\src\\main\\res\\raw\\human_nomal2.png"
+    },
+    {
+        "merged": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\raw\\human_fast.png",
+        "source": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\src\\main\\res\\raw\\human_fast.png"
+    },
+    {
+        "merged": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\raw\\human_slow2.png",
+        "source": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\src\\main\\res\\raw\\human_slow2.png"
+    },
+    {
         "merged": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\raw\\human_slow.png",
         "source": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\src\\main\\res\\raw\\human_slow.png"
     },
@@ -26,5 +50,9 @@
     {
         "merged": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\raw\\human_fast.png",
         "source": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\src\\main\\res\\raw\\human_fast.png"
+    },
+    {
+        "merged": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\raw\\human_fast2.png",
+        "source": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\src\\main\\res\\raw\\human_fast2.png"
     }
 ]

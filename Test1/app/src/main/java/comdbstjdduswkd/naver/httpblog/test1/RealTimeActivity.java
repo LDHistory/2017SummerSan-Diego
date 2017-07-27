@@ -82,6 +82,22 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
         }
     }
 
+    public void setHeart(int bit){
+        try{
+            heartText.setText("" + bit);
+            if(bit >= 120){
+                heart.setImageResource(R.drawable.human_fast2);
+            }
+            else if(bit >= 70){
+                heart.setImageResource(R.drawable.human_nomal2);
+            }
+            else
+                heart.setImageResource(R.drawable.human_slow2);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
     @Override
@@ -128,19 +144,6 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
         SO2 = (TextView)view.findViewById(R.id.so2_text);
         PM25 = (TextView)view.findViewById(R.id.pm25);
         TEMP = (TextView)view.findViewById(R.id.temp_text);
-
-        //handelr
-        handler = new Handler(){
-            public void handleMessage(android.os.Message msg){
-                heartText.setText(""+msg.what);
-                if(msg.what >= 70)
-                    heart.setImageResource(R.drawable.human_fast2);
-                else if(msg.what >= 50)
-                    heart.setImageResource(R.drawable.human_nomal2);
-                else
-                    heart.setImageResource(R.drawable.human_slow2);
-            }
-        };
 
         //HeartBit GIF
         Glide.with(this).load(R.raw.heartbit).into(heartBitget);
@@ -201,26 +204,6 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
     public void onStart() {
         super.onStart();
         mapView.onStart();
-        //새로 추가된 부분
-        Thread ChangeHeart = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true){
-                    try {
-                        for(int i = 0; i < 100; i++) {
-                            handler.sendEmptyMessage(i);
-                            Thread.sleep(100);
-                        }
-                    }catch (InterruptedException e){
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        ChangeHeart.start();
-
-        mapView.onStart();
-        //새로 추가된 부분
     }
 
     @Override

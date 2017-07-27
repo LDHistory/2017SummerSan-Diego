@@ -349,6 +349,7 @@ public class MainActivity extends AppCompatActivity
                 int hr = Integer.parseInt(tokens.nextToken());
                 Toast.makeText(MainActivity.this, ""+hr,Toast.LENGTH_LONG);
                 Log.e("hr detect",""+hr);
+                real.setHeart(hr);
                 int prrPercenteage = Integer.parseInt(tokens.nextToken());
                 int prrCount = Integer.parseInt(tokens.nextToken());
                 int rrThreshold = Integer.parseInt(tokens.nextToken());	//50%, 30%, etc.
