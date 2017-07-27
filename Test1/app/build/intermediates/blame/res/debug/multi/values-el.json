@@ -1,5 +1,6 @@
 [
     {
+<<<<<<< HEAD
         "outputFile": "C:\\Android\\ucsd\\Test1\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-el\\values-el.xml",
         "map": [
             {
@@ -1454,6 +1455,8 @@
         ]
     },
     {
+=======
+>>>>>>> 96403205e917fe72ef4820afdbfb71c2dd8417d3
         "outputFile": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-el\\values-el.xml",
         "map": [
             {

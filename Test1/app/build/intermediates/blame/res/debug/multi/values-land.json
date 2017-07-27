@@ -100,6 +100,7 @@
                 }
             }
         ]
+<<<<<<< HEAD
     },
     {
         "outputFile": "C:\\Android\\ucsd\\Test1\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-land\\values-land.xml",
@@ -304,5 +305,7 @@
                 }
             }
         ]
+=======
+>>>>>>> 96403205e917fe72ef4820afdbfb71c2dd8417d3
     }
 ]

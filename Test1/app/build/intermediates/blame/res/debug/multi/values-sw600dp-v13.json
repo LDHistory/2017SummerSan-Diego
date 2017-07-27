@@ -347,6 +347,7 @@
                 }
             }
         ]
+<<<<<<< HEAD
     },
     {
         "outputFile": "C:\\Android\\ucsd\\Test1\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-sw600dp-v13\\values-sw600dp-v13.xml",
@@ -1045,5 +1046,7 @@
                 }
             }
         ]
+=======
+>>>>>>> 96403205e917fe72ef4820afdbfb71c2dd8417d3
     }
 ]

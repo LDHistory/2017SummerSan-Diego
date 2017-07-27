@@ -101,7 +101,7 @@ public class PolarBleService extends Service {
 
     public class LocalBinder extends Binder {
         public PolarBleService getService() {
-        	//Log.w(TAG, "#### getService()");
+        	Log.w(TAG, "#### getService()");
         	LOG = LoggerFactory.getLogger(PolarBleService.class);
     		
             return PolarBleService.this;

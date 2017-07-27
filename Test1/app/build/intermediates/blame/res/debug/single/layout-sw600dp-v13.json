@@ -1,5 +1,6 @@
 [
     {
+<<<<<<< HEAD
         "merged": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\layout-sw600dp-v13\\design_layout_snackbar.xml",
         "source": "C:\\Users\\DONGHEE\\.android\\build-cache\\561814a19dd2b55ce8651d93490fdc9f29042481\\output\\res\\layout-sw600dp-v13\\design_layout_snackbar.xml"
     },
@@ -8,6 +9,8 @@
         "source": "C:\\Users\\Lauren\\.android\\build-cache\\982c9ccfdb8f076176327f16a1c921136c60c1ac\\output\\res\\layout-sw600dp-v13\\design_layout_snackbar.xml"
     },
     {
+=======
+>>>>>>> 96403205e917fe72ef4820afdbfb71c2dd8417d3
         "merged": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\layout-sw600dp-v13\\design_layout_snackbar.xml",
         "source": "C:\\Users\\USER\\.android\\build-cache\\d4986d65affdd2b65b9d59009778d7fd6f3b716a\\output\\res\\layout-sw600dp-v13\\design_layout_snackbar.xml"
     }

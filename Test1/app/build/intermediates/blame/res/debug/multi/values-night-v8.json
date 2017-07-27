@@ -136,6 +136,7 @@
                 }
             }
         ]
+<<<<<<< HEAD
     },
     {
         "outputFile": "C:\\Android\\ucsd\\Test1\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-night-v8\\values-night-v8.xml",
@@ -412,5 +413,7 @@
                 }
             }
         ]
+=======
+>>>>>>> 96403205e917fe72ef4820afdbfb71c2dd8417d3
     }
 ]

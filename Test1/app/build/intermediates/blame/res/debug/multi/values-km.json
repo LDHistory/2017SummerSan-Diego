@@ -326,6 +326,7 @@
                 }
             }
         ]
+<<<<<<< HEAD
     },
     {
         "outputFile": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-km\\values-km.xml",
@@ -982,5 +983,7 @@
                 }
             }
         ]
+=======
+>>>>>>> 96403205e917fe72ef4820afdbfb71c2dd8417d3
     }
 ]

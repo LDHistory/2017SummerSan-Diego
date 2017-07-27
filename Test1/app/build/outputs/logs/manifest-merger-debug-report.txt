@@ -1,6 +1,10 @@
 -- Merging decision tree log ---
 manifest
+<<<<<<< HEAD
 ADDED from C:\Users\DONGHEE\Documents\GitHub\2017SummerSan-Diego\Test1\app\src\main\AndroidManifest.xml:2:1-42:12
+=======
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:2:1-44:12
+>>>>>>> 96403205e917fe72ef4820afdbfb71c2dd8417d3
 	package
 		ADDED from C:\Users\DONGHEE\Documents\GitHub\2017SummerSan-Diego\Test1\app\src\main\AndroidManifest.xml:3:5-51
 		INJECTED from C:\Users\DONGHEE\Documents\GitHub\2017SummerSan-Diego\Test1\app\src\main\AndroidManifest.xml
@@ -27,6 +31,7 @@ ADDED from C:\Users\DONGHEE\Documents\GitHub\2017SummerSan-Diego\Test1\app\src\m
 	android:name
 		ADDED from C:\Users\DONGHEE\Documents\GitHub\2017SummerSan-Diego\Test1\app\src\main\AndroidManifest.xml:7:22-65
 application
+<<<<<<< HEAD
 ADDED from C:\Users\DONGHEE\Documents\GitHub\2017SummerSan-Diego\Test1\app\src\main\AndroidManifest.xml:9:5-40:19
 MERGED from [com.google.android.gms:play-services-maps:10.2.6] C:\Users\DONGHEE\.android\build-cache\476516e7f7c47ea8aaad8f936b27400ba3d32ba4\output\AndroidManifest.xml:24:5-19
 MERGED from [com.google.android.gms:play-services-location:10.2.6] C:\Users\DONGHEE\.android\build-cache\3a9ecb74d1b8ef10ec1d998ef911945318b13c66\output\AndroidManifest.xml:4:5-19
@@ -105,6 +110,92 @@ ADDED from C:\Users\DONGHEE\Documents\GitHub\2017SummerSan-Diego\Test1\app\src\m
 		ADDED from C:\Users\DONGHEE\Documents\GitHub\2017SummerSan-Diego\Test1\app\src\main\AndroidManifest.xml:38:13-68
 	android:name
 		ADDED from C:\Users\DONGHEE\Documents\GitHub\2017SummerSan-Diego\Test1\app\src\main\AndroidManifest.xml:37:13-58
+=======
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:9:5-42:19
+MERGED from [com.google.android.gms:play-services-maps:10.2.6] C:\Users\USER\.android\build-cache\b850a2c0b9b38e1e1df8792228002bc1ba6f1eaf\output\AndroidManifest.xml:24:5-19
+MERGED from [com.google.android.gms:play-services-location:10.2.6] C:\Users\USER\.android\build-cache\ffbf1a0e6f55a150647ee222246a87f4f3af29ba\output\AndroidManifest.xml:4:5-19
+MERGED from [com.google.android.gms:play-services-base:10.2.6] C:\Users\USER\.android\build-cache\ce85906d6481554cda637b747a7b665d333fad9b\output\AndroidManifest.xml:18:5-20:19
+MERGED from [com.google.android.gms:play-services-tasks:10.2.6] C:\Users\USER\.android\build-cache\e78a14a4569bd3dfa77d528cf2d67c636043e048\output\AndroidManifest.xml:4:5-19
+MERGED from [com.google.android.gms:play-services-basement:10.2.6] C:\Users\USER\.android\build-cache\d53a2e73013f0847c5bd88ea08aee358675ec45b\output\AndroidManifest.xml:19:5-21:19
+MERGED from [com.android.support:design:25.3.1] C:\Users\USER\.android\build-cache\d4986d65affdd2b65b9d59009778d7fd6f3b716a\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:appcompat-v7:25.3.1] C:\Users\USER\.android\build-cache\529bbe3a34560caa9b69e39217c710c049b658ba\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:animated-vector-drawable:25.3.1] C:\Users\USER\.android\build-cache\0229fb77e1c881ecfefae6c126619c580fdd9be0\output\AndroidManifest.xml:26:5-20
+MERGED from [com.android.support:support-vector-drawable:25.3.1] C:\Users\USER\.android\build-cache\606840e106de9d69e654555f01eaf5ebc6ddef8a\output\AndroidManifest.xml:26:5-20
+MERGED from [com.android.support:transition:25.3.1] C:\Users\USER\.android\build-cache\92f7aadd3b2d2a278ee124a9fe98afb337e2ab82\output\AndroidManifest.xml:26:5-20
+MERGED from [com.android.support:support-v4:25.3.1] C:\Users\USER\.android\build-cache\a6dc9c4a707bc62bcd1b30de46e86f0fd608cb09\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-fragment:25.3.1] C:\Users\USER\.android\build-cache\dd330a914525067be8c774b4f688f2c7e3a39098\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-media-compat:25.3.1] C:\Users\USER\.android\build-cache\ec3f8b7faac7496803b2867bb2437de45b9a020a\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-core-ui:25.3.1] C:\Users\USER\.android\build-cache\1aa634922f5e4f21b0c7ea12417304727ec6a4c5\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-core-utils:25.3.1] C:\Users\USER\.android\build-cache\1b5596ffe608ae6b972116d457a6d14deda01053\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-compat:25.3.1] C:\Users\USER\.android\build-cache\aac8a4800d16a7cdddf94ee8fb07f25f2937ddbe\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support.constraint:constraint-layout:1.0.2] C:\Users\USER\.android\build-cache\4b10cf58383beb883f0ccb54a1793901ec3766f5\output\AndroidManifest.xml:9:5-20
+	android:label
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:13:9-41
+	android:supportsRtl
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:15:9-35
+	android:roundIcon
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:14:9-54
+	android:allowBackup
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:11:9-35
+	android:icon
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:12:9-43
+	android:theme
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:16:9-40
+service#comdbstjdduswkd.naver.httpblog.test1.PolarBleService
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:17:9-74
+	android:enabled
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:17:50-72
+	android:name
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:17:18-49
+activity#comdbstjdduswkd.naver.httpblog.test1.MainActivity
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:18:9-22:59
+	android:label
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:20:13-45
+	android:configChanges
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:21:13-59
+	android:theme
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:22:13-56
+	android:name
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:19:13-41
+activity#comdbstjdduswkd.naver.httpblog.test1.UserManagement.LoginActivity
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:23:9-29:20
+	android:name
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:23:19-63
+intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:24:13-28:29
+action#android.intent.action.MAIN
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:25:17-69
+	android:name
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:25:25-66
+category#android.intent.category.LAUNCHER
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:27:17-77
+	android:name
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:27:27-74
+activity#comdbstjdduswkd.naver.httpblog.test1.UserManagement.RegActivity
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:30:9-64
+	android:name
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:30:19-61
+activity#comdbstjdduswkd.naver.httpblog.test1.UserManagement.ResetActivity
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:31:9-66
+	android:name
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:31:19-63
+activity#comdbstjdduswkd.naver.httpblog.test1.UDOO.DeviceListActivity
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:32:9-36:64
+	android:label
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:35:13-50
+	android:configChanges
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:34:13-63
+	android:theme
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:36:13-61
+	android:name
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:33:13-52
+meta-data#com.google.android.geo.API_KEY
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:38:9-40:71
+	android:value
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:40:13-68
+	android:name
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:39:13-58
+>>>>>>> 96403205e917fe72ef4820afdbfb71c2dd8417d3
 uses-sdk
 INJECTED from C:\Users\DONGHEE\Documents\GitHub\2017SummerSan-Diego\Test1\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 MERGED from [com.google.android.gms:play-services-maps:10.2.6] C:\Users\DONGHEE\.android\build-cache\476516e7f7c47ea8aaad8f936b27400ba3d32ba4\output\AndroidManifest.xml:23:5-43
