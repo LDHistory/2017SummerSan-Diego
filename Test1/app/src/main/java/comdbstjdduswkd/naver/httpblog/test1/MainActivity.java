@@ -391,21 +391,13 @@ public class MainActivity extends AppCompatActivity
                 finish();
             }
             mPolarBleService.connect("00:22:D0:9C:F9:8E", false);
-<<<<<<< HEAD
-=======
             // mPolarBleService.connect("00:22:D0:9C:F9:8E", false);
->>>>>>> 96403205e917fe72ef4820afdbfb71c2dd8417d3
             Log.e("mPolarBleService.init",": Sucscc");
         }
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-<<<<<<< HEAD
-            /////////if(app.runtimeLogging)
-                //Log.w("onServiceDisconnected","onServiceDisconnected() ");
-=======
             //if(app.runtimeLogging)
             //    Log.w("onServiceDisconnected","onServiceDisconnected() ");
->>>>>>> 96403205e917fe72ef4820afdbfb71c2dd8417d3
 
             mPolarBleService = null;
         }
