@@ -3776,13 +3776,18 @@ containing a value of this type.
         public static final int ic_launcher_round=0x7f030001;
     }
     public static final class raw {
-        public static final int heartbit=0x7f070000;
-        public static final int human_fast=0x7f070001;
-        public static final int human_fast2=0x7f070002;
-        public static final int human_nomal=0x7f070003;
-        public static final int human_nomal2=0x7f070004;
-        public static final int human_slow=0x7f070005;
-        public static final int human_slow2=0x7f070006;
+        public static final int heart_fast=0x7f070000;
+        public static final int heart_normal=0x7f070001;
+        public static final int heartbit=0x7f070002;
+        public static final int human_fast=0x7f070003;
+        public static final int human_fast2=0x7f070004;
+        public static final int human_fast2_1=0x7f070005;
+        public static final int human_nomal=0x7f070006;
+        public static final int human_nomal2=0x7f070007;
+        public static final int human_nomal2_2=0x7f070008;
+        public static final int human_slow=0x7f070009;
+        public static final int human_slow2=0x7f07000a;
+        public static final int human_slow2_3=0x7f07000b;
     }
     public static final class string {
         public static final int abc_action_bar_home_description=0x7f080000;

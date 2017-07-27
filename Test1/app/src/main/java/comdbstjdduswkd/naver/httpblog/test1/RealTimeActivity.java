@@ -84,6 +84,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
 
     public void setHeart(int bit){
         try{
+            Glide.with(this).load(R.raw.heart_normal).into(heartBitget);
             heartText.setText("" + bit);
             if(bit >= 120){
                 heart.setImageResource(R.drawable.human_fast2);
@@ -137,6 +138,8 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
         heartTartget = new GlideDrawableImageViewTarget(heart);
         heartBitget = new GlideDrawableImageViewTarget(heartbit);
 
+        heart.setImageResource(R.drawable.human_nomal2);
+        Glide.with(this).load(R.raw.heart_normal).into(heartBitget);
 
         CO = (TextView)view.findViewById(R.id.co_text);
         NO2 = (TextView)view.findViewById(R.id.no2_text);
@@ -144,9 +147,6 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
         SO2 = (TextView)view.findViewById(R.id.so2_text);
         PM25 = (TextView)view.findViewById(R.id.pm25);
         TEMP = (TextView)view.findViewById(R.id.temp_text);
-
-        //HeartBit GIF
-        Glide.with(this).load(R.raw.heartbit).into(heartBitget);
 
         mChart = (LineChart) view.findViewById(R.id.map_chart);
 
