@@ -1,6 +1,6 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:2:1-42:12
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:2:1-44:12
 	package
 		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:3:5-51
 		INJECTED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml
@@ -27,7 +27,7 @@ ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifes
 	android:name
 		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:7:22-65
 application
-ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:9:5-40:19
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:9:5-42:19
 MERGED from [com.google.android.gms:play-services-maps:10.2.6] C:\Users\USER\.android\build-cache\b850a2c0b9b38e1e1df8792228002bc1ba6f1eaf\output\AndroidManifest.xml:24:5-19
 MERGED from [com.google.android.gms:play-services-location:10.2.6] C:\Users\USER\.android\build-cache\ffbf1a0e6f55a150647ee222246a87f4f3af29ba\output\AndroidManifest.xml:4:5-19
 MERGED from [com.google.android.gms:play-services-base:10.2.6] C:\Users\USER\.android\build-cache\ce85906d6481554cda637b747a7b665d333fad9b\output\AndroidManifest.xml:18:5-20:19
@@ -46,65 +46,71 @@ MERGED from [com.android.support:support-core-utils:25.3.1] C:\Users\USER\.andro
 MERGED from [com.android.support:support-compat:25.3.1] C:\Users\USER\.android\build-cache\aac8a4800d16a7cdddf94ee8fb07f25f2937ddbe\output\AndroidManifest.xml:29:5-20
 MERGED from [com.android.support.constraint:constraint-layout:1.0.2] C:\Users\USER\.android\build-cache\4b10cf58383beb883f0ccb54a1793901ec3766f5\output\AndroidManifest.xml:9:5-20
 	android:label
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:12:9-41
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:13:9-41
 	android:supportsRtl
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:14:9-35
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:15:9-35
 	android:roundIcon
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:13:9-54
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:14:9-54
 	android:allowBackup
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:10:9-35
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:11:9-35
 	android:icon
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:11:9-43
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:12:9-43
 	android:theme
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:15:9-40
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:16:9-40
+service#comdbstjdduswkd.naver.httpblog.test1.PolarBleService
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:17:9-74
+	android:enabled
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:17:50-72
+	android:name
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:17:18-49
 activity#comdbstjdduswkd.naver.httpblog.test1.MainActivity
-ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:16:9-20:59
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:18:9-22:59
 	android:label
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:18:13-45
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:20:13-45
 	android:configChanges
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:19:13-59
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:21:13-59
 	android:theme
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:20:13-56
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:22:13-56
 	android:name
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:17:13-41
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:19:13-41
 activity#comdbstjdduswkd.naver.httpblog.test1.UserManagement.LoginActivity
-ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:21:9-27:20
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:23:9-29:20
 	android:name
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:21:19-63
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:23:19-63
 intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
-ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:22:13-26:29
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:24:13-28:29
 action#android.intent.action.MAIN
-ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:23:17-69
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:25:17-69
 	android:name
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:23:25-66
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:25:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:25:17-77
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:27:17-77
 	android:name
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:25:27-74
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:27:27-74
 activity#comdbstjdduswkd.naver.httpblog.test1.UserManagement.RegActivity
-ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:28:9-64
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:30:9-64
 	android:name
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:28:19-61
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:30:19-61
 activity#comdbstjdduswkd.naver.httpblog.test1.UserManagement.ResetActivity
-ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:29:9-66
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:31:9-66
 	android:name
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:29:19-63
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:31:19-63
 activity#comdbstjdduswkd.naver.httpblog.test1.UDOO.DeviceListActivity
-ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:30:9-34:64
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:32:9-36:64
 	android:label
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:33:13-50
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:35:13-50
 	android:configChanges
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:32:13-63
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:34:13-63
 	android:theme
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:34:13-61
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:36:13-61
 	android:name
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:31:13-52
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:33:13-52
 meta-data#com.google.android.geo.API_KEY
-ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:36:9-38:71
+ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:38:9-40:71
 	android:value
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:38:13-68
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:40:13-68
 	android:name
-		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:37:13-58
+		ADDED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml:39:13-58
 uses-sdk
 INJECTED from C:\Users\USER\AndroidStudioProjects\Test1\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 MERGED from [com.google.android.gms:play-services-maps:10.2.6] C:\Users\USER\.android\build-cache\b850a2c0b9b38e1e1df8792228002bc1ba6f1eaf\output\AndroidManifest.xml:23:5-43

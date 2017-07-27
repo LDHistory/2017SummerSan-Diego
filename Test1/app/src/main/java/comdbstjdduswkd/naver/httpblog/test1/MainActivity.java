@@ -390,14 +390,14 @@ public class MainActivity extends AppCompatActivity
                 Log.e(TAG, "Unable to initialize Bluetooth");
                 finish();
             }
-            /////////mPolarBleService.connect(app.mpolarBleDeviceAddress, false);
+            mPolarBleService.connect("00:22:D0:9C:F9:8E", false);
             // mPolarBleService.connect("00:22:D0:9C:F9:8E", false);
             Log.e("mPolarBleService.init",": Sucscc");
         }
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            /////////if(app.runtimeLogging)
-                Log.w("onServiceDisconnected","onServiceDisconnected() ");
+            //if(app.runtimeLogging)
+            //    Log.w("onServiceDisconnected","onServiceDisconnected() ");
 
             mPolarBleService = null;
         }
