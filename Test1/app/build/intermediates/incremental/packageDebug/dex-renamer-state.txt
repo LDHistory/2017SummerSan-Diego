@@ -1,4 +1,9 @@
+<<<<<<< HEAD
+#Fri Jul 28 00:37:02 GMT-07:00 2017
+base.0=C\:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\1f\\main
+=======
 #Thu Jul 27 17:01:37 PDT 2017
 base.0=C\:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\1f\\main
+>>>>>>> c26faeccf41accc61959cc05120c98fe5659f70d
 renamed.0=classes.dex
 file.0=C\:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\1f\\main\\classes.dex
