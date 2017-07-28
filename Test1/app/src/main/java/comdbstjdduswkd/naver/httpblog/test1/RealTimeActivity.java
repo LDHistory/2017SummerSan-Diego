@@ -48,14 +48,11 @@ import java.util.Date;
 public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
     View view;
 
-    private LineChart mChart, hChart;
+    private LineChart mChart;
     private GoogleMap googleMap = null;
     private MapView mapView = null;
 
-    int max = 0;
-    int min = 999;
-
-    TextView heartText, CO, NO2, SO2, O3, PM25, TEMP, maxhert, minheart;
+    TextView heartText, CO, NO2, SO2, O3, PM25, TEMP;
     ImageView heart, heartbit, hearticon;
     Handler handler;
     GlideDrawableImageViewTarget heartTartget, heartBitget;
@@ -87,30 +84,16 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
 
     public void setHeart(int bit){
         try{
+            Glide.with(this).load(R.raw.heart_normal).into(heartBitget);
             heartText.setText("" + bit);
-            heart.setImageResource(R.drawable.human_nomal2);
-
-            //set max, min
-            if(max <= bit) {
-                max = bit;
-                maxhert.setText("" + max);
+            if(bit >= 120){
+                heart.setImageResource(R.drawable.human_fast2);
             }
-            if(min >= bit){
-                min = bit;
-                minheart.setText("" + min);
+            else if(bit >= 70){
+                heart.setImageResource(R.drawable.human_nomal2);
             }
-
-
-            //heartrate state image
-            if(bit >= 100){
-                Glide.with(this).load(R.raw.heart_fast).into(heartBitget);
-            }
-            else if(bit >= 60){
-                Glide.with(this).load(R.raw.heart_normal).into(heartBitget);
-            }
-            else {
-                Glide.with(this).load(R.raw.heart_normal).into(heartBitget);
-            }
+            else
+                heart.setImageResource(R.drawable.human_slow2);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -151,16 +134,12 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
         heartText = (TextView)view.findViewById(R.id.heartValue);
         heart =  (ImageView)view.findViewById(R.id.heart);
         heartbit = (ImageView)view.findViewById(R.id.heartbit);
-
-        maxhert = (TextView) view.findViewById(R.id.HMValue);
-        minheart = (TextView) view.findViewById(R.id.MHValue);
-
         //GIF File Object
         heartTartget = new GlideDrawableImageViewTarget(heart);
         heartBitget = new GlideDrawableImageViewTarget(heartbit);
 
         heart.setImageResource(R.drawable.human_nomal2);
-        Glide.with(this).load(R.raw.heart_stop).into(heartBitget);
+        Glide.with(this).load(R.raw.heart_normal).into(heartBitget);
 
         CO = (TextView)view.findViewById(R.id.co_text);
         NO2 = (TextView)view.findViewById(R.id.no2_text);
@@ -170,82 +149,49 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
         TEMP = (TextView)view.findViewById(R.id.temp_text);
 
         mChart = (LineChart) view.findViewById(R.id.map_chart);
-        hChart = (LineChart) view.findViewById(R.id.hart_chart);
 
         // enable description text
         mChart.getDescription().setEnabled(true);
-        hChart.getDescription().setEnabled(true);
 
         // enable touch gestures
         mChart.setTouchEnabled(true);
-        hChart.setTouchEnabled(true);
 
         // enable scaling and dragging
         mChart.setDragEnabled(true);
         mChart.setScaleEnabled(true);
         mChart.setDrawGridBackground(false);
 
-        hChart.setDragEnabled(true);
-        hChart.setScaleEnabled(true);
-        hChart.setDrawGridBackground(false);
-
         // if disabled, scaling can be done on x- and y-axis separately
         mChart.setPinchZoom(true);
-        hChart.setPinchZoom(true);
 
         // set an alternative background color
         mChart.setBackgroundColor(Color.LTGRAY);
-        hChart.setBackgroundColor(Color.LTGRAY);
 
         LineData data = new LineData();
         data.setValueTextColor(Color.BLACK);
         //add empty data
         mChart.setData(data);
-        hChart.setData(data);
         // get the legend (only possible after setting data)
         Legend l = mChart.getLegend();
-        Legend lh = hChart.getLegend();
 
         // modify the legend ...
         l.setForm(Legend.LegendForm.LINE);
         l.setTextColor(Color.WHITE);
-        lh.setForm(Legend.LegendForm.LINE);
-        lh.setTextColor(Color.WHITE);
 
-        //sensor X
         XAxis xl = mChart.getXAxis();
         xl.setTextColor(Color.WHITE);
         xl.setDrawGridLines(false);
         xl.setAvoidFirstLastClipping(true);
         xl.setEnabled(true);
 
-        //heart X
-        XAxis xlh = hChart.getXAxis();
-        xlh.setTextColor(Color.WHITE);
-        xlh.setDrawGridLines(false);
-        xlh.setAvoidFirstLastClipping(true);
-        xlh.setEnabled(true);
-
-        //sensor Y
         YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.setTextColor(Color.WHITE);
         leftAxis.setAxisMaximum(500f);
         leftAxis.setAxisMinimum(0f);
         leftAxis.setDrawGridLines(true);
 
-        //heart Y
-        YAxis leftAxish = hChart.getAxisLeft();
-        leftAxish.setTextColor(Color.WHITE);
-        leftAxish.setAxisMaximum(150f);
-        leftAxish.setAxisMinimum(0f);
-        leftAxish.setDrawGridLines(true);
-
-
         YAxis rightAxis = mChart.getAxisRight();
-        YAxis rightAxish = hChart.getAxisRight();
         rightAxis.setEnabled(false);
-        rightAxish.setEnabled(false);
-
         return view;
     }
 
@@ -342,62 +288,8 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
         }
     }
 
-    public void addHEntry(Integer val) {
-        try {
-            LineData data = hChart.getData();
-
-            if (data != null) {
-
-                ILineDataSet set = data.getDataSetByIndex(0);
-                // set.addEntry(...); // can be called as well
-
-                if (set == null) {
-                    set = createSetH();
-                    data.addDataSet(set);
-                }
-
-                //data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 40) + 30f), 0);
-                if(heartText != null) {
-                    data.addEntry(new Entry(set.getEntryCount(), val), 0);
-                    data.notifyDataChanged();
-                }
-
-                // let the chart know it's data has changed
-                hChart.notifyDataSetChanged();
-
-                // limit the number of visible entries
-                hChart.setVisibleXRangeMaximum(20);
-                //mChart.setVisibleYRange(30, AxisDependency.LEFT);
-
-                hChart.moveViewToX(data.getEntryCount());
-            }
-        }catch (Exception e){
-            Log.e("setHeart","value error");
-            e.printStackTrace();
-        }
-    }
-
-    //sensor LineDateSet
     private LineDataSet createSet() {
         LineDataSet set = new LineDataSet(null, "Dynamic Data");
-        //set.setAxisDependency(AxisDependency.LEFT);
-        set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setColor(ColorTemplate.getHoloBlue());
-        set.setCircleColor(Color.WHITE);
-        set.setLineWidth(2f);
-        set.setCircleRadius(4f);
-        set.setFillAlpha(65);
-        set.setFillColor(ColorTemplate.getHoloBlue());
-        set.setHighLightColor(Color.rgb(244, 117, 117));
-        set.setValueTextColor(Color.WHITE);
-        set.setValueTextSize(9f);
-        set.setDrawValues(false);
-        return set;
-    }
-
-    //sensor LineDateSet
-    private LineDataSet createSetH() {
-        LineDataSet set = new LineDataSet(null, "HeartRate Data");
         //set.setAxisDependency(AxisDependency.LEFT);
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setColor(ColorTemplate.getHoloBlue());

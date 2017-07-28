@@ -3425,8 +3425,8 @@ containing a value of this type.
     }
     public static final class id {
         public static final int Bt_connect=0x7f0e00ff;
-        public static final int HMV=0x7f0e008e;
-        public static final int HMValue=0x7f0e008d;
+        public static final int HMV=0x7f0e008d;
+        public static final int HMValue=0x7f0e008e;
         public static final int MHV=0x7f0e008c;
         public static final int MHValue=0x7f0e008f;
         public static final int ViewReset=0x7f0e00b8;
@@ -3510,7 +3510,6 @@ containing a value of this type.
         public static final int fixed=0x7f0e0050;
         public static final int fromBtn=0x7f0e0092;
         public static final int fromView=0x7f0e0093;
-        public static final int hart_chart=0x7f0e0090;
         public static final int heart=0x7f0e0089;
         public static final int heartValue=0x7f0e008a;
         public static final int heartbit=0x7f0e008b;
@@ -3654,6 +3653,7 @@ containing a value of this type.
         public static final int textView2=0x7f0e00cc;
         public static final int textView5=0x7f0e0096;
         public static final int textView8=0x7f0e00a7;
+        public static final int textView9=0x7f0e0090;
         public static final int text_input_password_toggle=0x7f0e00ca;
         public static final int textinput_counter=0x7f0e0009;
         public static final int textinput_error=0x7f0e000a;
@@ -3778,17 +3778,16 @@ containing a value of this type.
     public static final class raw {
         public static final int heart_fast=0x7f070000;
         public static final int heart_normal=0x7f070001;
-        public static final int heart_stop=0x7f070002;
-        public static final int heartbit=0x7f070003;
-        public static final int human_fast=0x7f070004;
-        public static final int human_fast2=0x7f070005;
-        public static final int human_fast2_1=0x7f070006;
-        public static final int human_nomal=0x7f070007;
-        public static final int human_nomal2=0x7f070008;
-        public static final int human_nomal2_2=0x7f070009;
-        public static final int human_slow=0x7f07000a;
-        public static final int human_slow2=0x7f07000b;
-        public static final int human_slow2_3=0x7f07000c;
+        public static final int heartbit=0x7f070002;
+        public static final int human_fast=0x7f070003;
+        public static final int human_fast2=0x7f070004;
+        public static final int human_fast2_1=0x7f070005;
+        public static final int human_nomal=0x7f070006;
+        public static final int human_nomal2=0x7f070007;
+        public static final int human_nomal2_2=0x7f070008;
+        public static final int human_slow=0x7f070009;
+        public static final int human_slow2=0x7f07000a;
+        public static final int human_slow2_3=0x7f07000b;
     }
     public static final class string {
         public static final int abc_action_bar_home_description=0x7f080000;
