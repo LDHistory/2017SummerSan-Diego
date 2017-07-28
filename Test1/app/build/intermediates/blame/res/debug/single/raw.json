@@ -56,6 +56,10 @@
         "source": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\src\\main\\res\\raw\\heartbit.gif"
     },
     {
+        "merged": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\raw\\heart_stop.png",
+        "source": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\src\\main\\res\\raw\\heart_stop.png"
+    },
+    {
         "merged": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\raw\\human_fast.png",
         "source": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\src\\main\\res\\raw\\human_fast.png"
     },
