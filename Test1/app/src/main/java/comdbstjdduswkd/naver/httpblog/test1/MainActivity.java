@@ -28,6 +28,9 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.StringTokenizer;
 
 import comdbstjdduswkd.naver.httpblog.test1.UDOO.BluetoothChatService;
@@ -291,8 +294,13 @@ public class MainActivity extends AppCompatActivity
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    real.setAQI(readMessage);
-                    real.addEntry(readMessage);
+                    try {
+                        JSONObject wrapObject = new JSONObject(readMessage);
+                        real.setAQI(wrapObject);
+                        real.addEntry(wrapObject);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     //print the sensor data
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
                     break;

@@ -35,6 +35,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
@@ -48,7 +50,9 @@ import java.util.Date;
 public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
     View view;
 
-    private LineChart mChart;
+    private LineChart coChart;
+    private LineChart noChart;
+    
     private GoogleMap googleMap = null;
     private MapView mapView = null;
 
@@ -57,25 +61,40 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
     Handler handler;
     GlideDrawableImageViewTarget heartTartget, heartBitget;
 
-    public void setAQI(String values){
+    public void setAQI(JSONObject data){
+        try{
+            CO.setText(data.getString("CO"));
+            NO2.setText(data.getString("NO2"));
+            SO2.setText(data.getString("SO2"));
+            O3.setText(data.getString("O3"));
+            PM25.setText(data.getString("PM25"));
+            TEMP.setText(data.getString("temp"));
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+    }
+    public void addEntry(JSONObject jsonObject) {
         try {
-            String messageArray[] = null;
-            messageArray = values.split(";");
-            if (CO != null && NO2 != null && SO2 != null && O3 != null && PM25 != null && TEMP != null) {
-                CO.setText(messageArray[0]);
-                NO2.setText(messageArray[1]);
-                SO2.setText(messageArray[2]);
-                O3.setText(messageArray[3]);
-                PM25.setText(messageArray[4]);
-                TEMP.setText(messageArray[5]);
-                Log.e("test", "" + messageArray[0]);
-                Log.e("test", "" + messageArray[1]);
-                Log.e("test", "" + messageArray[2]);
-                Log.e("test", "" + messageArray[3]);
-                Log.e("test", "" + messageArray[4]);
-                Log.e("test", "" + messageArray[5]);
-            } else
-                Log.e("RealTimeActivity", "setCo CO: " + CO);
+            LineData data = coChart.getData();
+            if (data != null) {
+                ILineDataSet set = data.getDataSetByIndex(0);
+                // set.addEntry(...); // can be called as well
+                if (set == null) {
+                    set = createSet();
+                    data.addDataSet(set);
+                }
+                //data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 40) + 30f), 0);
+                if(CO != null) {
+                    data.addEntry(new Entry(set.getEntryCount(), Float.parseFloat(jsonObject.getString("CO"))), 0);
+                    data.notifyDataChanged();
+                }
+                // let the chart know it's data has changed
+                coChart.notifyDataSetChanged();
+                // limit the number of visible entries
+                coChart.setVisibleXRangeMaximum(120);
+                //mChart.setVisibleYRange(30, AxisDependency.LEFT);
+                coChart.moveViewToX(data.getEntryCount());
+            }
         }catch (Exception e){
             Log.e("setAQI","value error");
             e.printStackTrace();
@@ -148,53 +167,68 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
         PM25 = (TextView)view.findViewById(R.id.pm25);
         TEMP = (TextView)view.findViewById(R.id.temp_text);
 
-        mChart = (LineChart) view.findViewById(R.id.map_chart);
+        coChart = (LineChart) view.findViewById(R.id.co_chart);
 
         // enable description text
-        mChart.getDescription().setEnabled(true);
+        coChart.getDescription().setEnabled(true);
 
         // enable touch gestures
-        mChart.setTouchEnabled(true);
+        coChart.setTouchEnabled(true);
 
         // enable scaling and dragging
-        mChart.setDragEnabled(true);
-        mChart.setScaleEnabled(true);
-        mChart.setDrawGridBackground(false);
+        coChart.setDragEnabled(true);
+        coChart.setScaleEnabled(true);
+        coChart.setDrawGridBackground(false);
 
         // if disabled, scaling can be done on x- and y-axis separately
-        mChart.setPinchZoom(true);
+        coChart.setPinchZoom(true);
 
         // set an alternative background color
-        mChart.setBackgroundColor(Color.LTGRAY);
+        coChart.setBackgroundColor(Color.LTGRAY);
 
         LineData data = new LineData();
         data.setValueTextColor(Color.BLACK);
         //add empty data
-        mChart.setData(data);
+        coChart.setData(data);
         // get the legend (only possible after setting data)
-        Legend l = mChart.getLegend();
+        Legend l = coChart.getLegend();
 
         // modify the legend ...
         l.setForm(Legend.LegendForm.LINE);
         l.setTextColor(Color.WHITE);
 
-        XAxis xl = mChart.getXAxis();
+        XAxis xl = coChart.getXAxis();
         xl.setTextColor(Color.WHITE);
         xl.setDrawGridLines(false);
         xl.setAvoidFirstLastClipping(true);
         xl.setEnabled(true);
 
-        YAxis leftAxis = mChart.getAxisLeft();
+        YAxis leftAxis = coChart.getAxisLeft();
         leftAxis.setTextColor(Color.WHITE);
-        leftAxis.setAxisMaximum(500f);
-        leftAxis.setAxisMinimum(0f);
+        leftAxis.setAxisMaximum(50f);
+        leftAxis.setAxisMinimum(39f);
         leftAxis.setDrawGridLines(true);
 
-        YAxis rightAxis = mChart.getAxisRight();
+        YAxis rightAxis = coChart.getAxisRight();
         rightAxis.setEnabled(false);
         return view;
     }
-
+    private LineDataSet createSet() {
+        LineDataSet set = new LineDataSet(null, "CO Data");
+        //set.setAxisDependency(AxisDependency.LEFT);
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setColor(ColorTemplate.getHoloBlue());
+        set.setCircleColor(Color.WHITE);
+        set.setLineWidth(2f);
+        set.setCircleRadius(4f);
+        set.setFillAlpha(65);
+        set.setFillColor(ColorTemplate.getHoloBlue());
+        set.setHighLightColor(Color.rgb(244, 117, 117));
+        set.setValueTextColor(Color.WHITE);
+        set.setValueTextSize(9f);
+        set.setDrawValues(false);
+        return set;
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -249,59 +283,5 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback{
         googleMap.addMarker(markerOptions);
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(Atkinson));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(13));
-    }
-
-    public void addEntry(String val) {
-        try {
-            String messageArray[] = null;
-            messageArray = val.split(";");
-            LineData data = mChart.getData();
-
-            if (data != null) {
-
-                ILineDataSet set = data.getDataSetByIndex(0);
-                // set.addEntry(...); // can be called as well
-
-                if (set == null) {
-                    set = createSet();
-                    data.addDataSet(set);
-                }
-
-                //data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 40) + 30f), 0);
-                if(CO != null) {
-                    data.addEntry(new Entry(set.getEntryCount(), Float.parseFloat(messageArray[0])), 0);
-                    data.notifyDataChanged();
-                }
-
-                // let the chart know it's data has changed
-                mChart.notifyDataSetChanged();
-
-                // limit the number of visible entries
-                mChart.setVisibleXRangeMaximum(120);
-                //mChart.setVisibleYRange(30, AxisDependency.LEFT);
-
-                mChart.moveViewToX(data.getEntryCount());
-            }
-        }catch (Exception e){
-            Log.e("setAQI","value error");
-            e.printStackTrace();
-        }
-    }
-
-    private LineDataSet createSet() {
-        LineDataSet set = new LineDataSet(null, "Dynamic Data");
-        //set.setAxisDependency(AxisDependency.LEFT);
-        set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setColor(ColorTemplate.getHoloBlue());
-        set.setCircleColor(Color.WHITE);
-        set.setLineWidth(2f);
-        set.setCircleRadius(4f);
-        set.setFillAlpha(65);
-        set.setFillColor(ColorTemplate.getHoloBlue());
-        set.setHighLightColor(Color.rgb(244, 117, 117));
-        set.setValueTextColor(Color.WHITE);
-        set.setValueTextSize(9f);
-        set.setDrawValues(false);
-        return set;
     }
 }

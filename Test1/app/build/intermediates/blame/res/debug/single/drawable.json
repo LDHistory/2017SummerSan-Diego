@@ -1,11 +1,11 @@
 [
     {
-        "merged": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\ic_menu_manage.xml",
-        "source": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\src\\main\\res\\drawable\\ic_menu_manage.xml"
-    },
-    {
         "merged": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\common_google_signin_btn_icon_light_focused.xml",
         "source": "C:\\Users\\DONGHEE\\.android\\build-cache\\cfda30bab298a3bd693712a60e256289199bb579\\output\\res\\drawable\\common_google_signin_btn_icon_light_focused.xml"
+    },
+    {
+        "merged": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\ic_menu_manage.xml",
+        "source": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\src\\main\\res\\drawable\\ic_menu_manage.xml"
     },
     {
         "merged": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\common_google_signin_btn_icon_dark_normal.xml",
