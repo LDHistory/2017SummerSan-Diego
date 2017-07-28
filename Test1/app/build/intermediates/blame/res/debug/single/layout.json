@@ -4,16 +4,16 @@
         "source": "C:\\Users\\USER\\.android\\build-cache\\529bbe3a34560caa9b69e39217c710c049b658ba\\output\\res\\layout\\abc_list_menu_item_layout.xml"
     },
     {
-        "merged": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_alert_dialog_material.xml",
-        "source": "C:\\Users\\USER\\.android\\build-cache\\529bbe3a34560caa9b69e39217c710c049b658ba\\output\\res\\layout\\abc_alert_dialog_material.xml"
+        "merged": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\layout\\design_menu_item_action_area.xml",
+        "source": "C:\\Users\\DONGHEE\\.android\\build-cache\\561814a19dd2b55ce8651d93490fdc9f29042481\\output\\res\\layout\\design_menu_item_action_area.xml"
     },
     {
         "merged": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\layout\\select_dialog_singlechoice_material.xml",
         "source": "C:\\Users\\USER\\.android\\build-cache\\529bbe3a34560caa9b69e39217c710c049b658ba\\output\\res\\layout\\select_dialog_singlechoice_material.xml"
     },
     {
-        "merged": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\layout\\design_menu_item_action_area.xml",
-        "source": "C:\\Users\\DONGHEE\\.android\\build-cache\\561814a19dd2b55ce8651d93490fdc9f29042481\\output\\res\\layout\\design_menu_item_action_area.xml"
+        "merged": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_alert_dialog_material.xml",
+        "source": "C:\\Users\\USER\\.android\\build-cache\\529bbe3a34560caa9b69e39217c710c049b658ba\\output\\res\\layout\\abc_alert_dialog_material.xml"
     },
     {
         "merged": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\layout\\design_navigation_menu_item.xml",
@@ -24,12 +24,12 @@
         "source": "C:\\Users\\DONGHEE\\.android\\build-cache\\d75e3a5e5a22d41e5c0be82a4523dff18ec77463\\output\\res\\layout\\abc_action_mode_close_item_material.xml"
     },
     {
-        "merged": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_list_menu_item_icon.xml",
-        "source": "C:\\Users\\USER\\.android\\build-cache\\529bbe3a34560caa9b69e39217c710c049b658ba\\output\\res\\layout\\abc_list_menu_item_icon.xml"
-    },
-    {
         "merged": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\layout\\notification_template_media.xml",
         "source": "C:\\Users\\DONGHEE\\.android\\build-cache\\d75e3a5e5a22d41e5c0be82a4523dff18ec77463\\output\\res\\layout\\notification_template_media.xml"
+    },
+    {
+        "merged": "C:\\Users\\USER\\AndroidStudioProjects\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_list_menu_item_icon.xml",
+        "source": "C:\\Users\\USER\\.android\\build-cache\\529bbe3a34560caa9b69e39217c710c049b658ba\\output\\res\\layout\\abc_list_menu_item_icon.xml"
     },
     {
         "merged": "C:\\Users\\DONGHEE\\Documents\\GitHub\\2017SummerSan-Diego\\Test1\\app\\build\\intermediates\\res\\merged\\debug\\layout\\design_navigation_menu.xml",
