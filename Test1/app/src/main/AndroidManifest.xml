@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <application
 
         android:allowBackup="true"
@@ -37,7 +37,10 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBZ_MXs2yRdDq9qXU-LYBFzRbctDOOnN5E" />
+            android:value="AIzaSyD6aSW3hxL5jSxlmkVEEPLzmlxgX9prsbc" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
     </application>
 

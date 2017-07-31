@@ -269,6 +269,7 @@ public class MainActivity extends AppCompatActivity
      * The Handler that gets information back from the BluetoothChatService
      */
 
+
     //블루투스 채팅 핸들러 메인 부분
     private final Handler mHandler = new Handler() {
         @Override
