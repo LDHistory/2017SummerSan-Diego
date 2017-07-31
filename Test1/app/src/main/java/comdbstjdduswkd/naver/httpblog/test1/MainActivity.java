@@ -33,6 +33,12 @@ import org.json.JSONObject;
 
 import java.util.StringTokenizer;
 
+import comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.CO;
+import comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.NO2;
+import comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.O3;
+import comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.PM25;
+import comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.SO2;
+import comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.TEMP;
 import comdbstjdduswkd.naver.httpblog.test1.UDOO.BluetoothChatService;
 import comdbstjdduswkd.naver.httpblog.test1.UDOO.Constants;
 import comdbstjdduswkd.naver.httpblog.test1.UDOO.DeviceListActivity;
@@ -43,7 +49,12 @@ public class MainActivity extends AppCompatActivity
     FragmentManager manager = getFragmentManager();
     RealTimeActivity real;
     HistoryActivity history;
-    Bundle bundle = new Bundle();
+    CO cofragment;
+    NO2 no2fragment;
+    O3 o3fragment;
+    PM25 pm25fragment;
+    SO2 so2fragment;
+    TEMP tempfragemnt;
 
     int i=0;
     private final String TAG = "YourActivity";
@@ -85,6 +96,13 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         real = new RealTimeActivity();
         history = new HistoryActivity();
+
+        cofragment = new CO();
+        no2fragment = new NO2();
+        o3fragment = new O3();
+        pm25fragment = new PM25();
+        so2fragment = new SO2();
+        tempfragemnt = new TEMP();
 
         //manager.beginTransaction().replace(R.id.content_main, real).commit(); //if push the button, change the frame
         changeFragment(0);
@@ -298,7 +316,12 @@ public class MainActivity extends AppCompatActivity
                     try {
                         JSONObject wrapObject = new JSONObject(readMessage);
                         real.setAQI(wrapObject);
-                        real.addEntry(wrapObject);
+                        cofragment.addEntryCO(wrapObject);
+                        no2fragment.addEntryNO2(wrapObject);
+                        o3fragment.addEntryO3(wrapObject);
+                        pm25fragment.addEntryPM25(wrapObject);
+                        so2fragment.addEntrySO2(wrapObject);
+                        tempfragemnt.addEntryTEMP(wrapObject);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

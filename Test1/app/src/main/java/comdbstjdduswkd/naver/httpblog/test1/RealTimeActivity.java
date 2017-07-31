@@ -2,6 +2,7 @@ package comdbstjdduswkd.naver.httpblog.test1;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -69,6 +70,13 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.Date;
 
+import comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.CO;
+import comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.NO2;
+import comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.O3;
+import comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.PM25;
+import comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.SO2;
+import comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.TEMP;
+
 
 /**
  * Created by USER on 2017-07-14.
@@ -94,6 +102,14 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     private LatLng[] LikelyLatLngs = null;
 
     View view;
+    FragmentManager manager;
+
+    comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.CO fragmentco;
+    comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.NO2 fragmentno2;
+    comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.O3 fragmento3;
+    comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.PM25 fragmentpm25;
+    comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.SO2 fragmentso2;
+    comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.TEMP fragmenttemp;
 
     private LineChart coChart, hChart;
     private LineChart noChart;
@@ -220,39 +236,20 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
             e.printStackTrace();
         }
     }
-    public void addEntry(JSONObject jsonObject) {
-        try {
-            LineData data = coChart.getData();
-            if (data != null) {
-                ILineDataSet set = data.getDataSetByIndex(0);
-                // set.addEntry(...); // can be called as well
-                if (set == null) {
-                    set = createSet();
-                    data.addDataSet(set);
-                }
-                //data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 40) + 30f), 0);
-                if(CO != null) {
-                    data.addEntry(new Entry(set.getEntryCount(), Float.parseFloat(jsonObject.getString("CO"))), 0);
-                    data.notifyDataChanged();
-                }
-                // let the chart know it's data has changed
-                coChart.notifyDataSetChanged();
-                // limit the number of visible entries
-                coChart.setVisibleXRangeMaximum(120);
-                //mChart.setVisibleYRange(30, AxisDependency.LEFT);
-                coChart.moveViewToX(data.getEntryCount());
-            }
-        }catch (Exception e){
-            Log.e("setAQI","value error");
-            e.printStackTrace();
-        }
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.realtime_layout, container, false);
+        manager = getFragmentManager();
+
+        fragmentco = new CO();
+        fragmentno2 = new NO2();
+        fragmento3 = new O3();
+        fragmentpm25 = new PM25();
+        fragmentso2 = new SO2();
+        fragmenttemp = new TEMP();
 
         maxhert = (TextView) view.findViewById(R.id.HMValue);
         minheart = (TextView) view.findViewById(R.id.MHValue);
@@ -313,62 +310,82 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         Glide.with(this).load(R.raw.heart_stop).into(heartBitget);
 
         CO = (TextView)view.findViewById(R.id.co_text);
-        NO2 = (TextView)view.findViewById(R.id.no2_text);
-        O3 = (TextView)view.findViewById(R.id.o3_text);
-        SO2 = (TextView)view.findViewById(R.id.so2_text);
-        PM25 = (TextView)view.findViewById(R.id.pm25);
-        TEMP = (TextView)view.findViewById(R.id.temp_text);
+        CO.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeFragment(0);
+            }
+        });
 
-        coChart = (LineChart) view.findViewById(R.id.co_chart);
+        NO2 = (TextView)view.findViewById(R.id.no2_text);
+        NO2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeFragment(1);
+            }
+        });
+
+        O3 = (TextView)view.findViewById(R.id.o3_text);
+        O3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeFragment(2);
+            }
+        });
+
+        PM25 = (TextView)view.findViewById(R.id.pm25);
+        PM25.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeFragment(3);
+            }
+        });
+
+        SO2 = (TextView)view.findViewById(R.id.so2_text);
+        SO2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeFragment(4);
+            }
+        });
+
+        TEMP = (TextView)view.findViewById(R.id.temp_text);
+        TEMP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeFragment(5);
+            }
+        });
+
         hChart = (LineChart) view.findViewById(R.id.hart_chart);
 
         // enable description text
-        coChart.getDescription().setEnabled(true);
         hChart.getDescription().setEnabled(true);
 
         // enable touch gestures
-        coChart.setTouchEnabled(true);
         hChart.setTouchEnabled(true);
 
         // enable scaling and dragging
-        coChart.setDragEnabled(true);
-        coChart.setScaleEnabled(true);
-        coChart.setDrawGridBackground(false);
-
         hChart.setDragEnabled(true);
         hChart.setScaleEnabled(true);
         hChart.setDrawGridBackground(false);
 
         // if disabled, scaling can be done on x- and y-axis separately
-        coChart.setPinchZoom(true);
         hChart.setPinchZoom(true);
 
         // set an alternative background color
-        coChart.setBackgroundColor(Color.LTGRAY);
         hChart.setBackgroundColor(Color.LTGRAY);
 
-        LineData data = new LineData();
         LineData datah = new LineData();
-        data.setValueTextColor(Color.BLACK);
         datah.setValueTextColor(Color.BLACK);
         //add empty data
-        coChart.setData(data);
         hChart.setData(datah);
         // get the legend (only possible after setting data)
-        Legend l = coChart.getLegend();
         Legend lh = hChart.getLegend();
 
         // modify the legend ...
-        l.setForm(Legend.LegendForm.LINE);
-        l.setTextColor(Color.WHITE);
         lh.setForm(Legend.LegendForm.LINE);
         lh.setTextColor(Color.WHITE);
-
-        XAxis xl = coChart.getXAxis();
-        xl.setTextColor(Color.WHITE);
-        xl.setDrawGridLines(false);
-        xl.setAvoidFirstLastClipping(true);
-        xl.setEnabled(true);
 
         //heart X
         XAxis xlh = hChart.getXAxis();
@@ -377,12 +394,6 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         xlh.setAvoidFirstLastClipping(true);
         xlh.setEnabled(true);
 
-        YAxis leftAxis = coChart.getAxisLeft();
-        leftAxis.setTextColor(Color.WHITE);
-        leftAxis.setAxisMaximum(50f);
-        leftAxis.setAxisMinimum(39f);
-        leftAxis.setDrawGridLines(true);
-
         //heart Y
         YAxis leftAxish = hChart.getAxisLeft();
         leftAxish.setTextColor(Color.WHITE);
@@ -390,27 +401,17 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         leftAxish.setAxisMinimum(50f);
         leftAxish.setDrawGridLines(true);
 
-        YAxis rightAxis = coChart.getAxisRight();
         YAxis rightAxish = hChart.getAxisRight();
-        rightAxis.setEnabled(false);
         rightAxish.setEnabled(false);
+
+        //Fragment initialization
+        changeFragment(5);
+        changeFragment(4);
+        changeFragment(3);
+        changeFragment(2);
+        changeFragment(1);
+        changeFragment(0);
         return view;
-    }
-    private LineDataSet createSet() {
-        LineDataSet set = new LineDataSet(null, "CO Data");
-        //set.setAxisDependency(AxisDependency.LEFT);
-        set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setColor(ColorTemplate.getHoloBlue());
-        set.setCircleColor(Color.WHITE);
-        set.setLineWidth(2f);
-        set.setCircleRadius(4f);
-        set.setFillAlpha(65);
-        set.setFillColor(ColorTemplate.getHoloBlue());
-        set.setHighLightColor(Color.rgb(244, 117, 117));
-        set.setValueTextColor(Color.WHITE);
-        set.setValueTextSize(9f);
-        set.setDrawValues(false);
-        return set;
     }
 
     //sensor LineDateSet
@@ -430,6 +431,126 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         set.setDrawValues(false);
         return set;
     }
+
+    public void changeFragment(int fNum) {
+        switch (fNum) {
+            case 0:
+                if (manager.findFragmentByTag("co") != null) {
+                    //if the fragment exists, show it.
+                    manager.beginTransaction().show(manager.findFragmentByTag("co")).commit();
+                } else {
+                    //if the fragment does not exist, add it to fragment manager.
+                    manager.beginTransaction().add(R.id.tab2, fragmentco, "co").commit();
+                }
+                if (manager.findFragmentByTag("no2") != null && manager.findFragmentByTag("o3") != null
+                        && manager.findFragmentByTag("pm25") != null && manager.findFragmentByTag("so2") != null
+                        && manager.findFragmentByTag("temp") != null) {
+                    //if the other fragment is visible, hide it.
+                    manager.beginTransaction().hide(manager.findFragmentByTag("no2")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("o3")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("pm25")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("so2")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("temp")).commit();
+                }
+                break;
+            case 1:
+                if (manager.findFragmentByTag("no2") != null) {
+                    //if the fragment exists, show it.
+                    manager.beginTransaction().show(manager.findFragmentByTag("no2")).commit();
+                } else {
+                    //if the fragment does not exist, add it to fragment manager.
+                    manager.beginTransaction().add(R.id.tab2, fragmentno2, "no2").commit();
+                }
+                if (manager.findFragmentByTag("co") != null && manager.findFragmentByTag("o3") != null
+                        && manager.findFragmentByTag("pm25") != null && manager.findFragmentByTag("so2") != null
+                        && manager.findFragmentByTag("temp") != null) {
+                    //if the other fragment is visible, hide it.
+                    manager.beginTransaction().hide(manager.findFragmentByTag("co")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("o3")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("pm25")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("so2")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("temp")).commit();
+                }
+                break;
+            case 2:
+                if (manager.findFragmentByTag("o3") != null) {
+                    //if the fragment exists, show it.
+                    manager.beginTransaction().show(manager.findFragmentByTag("o3")).commit();
+                } else {
+                    //if the fragment does not exist, add it to fragment manager.
+                    manager.beginTransaction().add(R.id.tab2, fragmento3, "o3").commit();
+                }
+                if (manager.findFragmentByTag("co") != null && manager.findFragmentByTag("no2") != null
+                        && manager.findFragmentByTag("pm25") != null && manager.findFragmentByTag("so2") != null
+                        && manager.findFragmentByTag("temp") != null) {
+                    //if the other fragment is visible, hide it.
+                    manager.beginTransaction().hide(manager.findFragmentByTag("co")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("no2")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("pm25")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("so2")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("temp")).commit();
+                }
+                break;
+            case 3:
+                if (manager.findFragmentByTag("pm25") != null) {
+                    //if the fragment exists, show it.
+                    manager.beginTransaction().show(manager.findFragmentByTag("pm25")).commit();
+                } else {
+                    //if the fragment does not exist, add it to fragment manager.
+                    manager.beginTransaction().add(R.id.tab2, fragmentpm25, "pm25").commit();
+                }
+                if (manager.findFragmentByTag("co") != null && manager.findFragmentByTag("no2") != null
+                        && manager.findFragmentByTag("o3") != null && manager.findFragmentByTag("so2") != null
+                        && manager.findFragmentByTag("temp") != null) {
+                    //if the other fragment is visible, hide it.
+                    manager.beginTransaction().hide(manager.findFragmentByTag("co")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("no2")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("o3")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("so2")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("temp")).commit();
+                }
+                break;
+            case 4:
+                if (manager.findFragmentByTag("so2") != null) {
+                    //if the fragment exists, show it.
+                    manager.beginTransaction().show(manager.findFragmentByTag("so2")).commit();
+                } else {
+                    //if the fragment does not exist, add it to fragment manager.
+                    manager.beginTransaction().add(R.id.tab2, fragmentso2, "so2").commit();
+                }
+                if (manager.findFragmentByTag("co") != null && manager.findFragmentByTag("no2") != null
+                        && manager.findFragmentByTag("o3") != null && manager.findFragmentByTag("pm25") != null
+                        && manager.findFragmentByTag("temp") != null) {
+                    //if the other fragment is visible, hide it.
+                    manager.beginTransaction().hide(manager.findFragmentByTag("co")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("no2")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("o3")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("pm25")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("temp")).commit();
+                }
+                break;
+            case 5:
+                if (manager.findFragmentByTag("temp") != null) {
+                    //if the fragment exists, show it.
+                    manager.beginTransaction().show(manager.findFragmentByTag("temp")).commit();
+                } else {
+                    //if the fragment does not exist, add it to fragment manager.
+                    manager.beginTransaction().add(R.id.tab2, fragmenttemp, "temp").commit();
+                }
+                if (manager.findFragmentByTag("co") != null && manager.findFragmentByTag("no2") != null
+                        && manager.findFragmentByTag("o3") != null && manager.findFragmentByTag("pm25") != null
+                        && manager.findFragmentByTag("so2") != null) {
+                    //if the other fragment is visible, hide it.
+                    manager.beginTransaction().hide(manager.findFragmentByTag("co")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("no2")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("o3")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("pm25")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("so2")).commit();
+                }
+                break;
+        }
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
