@@ -120,7 +120,7 @@ public class RegActivity extends AppCompatActivity {
             // 서버에게 웹에서 <Form>으로 값이 넘어온 것과 같은 방식으로 처리하라는 걸 알려준다
             http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
             //--------------------------
-            //   서버로 값 전송
+            //   서버로 값 전송 (URL Tag protocol)
             //--------------------------
             StringBuffer buffer = new StringBuffer();
             buffer.append("email").append("=").append(email).append("&");                 // php 변수에 값 대입

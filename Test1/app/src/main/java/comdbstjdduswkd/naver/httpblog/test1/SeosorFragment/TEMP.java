@@ -125,7 +125,7 @@ public class TEMP extends Fragment {
                 tempChart.moveViewToX(dataco.getEntryCount());
             }
         }catch (Exception e){
-            Log.e("CO","value error");
+            Log.e("TEMP","value error");
             e.printStackTrace();
         }
     }

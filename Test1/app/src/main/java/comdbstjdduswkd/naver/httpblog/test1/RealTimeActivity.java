@@ -53,6 +53,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -104,22 +105,20 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     View view;
     FragmentManager manager;
 
-    comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.CO fragmentco;
-    comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.NO2 fragmentno2;
-    comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.O3 fragmento3;
-    comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.PM25 fragmentpm25;
-    comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.SO2 fragmentso2;
-    comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.TEMP fragmenttemp;
+    CO fragmentco;
+    NO2 fragmentno2;
+    O3 fragmento3;
+    PM25 fragmentpm25;
+    SO2 fragmentso2;
+    TEMP fragmenttemp;
 
     private LineChart coChart, hChart;
-    private LineChart noChart;
     
     private GoogleMap googleMap = null;
     private MapView mapView = null;
 
     TextView heartText, CO, NO2, SO2, O3, PM25, TEMP, maxhert, minheart;
-    ImageView heart, heartbit, hearticon;
-    Handler handler;
+    ImageView heart, heartbit;
     GlideDrawableImageViewTarget heartTartget, heartBitget;
 
     int max = 0;
@@ -133,24 +132,35 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
             LatLng currentLocation = new LatLng( location.getLatitude(), location.getLongitude());
 
             MarkerOptions markerOptions = new MarkerOptions();
+            CircleOptions circle1KM = new CircleOptions().center(currentLocation) //원점
+                    .radius(200)      //반지름 단위 : m
+                    .strokeWidth(0f)  //선너비 0f : 선없음
+                    .fillColor(Color.parseColor("#8800ffff")); //배경색
             markerOptions.position(currentLocation);
             markerOptions.title(markerTitle);
             markerOptions.snippet(markerSnippet);
             markerOptions.draggable(true);
-            //markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker1));
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker1));
             currentMarker = this.googleMap.addMarker(markerOptions);
-
+            this.googleMap.addCircle(circle1KM);
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
             return;
         }
 
         MarkerOptions markerOptions = new MarkerOptions();
+        CircleOptions circle1KM = new CircleOptions().center(DEFAULT_LOCATION) //원점
+                .radius(200)      //반지름 단위 : m
+                .strokeWidth(0f)  //선너비 0f : 선없음
+                .fillColor(Color.parseColor("#880000ff")); //배경색
         markerOptions.position(DEFAULT_LOCATION);
         markerOptions.title(markerTitle);
         markerOptions.snippet(markerSnippet);
         markerOptions.draggable(true);
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+        //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker1));
         currentMarker = this.googleMap.addMarker(markerOptions);
+        this.googleMap.addCircle(circle1KM);
+
 
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_LOCATION));
     }
@@ -189,7 +199,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         }
     }
 
-    public void addHEntry(Integer val) {
+    public void addHEntry(Integer val) { //Set the heart data chart
         try {
             LineData data = hChart.getData();
 
@@ -613,7 +623,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         this.googleMap = googleMap;
 
         //런타임 퍼미션 요청 대화상자나 GPS 활성 요청 대화상자 보이기전에 지도의 초기위치를 서울로 이동
-        setCurrentLocation(null, "위치정보 가져올 수 없음", "위치 퍼미션과 GPS 활성 여부 확인");
+        setCurrentLocation(null, "Unable to get location info", "Check location permissions and GPS activation");
 
         //나침반이 나타나도록 설정
         googleMap.getUiSettings().setCompassEnabled(true);
@@ -674,11 +684,11 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     public void onConnected(@Nullable Bundle bundle) {
         if ( !checkLocationServicesStatus()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle("위치 서비스 비활성화");
-            builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n" +
-                    "위치 설정을 수정하십시오.");
+            builder.setTitle("Disable Location Services");
+            builder.setMessage("Location services are required to use the app.\n" +
+                    "Please correct your location settings.");
             builder.setCancelable(true);
-            builder.setPositiveButton("설정", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     Intent callGPSSettingIntent =
@@ -686,7 +696,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                     startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE);
                 }
             });
-            builder.setNegativeButton("취소", new DialogInterface.OnClickListener(){
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     dialogInterface.cancel();
@@ -734,8 +744,8 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         location.setLatitude(DEFAULT_LOCATION.latitude);
         location.setLongitude((DEFAULT_LOCATION.longitude));
 
-        setCurrentLocation(location, "위치정보 가져올 수 없음",
-                "위치 퍼미션과 GPS활성 여부 확인");
+        setCurrentLocation(location, "Unable to get location info",
+                "Check location permissions and GPS activation");
     }
 
     @Override
