@@ -7,20 +7,24 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -43,6 +47,7 @@ import comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.TEMP;
 import comdbstjdduswkd.naver.httpblog.test1.UDOO.BluetoothChatService;
 import comdbstjdduswkd.naver.httpblog.test1.UDOO.Constants;
 import comdbstjdduswkd.naver.httpblog.test1.UDOO.DeviceListActivity;
+import comdbstjdduswkd.naver.httpblog.test1.UserManagement.LoginActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -279,9 +284,53 @@ public class MainActivity extends AppCompatActivity
             //manager.beginTransaction().replace(R.id.content_main, new HistoryActivity()).commit();
             changeFragment(1);
         } else if (id == R.id.nav_logout) {
-
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this); //get builder
+            alertDialogBuilder.setTitle("Wanning!");
+            //set the message
+            alertDialogBuilder.setMessage("Are you sure you wanna sign out?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", //positive fuction write
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    MainActivity.this.finish();
+                                    Toast.makeText(MainActivity.this,
+                                            "Successfully sign out !",Toast.LENGTH_LONG).show();
+                                }
+                            })
+                    .setNegativeButton("No", //Negative button function write
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
         } else if (id == R.id.nav_dereg) {
-
+            AlertDialog.Builder alertDialogBuilder2 = new AlertDialog.Builder(this); //get builder
+            alertDialogBuilder2.setTitle("Wanning!");
+            //set the message
+            alertDialogBuilder2.setMessage("Are you sure you wanna cancel ID ???\nReally???")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes, Bye", //positive fuction write
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    MainActivity.this.finish();
+                                    Toast.makeText(MainActivity.this,
+                                            "Successfully canceled your ID, goodbye",Toast.LENGTH_LONG).show();
+                                }
+                            })
+                    .setNegativeButton("No, Sorry", //Negative button function write
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+            AlertDialog alertDialog2 = alertDialogBuilder2.create();
+            alertDialog2.show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -389,6 +438,7 @@ public class MainActivity extends AppCompatActivity
         registerReceiver(mPolarBleUpdateReceiver, makePolarGattUpdateIntentFilter());
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     protected void deactivatePolar() {
         Log.w(this.getClass().getName(), "deactivatePolar()");
         if(mPolarBleService!=null){
@@ -419,12 +469,6 @@ public class MainActivity extends AppCompatActivity
                 Log.e("hr detect",""+hr);
                 real.setHeart(hr);
                 real.addHEntry(hr);
-                int prrPercenteage = Integer.parseInt(tokens.nextToken());
-                int prrCount = Integer.parseInt(tokens.nextToken());
-                int rrThreshold = Integer.parseInt(tokens.nextToken());	//50%, 30%, etc.
-                int rrTotal = Integer.parseInt(tokens.nextToken());
-                int rrValue = Integer.parseInt(tokens.nextToken());
-                long sid = Long.parseLong(tokens.nextToken());
 
                 //dataFragPolar.settvHR(Integer.toString(hr));
             }else if (PolarBleService.ACTION_BATTERY_DATA_AVAILABLE.equals(action)) {
@@ -453,6 +497,7 @@ public class MainActivity extends AppCompatActivity
     }
     private final ServiceConnection mPolarBleServiceConnection = new ServiceConnection() {
 
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mPolarBleService = ((PolarBleService.LocalBinder) service).getService();
@@ -472,6 +517,7 @@ public class MainActivity extends AppCompatActivity
             mPolarBleService = null;
         }
     };
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     protected void onDestroy() {
         super.onDestroy();

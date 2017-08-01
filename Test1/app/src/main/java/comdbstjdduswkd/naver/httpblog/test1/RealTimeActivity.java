@@ -760,38 +760,41 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         @SuppressWarnings("MissingPermission")
         PendingResult<PlaceLikelihoodBuffer> result = Places.PlaceDetectionApi
                 .getCurrentPlace(googleApiClient, null);
-        result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>(){
+        try {
+            result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>() {
 
-            @Override
-            public void onResult(@NonNull PlaceLikelihoodBuffer placeLikelihoods) {
-                int i = 0;
-                LikelyPlaceNames = new String[MAXENTRIES];
-                LikelyAddresses = new String[MAXENTRIES];
-                LikelyAttributions = new String[MAXENTRIES];
-                LikelyLatLngs = new LatLng[MAXENTRIES];
+                @Override
+                public void onResult(@NonNull PlaceLikelihoodBuffer placeLikelihoods) {
+                    int i = 0;
+                    LikelyPlaceNames = new String[MAXENTRIES];
+                    LikelyAddresses = new String[MAXENTRIES];
+                    LikelyAttributions = new String[MAXENTRIES];
+                    LikelyLatLngs = new LatLng[MAXENTRIES];
 
-                for(PlaceLikelihood placeLikelihood : placeLikelihoods) {
-                    LikelyPlaceNames[i] = (String) placeLikelihood.getPlace().getName();
-                    LikelyAddresses[i] = (String) placeLikelihood.getPlace().getAddress();
-                    LikelyAttributions[i] = (String) placeLikelihood.getPlace().getAttributions();
-                    LikelyLatLngs[i] = placeLikelihood.getPlace().getLatLng();
+                    for (PlaceLikelihood placeLikelihood : placeLikelihoods) {
+                        LikelyPlaceNames[i] = (String) placeLikelihood.getPlace().getName();
+                        LikelyAddresses[i] = (String) placeLikelihood.getPlace().getAddress();
+                        LikelyAttributions[i] = (String) placeLikelihood.getPlace().getAttributions();
+                        LikelyLatLngs[i] = placeLikelihood.getPlace().getLatLng();
 
-                    i++;
-                    if(i > MAXENTRIES - 1 ) {
-                        break;
+                        i++;
+                        if (i > MAXENTRIES - 1) {
+                            break;
+                        }
                     }
+
+                    placeLikelihoods.release();
+
+                    Location location = new Location("");
+                    location.setLatitude(LikelyLatLngs[0].latitude);
+                    location.setLongitude(LikelyLatLngs[0].longitude);
+
+                    setCurrentLocation(location, LikelyPlaceNames[0], LikelyAddresses[0]);
                 }
-
-                placeLikelihoods.release();
-
-                Location location = new Location("");
-                location.setLatitude(LikelyLatLngs[0].latitude);
-                location.setLongitude(LikelyLatLngs[0].longitude);
-
-                setCurrentLocation(location, LikelyPlaceNames[0], LikelyAddresses[0]);
-            }
-        });
-
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override

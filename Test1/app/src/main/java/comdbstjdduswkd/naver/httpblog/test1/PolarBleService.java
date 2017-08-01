@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +35,7 @@ import comdbstjdduswkd.naver.httpblog.test1.PolarHealth.SensorCache;
  * given Bluetooth LE device.
  */
 //https://developer.android.com/guide/components/services.html
+@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class PolarBleService extends Service {
 	public static final int CLICKER_CMD_RESET=0;
 	public static final int CLICKER_CMD_SETTIME=1;
