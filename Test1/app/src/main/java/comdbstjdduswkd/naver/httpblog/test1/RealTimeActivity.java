@@ -19,6 +19,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,10 +44,15 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.PlaceLikelihood;
+import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -125,8 +131,10 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     int min = 999;
 
     public void setCurrentLocation(Location location, String markerTitle, String markerSnippet) {
-        if ( currentMarker != null ) currentMarker.remove();
-
+        if ( currentMarker != null ) {
+            currentMarker.remove();
+        }
+        this.googleMap.clear();
         if ( location != null) {
             //현재위치의 위도 경도 가져옴
             LatLng currentLocation = new LatLng( location.getLatitude(), location.getLongitude());
@@ -135,7 +143,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
             CircleOptions circle1KM = new CircleOptions().center(currentLocation) //원점
                     .radius(200)      //반지름 단위 : m
                     .strokeWidth(0f)  //선너비 0f : 선없음
-                    .fillColor(Color.parseColor("#8800ffff")); //배경색
+                    .fillColor(Color.parseColor("#110000ff")); //배경색
             markerOptions.position(currentLocation);
             markerOptions.title(markerTitle);
             markerOptions.snippet(markerSnippet);
@@ -148,10 +156,6 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         }
 
         MarkerOptions markerOptions = new MarkerOptions();
-        CircleOptions circle1KM = new CircleOptions().center(DEFAULT_LOCATION) //원점
-                .radius(200)      //반지름 단위 : m
-                .strokeWidth(0f)  //선너비 0f : 선없음
-                .fillColor(Color.parseColor("#880000ff")); //배경색
         markerOptions.position(DEFAULT_LOCATION);
         markerOptions.title(markerTitle);
         markerOptions.snippet(markerSnippet);
@@ -159,8 +163,6 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker1));
         currentMarker = this.googleMap.addMarker(markerOptions);
-        this.googleMap.addCircle(circle1KM);
-
 
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_LOCATION));
     }
@@ -666,9 +668,9 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
-                //.addApi(Places.GEO_DATA_API)
-                //.addApi(Places.PLACE_DETECTION_API)
-                //.enableAutoManage(getActivity(), this)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage((FragmentActivity) getActivity(), this)
                 .build();
         googleApiClient.connect();
     }
@@ -751,9 +753,9 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     @Override
     public void onLocationChanged(Location location) {
         Log.i(TAG, "onLocationChanged call..");
-        //searchCurrentPlaces();
+        searchCurrentPlaces();
     }
-/*
+
     private void searchCurrentPlaces() {
         @SuppressWarnings("MissingPermission")
         PendingResult<PlaceLikelihoodBuffer> result = Places.PlaceDetectionApi
@@ -791,7 +793,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         });
 
     }
-*/
+
     @Override
     public void onLowMemory() {
         super.onLowMemory();
