@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -57,6 +58,12 @@ public class MainActivity extends AppCompatActivity
     TEMP tempfragemnt;
 
     int i=0;
+
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    SharedPreferences sharedpreferences;
+    SharedPreferences.Editor editor;
+    String saveaddr;
+
     private final String TAG = "YourActivity";
     PolarBleService mPolarBleService;
     String mpolarBleDeviceAddress = "00:22:D0:9C:F9:8E";	// your need to pass the address (주소를 전달해야한다.)
@@ -70,7 +77,7 @@ public class MainActivity extends AppCompatActivity
     private BluetoothChatService mChatService = null;
     //Name of the connected device
     private String mConnectedDeviceName = null;
-     //Array adapter for the conversation thread
+    //Array adapter for the conversation thread
     private ArrayAdapter<String> mConversationArrayAdapter;
 
     @Override
@@ -85,6 +92,10 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //데이터 저장하기 위해 sharedpreferences 객체 구현
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        editor = sharedpreferences.edit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -130,6 +141,16 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, "Ready for chat ! :)", Toast.LENGTH_SHORT).show();
         }
 
+        //sharedpreferences
+        if(mBluetoothAdapter.isEnabled()) {
+            saveaddr = sharedpreferences.getString(MyPREFERENCES, "null");
+            if (!saveaddr.equals("null")) {
+                BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(saveaddr);
+                // Attempt to connect to the device
+                mChatService.connect(device, false);
+            }
+        }
+
         Log.w(this.getClass().getName(), "onCreate()");
         activatePolar();
     }
@@ -169,6 +190,13 @@ public class MainActivity extends AppCompatActivity
                             Toast.LENGTH_SHORT).show();
                     this.finish();
                 }
+                //sharedpreferences
+                saveaddr = sharedpreferences.getString(MyPREFERENCES, "null");
+                if (!saveaddr.equals("null")) {
+                    BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(saveaddr);
+                    // Attempt to connect to the device
+                    mChatService.connect(device, false);
+                }
         }
     }
     /**
@@ -181,6 +209,8 @@ public class MainActivity extends AppCompatActivity
         // Get the device MAC address
         String address = data.getExtras()
                 .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+        editor.putString(MyPREFERENCES, address);
+        editor.commit();
         // Get the BluetoothDevice object
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         // Attempt to connect to the device
@@ -213,6 +243,12 @@ public class MainActivity extends AppCompatActivity
                 startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
                 // Otherwise, setup the chat session
             } else if (mChatService == null) {
+                saveaddr = sharedpreferences.getString(MyPREFERENCES, "null");
+                if(!saveaddr.equals("null")) {
+                    BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(saveaddr);
+                    // Attempt to connect to the device
+                    mChatService.connect(device, false);
+                }
                 //이상이 없으면 채팅세션을 설정한다.
                 //setupChat(); 보류
             }
