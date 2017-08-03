@@ -399,6 +399,7 @@ public class MainActivity extends AppCompatActivity
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     try {
+                        JsonTransfer jsonTransfer = new JsonTransfer();
                         JSONObject wrapObject = new JSONObject(readMessage);
                         real.setAQI(wrapObject);
                         cofragment.addEntryCO(wrapObject);
@@ -407,6 +408,10 @@ public class MainActivity extends AppCompatActivity
                         pm25fragment.addEntryPM25(wrapObject);
                         so2fragment.addEntrySO2(wrapObject);
                         tempfragemnt.addEntryTEMP(wrapObject);
+                        //send AQI data(jsonObject) to server
+                        String jsonString = wrapObject.toString();
+                        Log.v("json String print",""+jsonString);
+                        jsonTransfer.execute("http://teamb-iot.calit2.net/slim-api/receive-air-data","["+jsonString+"]");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
