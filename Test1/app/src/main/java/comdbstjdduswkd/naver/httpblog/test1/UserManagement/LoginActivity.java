@@ -4,13 +4,17 @@ package comdbstjdduswkd.naver.httpblog.test1.UserManagement;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,6 +44,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         sharedpreferences = getSharedPreferences("Account", Context.MODE_PRIVATE);
         editor = sharedpreferences.edit();
@@ -96,11 +102,19 @@ public class LoginActivity extends AppCompatActivity {
                     editor.putString("PASS", PASS);
                     editor.putBoolean("CHECK", true);
                     editor.commit();
-                    HttpPostData();
+                    if(ID.equals("") || PASS.equals("")){
+                        Toast.makeText(LoginActivity.this, "Fill out your ID or Password!", Toast.LENGTH_SHORT).show();
+                    }else {
+                        HttpPostData();
+                    }
                 }else {
                     editor.clear();
                     editor.commit();
-                    HttpPostData();
+                    if(ID.equals("") || PASS.equals("")){
+                        Toast.makeText(LoginActivity.this, "Fill out your ID or Password!", Toast.LENGTH_SHORT).show();
+                    }else {
+                        HttpPostData();
+                    }
                 }
             }
         });
@@ -111,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
             //--------------------------
             //   URL 설정하고 접속하기
             //--------------------------
-            URL url = new URL("http://teamb-iot.calit2.net/app_user_information_command.php");       // URL 설정
+            URL url = new URL("http://teamb-iot.calit2.net/slim-api/appuser-info");       // URL 설정
             HttpURLConnection http = (HttpURLConnection) url.openConnection();   // connect to server
             //--------------------------
             //   전송 모드 설정 - 기본적인 설정이다
@@ -145,7 +159,9 @@ public class LoginActivity extends AppCompatActivity {
                 builder.append(str + "\n");                     // View에 표시하기 위해 라인 구분자 추가
             }
             status = builder.toString();                       // 전송결과를 전역 변수에 저장
-            if(status.equals("1")){
+            Log.e("ㅅㅅㅅㅅ",""+status);
+            JSONObject jsonObject = new JSONObject(status);
+            if(jsonObject.getString("status").equals("true")){
                 Intent startup = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(startup);
             }else{
@@ -153,9 +169,14 @@ public class LoginActivity extends AppCompatActivity {
             }
             //((TextView)(findViewById(R.id.text_result))).setText(myResult);
         } catch (MalformedURLException e) {
+            e.printStackTrace();
             //
         } catch (IOException e) {
+            e.printStackTrace();
             //
-        } // try
+        } catch(Exception e){
+            Toast.makeText(this, "오류 발생", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
     }
 }

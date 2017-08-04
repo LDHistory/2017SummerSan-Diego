@@ -89,7 +89,7 @@ public class RegActivity extends AppCompatActivity {
                     Log.e("래금",""+checkEmailFormat(email));
                     if(!checkEmailFormat(email)){
                         ((EditText)findViewById(R.id.inputemail)).setText("");
-                        Toast.makeText(RegActivity.this, "Please check your E-mail format", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegActivity.this, "Please check E-mail format", Toast.LENGTH_SHORT).show();
                     }else {
                         HttpIDCheck();
                         //if(IDcheckResult.equals(""))
@@ -188,7 +188,7 @@ public class RegActivity extends AppCompatActivity {
             //--------------------------
             //   URL 설정하고 접속하기
             //--------------------------
-            URL url = new URL("http://teamb-iot.calit2.net/app_user_information_command.php");       // URL 설정
+            URL url = new URL("http://teamb-iot.calit2.net/slim-api/app-user-signup");       // URL 설정
             HttpURLConnection http = (HttpURLConnection) url.openConnection();   // 접속
             //--------------------------
             //   전송 모드 설정 - 기본적인 설정이다
@@ -226,6 +226,7 @@ public class RegActivity extends AppCompatActivity {
             //regResult = builder.toString();                       // 전송결과를 전역 변수에 저장
             //((TextView)(findViewById(R.id.text_result))).setText(myResult);
             Toast.makeText(RegActivity.this,"Successfully registered your account! :)",Toast.LENGTH_LONG).show();
+            finish();
         } catch (MalformedURLException e) {
             //
         } catch (IOException e) {
