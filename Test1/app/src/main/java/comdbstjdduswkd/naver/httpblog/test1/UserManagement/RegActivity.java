@@ -5,12 +5,16 @@ import android.content.Intent;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,6 +25,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import comdbstjdduswkd.naver.httpblog.test1.MainActivity;
 import comdbstjdduswkd.naver.httpblog.test1.R;
@@ -29,11 +35,13 @@ public class RegActivity extends AppCompatActivity {
 
     private Button RegSend, Regcancel, chkBtn;
     //private Spinner Year, Month, Day;
-    String email, pw, chkpw, fname, lname, regResult;
+    boolean checkflag;
+    String email, pw, chkpw, fname, lname, regResult, IDcheckResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkflag = false;
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         setContentView(R.layout.activity_reg);
@@ -75,7 +83,19 @@ public class RegActivity extends AppCompatActivity {
         chkBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-
+                checkflag = true;
+                email = ((EditText)findViewById(R.id.inputemail)).getText().toString();
+                if(!email.equals("")){
+                    Log.e("래금",""+checkEmailFormat(email));
+                    if(!checkEmailFormat(email)){
+                        ((EditText)findViewById(R.id.inputemail)).setText("");
+                        Toast.makeText(RegActivity.this, "Please check your E-mail format", Toast.LENGTH_SHORT).show();
+                    }else {
+                        HttpIDCheck();
+                        //if(IDcheckResult.equals(""))
+                    }
+                }else
+                    Toast.makeText(RegActivity.this, "Please check your E-mail", Toast.LENGTH_LONG).show();
             }
         });
         RegSend.setOnClickListener(new View.OnClickListener() {
@@ -86,10 +106,14 @@ public class RegActivity extends AppCompatActivity {
                 chkpw = ((EditText)findViewById(R.id.inputchkpw)).getText().toString();
                 fname = ((EditText)findViewById(R.id.inputLname)).getText().toString();
                 lname = ((EditText)findViewById(R.id.inputFname)).getText().toString();
-                if(pw.equals(chkpw)){
+                if(pw.equals(chkpw) && checkflag && !pw.equals("") && !fname.equals("") && !lname.equals("")){
                     HttpPostData();   // communicate with Web server transfer & receive response
-                }else{
+                }else if(!pw.equals(chkpw)){
                     Toast.makeText(RegActivity.this, "Please check your password", Toast.LENGTH_LONG).show();
+                }else if(!checkflag){
+                    Toast.makeText(RegActivity.this, "Please click the CHECK button", Toast.LENGTH_LONG).show();
+                }else if(email.equals("") || pw.equals("") || fname.equals("") || !lname.equals("")){
+                    Toast.makeText(RegActivity.this, "Please enter without empty spaces.", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -102,6 +126,63 @@ public class RegActivity extends AppCompatActivity {
         });
         //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     }
+    public void HttpIDCheck(){
+        try {
+            //--------------------------
+            //   URL 설정하고 접속하기
+            //--------------------------
+            URL url = new URL("http://teamb-iot.calit2.net/slim-api/check-email");       // URL 설정
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();   // 접속
+            //--------------------------
+            //   전송 모드 설정 - 기본적인 설정이다
+            //--------------------------
+            http.setDefaultUseCaches(false);
+            http.setDoInput(true);                         // 서버에서 읽기 모드 지정
+            http.setDoOutput(true);                       // 서버로 쓰기 모드 지정
+            http.setRequestMethod("POST");         // 전송 방식은 POST
+
+            // 서버에게 웹에서 <Form>으로 값이 넘어온 것과 같은 방식으로 처리하라는 걸 알려준다
+            http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
+            //--------------------------
+            //   서버로 값 전송 (URL Tag protocol)
+            //--------------------------
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("email").append("=").append(email);                 // php 변수에 값 대입
+
+            OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "EUC-KR");
+            PrintWriter writer = new PrintWriter(outStream);
+            writer.write(buffer.toString());
+            writer.flush();
+            //--------------------------
+            //   서버에서 전송받기
+            //--------------------------
+            InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "EUC-KR");
+            BufferedReader reader = new BufferedReader(tmp);
+            StringBuilder builder = new StringBuilder();
+            String str;
+            while ((str = reader.readLine()) != null) {       // 서버에서 라인단위로 보내줄 것이므로 라인단위로 읽는다
+                builder.append(str + "\n");                     // View에 표시하기 위해 라인 구분자 추가
+            }
+            IDcheckResult = builder.toString();                       // 전송결과를 전역 변수에 저장
+            try {
+                JSONObject jsonObject = new JSONObject(IDcheckResult);
+                if(jsonObject.getString("status").equals("true")){
+                    Toast.makeText(RegActivity.this, "You can use this E-mail :)", Toast.LENGTH_LONG).show();
+                }else if(jsonObject.getString("status").equals("false")){
+                    Toast.makeText(RegActivity.this, "This E-mail is redundant!\n" +
+                            "you should use other E-mail", Toast.LENGTH_LONG).show();
+                }
+                //((TextView)(findViewById(R.id.text_result))).setText(myResult);
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+        } catch (MalformedURLException e) {
+            //
+        } catch (IOException e) {
+            //
+        } // try
+    }
+
     public void HttpPostData() {
         try {
             //--------------------------
@@ -142,13 +223,21 @@ public class RegActivity extends AppCompatActivity {
             while ((str = reader.readLine()) != null) {       // 서버에서 라인단위로 보내줄 것이므로 라인단위로 읽는다
                 builder.append(str + "\n");                     // View에 표시하기 위해 라인 구분자 추가
             }
-            regResult = builder.toString();                       // 전송결과를 전역 변수에 저장
+            //regResult = builder.toString();                       // 전송결과를 전역 변수에 저장
             //((TextView)(findViewById(R.id.text_result))).setText(myResult);
-            Toast.makeText(this, "Successful sign up! :) \n"+regResult,Toast.LENGTH_LONG).show();
+            Toast.makeText(RegActivity.this,"Successfully registered your account! :)",Toast.LENGTH_LONG).show();
         } catch (MalformedURLException e) {
             //
         } catch (IOException e) {
             //
         } // try
+    }
+
+    public static boolean checkEmailFormat(String email){
+        String format = "^[_a-zA-Z0-9-\\.]+@[\\.a-zA-Z0-9-]+\\.[a-zA-Z]+$";
+        Pattern p = Pattern.compile(format);
+        Matcher m = p.matcher(email);
+        boolean isNormal = m.matches();
+        return isNormal;
     }
 }

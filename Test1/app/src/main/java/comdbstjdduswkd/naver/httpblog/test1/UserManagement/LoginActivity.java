@@ -10,6 +10,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import comdbstjdduswkd.naver.httpblog.test1.MainActivity;
 import comdbstjdduswkd.naver.httpblog.test1.R;
@@ -21,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button login;
     private TextView id, pass;
     private CheckBox save;
+    private String ID,PASS, status;
 
     SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
@@ -79,22 +90,72 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(save.isChecked()) {
-                    Intent login = new Intent(LoginActivity.this, MainActivity.class);
-                    String ID = id.getText().toString();
-                    String PASS = pass.getText().toString();
+                    ID = id.getText().toString();
+                    PASS = pass.getText().toString();
                     editor.putString("ID", ID);
                     editor.putString("PASS", PASS);
                     editor.putBoolean("CHECK", true);
                     editor.commit();
-                    startActivity(login);
+                    HttpPostData();
                 }else {
                     editor.clear();
                     editor.commit();
-                    Intent login = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(login);
+                    HttpPostData();
                 }
             }
         });
         //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    }
+    public void HttpPostData() {
+        try {
+            //--------------------------
+            //   URL 설정하고 접속하기
+            //--------------------------
+            URL url = new URL("http://teamb-iot.calit2.net/app_user_information_command.php");       // URL 설정
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();   // connect to server
+            //--------------------------
+            //   전송 모드 설정 - 기본적인 설정이다
+            //--------------------------
+            http.setDefaultUseCaches(false);
+            http.setDoInput(true);                         // 서버에서 읽기 모드 지정
+            http.setDoOutput(true);                       // 서버로 쓰기 모드 지정
+            http.setRequestMethod("POST");         // 전송 방식은 POST
+
+            // 서버에게 웹에서 <Form>으로 값이 넘어온 것과 같은 방식으로 처리하라는 걸 알려준다
+            http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
+            //--------------------------
+            //   서버로 값 전송 (URL Tag protocol)
+            //--------------------------
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("email").append("=").append(ID).append("&");       // php 변수에 값 대입
+            buffer.append("password").append("=").append(PASS); // php 변수 앞에 '$' 붙이지 않는다
+
+            OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "EUC-KR");
+            PrintWriter writer = new PrintWriter(outStream);
+            writer.write(buffer.toString());
+            writer.flush();
+            //--------------------------
+            //   서버에서 전송받기
+            //--------------------------
+            InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "EUC-KR");
+            BufferedReader reader = new BufferedReader(tmp);
+            StringBuilder builder = new StringBuilder();
+            String str;
+            while ((str = reader.readLine()) != null) {       // 서버에서 라인단위로 보내줄 것이므로 라인단위로 읽는다
+                builder.append(str + "\n");                     // View에 표시하기 위해 라인 구분자 추가
+            }
+            status = builder.toString();                       // 전송결과를 전역 변수에 저장
+            if(status.equals("1")){
+                Intent startup = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(startup);
+            }else{
+                Toast.makeText(this, "Check your ID or Password !", Toast.LENGTH_SHORT).show();
+            }
+            //((TextView)(findViewById(R.id.text_result))).setText(myResult);
+        } catch (MalformedURLException e) {
+            //
+        } catch (IOException e) {
+            //
+        } // try
     }
 }

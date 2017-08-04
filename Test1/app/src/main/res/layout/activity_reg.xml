@@ -97,6 +97,7 @@
             android:layout_marginTop="0dp"
             android:ems="10"
             android:inputType="textPersonName"
+            android:password="true"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/regpw" />
@@ -110,6 +111,7 @@
             android:layout_marginTop="0dp"
             android:ems="10"
             android:inputType="textPersonName"
+            android:password="true"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/regpwconfirm" />
@@ -144,13 +146,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="submit"
-            android:layout_marginLeft="72dp"
+            android:layout_marginLeft="85dp"
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@+id/inputFname"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="8dp"
-            app:layout_constraintVertical_bias="0.566" />
+            app:layout_constraintVertical_bias="0.565" />
 
         <Button
             android:id="@+id/regCancel"
@@ -158,12 +160,12 @@
             android:layout_height="wrap_content"
             android:text="cancel"
             app:layout_constraintLeft_toRightOf="@+id/regsubmit"
-            android:layout_marginLeft="56dp"
+            android:layout_marginLeft="60dp"
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@+id/inputFname"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="8dp"
-            app:layout_constraintVertical_bias="0.566" />
+            app:layout_constraintVertical_bias="0.565" />
 
         <Button
             android:id="@+id/chkBtn"

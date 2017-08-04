@@ -456,18 +456,13 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onReceive(Context ctx, Intent intent) {
             final String action = intent.getAction();
-            Log.e("000","시작하는부ㅜㄴ");
             if (PolarBleService.ACTION_GATT_CONNECTED.equals(action)) {
-                Log.e("1111111","mPolarBleService.initialize");
             } else if (PolarBleService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 //dataFragPolar.stopAnimation();
-                Log.e("222","ACTION_GATT_DISCONNECTED");
             } else if (PolarBleService.ACTION_HR_DATA_AVAILABLE.equals(action)) {
-                Log.e("333","ACTION_HR_DATA_AVAILABLE");
                 //heartRate+";"+pnnPercentage+";"+pnnCount+";"+rrThreshold+";"+bioHarnessSessionData.totalNN
                 //String data = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);  //-> is it miss type? (i don't need that class)
                 String data = intent.getStringExtra(PolarBleService.EXTRA_DATA);
-                Log.e("data",""+data);
                 StringTokenizer tokens = new StringTokenizer(data, ";");
                 int hr = Integer.parseInt(tokens.nextToken());
                 Toast.makeText(MainActivity.this, ""+hr,Toast.LENGTH_LONG);
@@ -477,11 +472,9 @@ public class MainActivity extends AppCompatActivity
 
                 //dataFragPolar.settvHR(Integer.toString(hr));
             }else if (PolarBleService.ACTION_BATTERY_DATA_AVAILABLE.equals(action)) {
-                Log.e("444","ACTION_BATTERY_DATA_AVAILABLE");
                 String data = intent.getStringExtra(PolarBleService.EXTRA_DATA);
                 batteryLevel = Integer.parseInt(data);
             }else if (PolarBleService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-                Log.e("555","ACTION_GATT_SERVICES_DISCOVERED");
                 String data = intent.getStringExtra(PolarBleService.EXTRA_DATA);
                 StringTokenizer tokens = new StringTokenizer(data, ";");
                 int totalNN = Integer.parseInt(tokens.nextToken());
