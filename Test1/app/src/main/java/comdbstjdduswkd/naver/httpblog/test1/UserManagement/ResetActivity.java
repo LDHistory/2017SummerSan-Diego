@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -28,8 +29,7 @@ public class ResetActivity extends AppCompatActivity {
 
     private Button resetSend, resetCancel;
     private TextView emailText;
-
-    String IDcheckResult;
+    String IDcheckResult, email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +53,8 @@ public class ResetActivity extends AppCompatActivity {
         resetSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent change = new Intent(ResetActivity.this, ResetPassActivity.class);
-                if(!HttpIDCheck(emailText.getText().toString())) {
-                    startActivity(change);
-                    finish();
-                }
+                email = emailText.getText().toString();
+                HttpIDCheck();
             }
         });
 
@@ -70,8 +67,7 @@ public class ResetActivity extends AppCompatActivity {
         //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     }
 
-    public boolean HttpIDCheck(String email) {
-        boolean check = false;
+    public void HttpIDCheck() {
         try {
             //--------------------------
             //   URL 설정하고 접속하기
@@ -112,18 +108,22 @@ public class ResetActivity extends AppCompatActivity {
             try {
                 JSONObject jsonObject = new JSONObject(IDcheckResult);
                 if (jsonObject.getString("status").equals("true")) {
-                    check = true;
-                }else
+                    Intent setpass = new Intent(ResetActivity.this, ResetPassActivity.class);
+                    startActivity(setpass);
+                    finish();
+                }else if(jsonObject.getString("status").equals("false")){
                     Toast.makeText(ResetActivity.this, "This email dosen't exist.", Toast.LENGTH_LONG).show();
-                    check = false;
+                }
             } catch (JSONException e) {
+                Log.e("test", "1234");
                 e.printStackTrace();
             }
         } catch (MalformedURLException e) {
-            //
+
         } catch (IOException e) {
-            //
+
         } // try
-        return check;
+        Log.e("test", "" + email);
+        Log.e("test", "" + IDcheckResult);
     }
 }
