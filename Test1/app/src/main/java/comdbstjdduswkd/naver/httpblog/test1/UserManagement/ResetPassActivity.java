@@ -105,9 +105,10 @@ public class ResetPassActivity extends AppCompatActivity {
                 JSONObject jsonObject = new JSONObject(SendResult);
                 if (jsonObject.getString("status").equals("true")) {
                     check = true;
-                }else
+                }else {
                     Toast.makeText(ResetPassActivity.this, "Please, Check your code and Password.", Toast.LENGTH_LONG).show();
-                check = false;
+                    check = false;
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }

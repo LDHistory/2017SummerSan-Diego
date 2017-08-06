@@ -86,7 +86,6 @@ public class RegActivity extends AppCompatActivity {
                 checkflag = true;
                 email = ((EditText)findViewById(R.id.inputemail)).getText().toString();
                 if(!email.equals("")){
-                    Log.e("래금",""+checkEmailFormat(email));
                     if(!checkEmailFormat(email)){
                         ((EditText)findViewById(R.id.inputemail)).setText("");
                         Toast.makeText(RegActivity.this, "Please check E-mail format", Toast.LENGTH_SHORT).show();

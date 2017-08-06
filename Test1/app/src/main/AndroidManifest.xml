@@ -35,6 +35,7 @@
         </activity>
         <activity android:name=".UserManagement.RegActivity" />
         <activity android:name=".UserManagement.ResetActivity" />
+        <activity android:name=".UserManagement.ResetPassActivity"/>
         <activity
             android:name=".UDOO.DeviceListActivity"
             android:configChanges="orientation|keyboardHidden"

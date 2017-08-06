@@ -163,6 +163,7 @@ public class LoginActivity extends AppCompatActivity {
             JSONObject jsonObject = new JSONObject(status);
             if(jsonObject.getString("status").equals("true")){
                 Intent startup = new Intent(LoginActivity.this, MainActivity.class);
+                startup.putExtra("ID",ID);
                 startActivity(startup);
             }else{
                 Toast.makeText(this, "Check your ID or Password !", Toast.LENGTH_SHORT).show();

@@ -31,11 +31,20 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.StringTokenizer;
 
 import comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.CO;
@@ -48,6 +57,7 @@ import comdbstjdduswkd.naver.httpblog.test1.UDOO.BluetoothChatService;
 import comdbstjdduswkd.naver.httpblog.test1.UDOO.Constants;
 import comdbstjdduswkd.naver.httpblog.test1.UDOO.DeviceListActivity;
 import comdbstjdduswkd.naver.httpblog.test1.UserManagement.LoginActivity;
+import comdbstjdduswkd.naver.httpblog.test1.UserManagement.RegActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -61,6 +71,7 @@ public class MainActivity extends AppCompatActivity
     PM25 pm25fragment;
     SO2 so2fragment;
     TEMP tempfragemnt;
+    String id,PWcheckResult;
 
     int i=0;
 
@@ -68,6 +79,7 @@ public class MainActivity extends AppCompatActivity
     SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
     String saveaddr;
+    boolean checkPW;
 
     private final String TAG = "YourActivity";
     PolarBleService mPolarBleService;
@@ -97,6 +109,10 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Intent intent  = getIntent();
+        id = intent.getStringExtra("ID");
+        Toast.makeText(this, ""+id, Toast.LENGTH_SHORT).show();
 
         //데이터 저장하기 위해 sharedpreferences 객체 구현
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
@@ -309,20 +325,27 @@ public class MainActivity extends AppCompatActivity
             alertDialog.show();
         } else if (id == R.id.nav_dereg) {
             AlertDialog.Builder alertDialogBuilder2 = new AlertDialog.Builder(this); //get builder
-            alertDialogBuilder2.setTitle("Wanning!");
+            alertDialogBuilder2.setTitle("Identification");
             //set the message
-            alertDialogBuilder2.setMessage("Are you sure you wanna cancel ID ???\nReally???")
+            final EditText editpw = new EditText(MainActivity.this);
+            alertDialogBuilder2.setView(editpw);
+            alertDialogBuilder2.setMessage("Enter your password.")
                     .setCancelable(false)
-                    .setPositiveButton("Yes, Bye", //positive fuction write
+                    .setPositiveButton("Confirm", //positive fuction write
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    MainActivity.this.finish();
-                                    Toast.makeText(MainActivity.this,
-                                            "Successfully canceled your ID, goodbye",Toast.LENGTH_LONG).show();
+                                    if(checkPWtoSever(editpw.getText().toString())) {
+                                        finish();
+                                        Toast.makeText(MainActivity.this,
+                                                "Successfully canceled your ID, goodbye", Toast.LENGTH_LONG).show();
+                                    }else{
+                                        Toast.makeText(MainActivity.this,
+                                                "Check your password!!", Toast.LENGTH_LONG).show();
+                                    }
                                 }
                             })
-                    .setNegativeButton("No, Sorry", //Negative button function write
+                    .setNegativeButton("Cancel", //Negative button function write
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -521,5 +544,64 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
         Log.e(this.getClass().getName(), "onDestroy");
         deactivatePolar();
+    }
+    public boolean checkPWtoSever(String pw){
+        try {
+            //--------------------------
+            //   URL 설정하고 접속하기
+            //--------------------------
+            URL url = new URL("http://teamb-iot.calit2.net/slim-api/appcancel-email");       // URL 설정
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();   // 접속
+            //--------------------------
+            //   전송 모드 설정 - 기본적인 설정이다
+            //--------------------------
+            http.setDefaultUseCaches(false);
+            http.setDoInput(true);                         // 서버에서 읽기 모드 지정
+            http.setDoOutput(true);                       // 서버로 쓰기 모드 지정
+            http.setRequestMethod("POST");         // 전송 방식은 POST
+
+            // 서버에게 웹에서 <Form>으로 값이 넘어온 것과 같은 방식으로 처리하라는 걸 알려준다
+            http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
+            //--------------------------
+            //   서버로 값 전송 (URL Tag protocol)
+            //--------------------------
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("email").append("=").append(id).append("&");                 // php 변수에 값 대입
+            buffer.append("password").append("=").append(pw);
+
+
+            OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "EUC-KR");
+            PrintWriter writer = new PrintWriter(outStream);
+            writer.write(buffer.toString());
+            writer.flush();
+            //--------------------------
+            //   서버에서 전송받기
+            //--------------------------
+            InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "EUC-KR");
+            BufferedReader reader = new BufferedReader(tmp);
+            StringBuilder builder = new StringBuilder();
+            String str;
+            while ((str = reader.readLine()) != null) {       // 서버에서 라인단위로 보내줄 것이므로 라인단위로 읽는다
+                builder.append(str + "\n");                     // View에 표시하기 위해 라인 구분자 추가
+            }
+            PWcheckResult = builder.toString();                       // 전송결과를 전역 변수에 저장
+            try {
+                JSONObject jsonObject = new JSONObject(PWcheckResult);
+                if(jsonObject.getString("status").equals("true")){
+                   checkPW = true;
+                }else if(jsonObject.getString("status").equals("false")){
+                   checkPW = false;
+                }
+                //((TextView)(findViewById(R.id.text_result))).setText(myResult);
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+        } catch (MalformedURLException e) {
+            //
+        } catch (IOException e) {
+            //
+        } // try
+        Log.e("pwcheck",""+checkPW);
+        return checkPW;
     }
 }
