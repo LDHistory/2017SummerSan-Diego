@@ -54,7 +54,10 @@ public class ResetActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 email = emailText.getText().toString();
-                HttpIDCheck();
+                if(!email.equals(""))
+                    HttpIDCheck();
+                else
+                    Toast.makeText(ResetActivity.this, "Please, Write your email.", Toast.LENGTH_LONG).show();
             }
         });
 
