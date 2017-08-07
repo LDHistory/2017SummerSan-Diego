@@ -76,7 +76,7 @@ public class SO2 extends Fragment {
 
         YAxis leftAxis = so2Chart.getAxisLeft();
         leftAxis.setTextColor(Color.WHITE);
-        leftAxis.setAxisMaximum(300f);
+        leftAxis.setAxisMaximum(1005f);
         leftAxis.setAxisMinimum(0f);
         leftAxis.setDrawGridLines(true);
 

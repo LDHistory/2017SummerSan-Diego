@@ -76,7 +76,7 @@ public class PM25 extends Fragment {
 
         YAxis leftAxis = pm25Chart.getAxisLeft();
         leftAxis.setTextColor(Color.WHITE);
-        leftAxis.setAxisMaximum(300f);
+        leftAxis.setAxisMaximum(501f);
         leftAxis.setAxisMinimum(0f);
         leftAxis.setDrawGridLines(true);
 

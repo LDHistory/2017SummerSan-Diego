@@ -76,7 +76,7 @@ public class NO2 extends Fragment {
 
         YAxis leftAxis = no2Chart.getAxisLeft();
         leftAxis.setTextColor(Color.WHITE);
-        leftAxis.setAxisMaximum(500f);
+        leftAxis.setAxisMaximum(2050f);
         leftAxis.setAxisMinimum(0f);
         leftAxis.setDrawGridLines(true);
 

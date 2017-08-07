@@ -76,7 +76,7 @@ public class CO extends Fragment {
 
         YAxis leftAxis = coChart.getAxisLeft();
         leftAxis.setTextColor(Color.WHITE);
-        leftAxis.setAxisMaximum(300f);
+        leftAxis.setAxisMaximum(55f);
         leftAxis.setAxisMinimum(0f);
         leftAxis.setDrawGridLines(true);
 

@@ -126,7 +126,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     private MapView mapView = null;
 
     TextView heartText, CO, NO2, SO2, O3, PM25, TEMP, maxhert, minheart;
-    ImageView heart, heartbit;
+    ImageView heart, heartbit, coimage, no2image, so2image, o3image, pm25image, tempimage;
     GlideDrawableImageViewTarget heartTartget, heartBitget;
 
     int max = 0;
@@ -241,10 +241,75 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     public void setAQI(JSONObject data){
         try{
             CO.setText(data.getString("CO"));
+            if(Float.parseFloat(data.getString("CO")) >= 0 && Float.parseFloat(data.getString("CO")) <=4.4)
+                coimage.setImageResource(R.drawable.co_good);
+            else if(Float.parseFloat(data.getString("CO")) >= 4.5 && Float.parseFloat(data.getString("CO")) <=9.4)
+                coimage.setImageResource(R.drawable.co_moderate);
+            else if(Float.parseFloat(data.getString("CO")) >= 9.5 && Float.parseFloat(data.getString("CO")) <=12.4)
+                coimage.setImageResource(R.drawable.co_usg);
+            else if(Float.parseFloat(data.getString("CO")) >= 12.5 && Float.parseFloat(data.getString("CO")) <=15.4)
+                coimage.setImageResource(R.drawable.co_unhealthy);
+            else if(Float.parseFloat(data.getString("CO")) >= 15.5 && Float.parseFloat(data.getString("CO")) <=30.4)
+                coimage.setImageResource(R.drawable.co_vu);
+            else if(Float.parseFloat(data.getString("CO")) >= 30.5)
+                coimage.setImageResource(R.drawable.co_hazardous);
+
             NO2.setText(data.getString("NO2"));
+            if(Float.parseFloat(data.getString("NO2")) >= 0 && Float.parseFloat(data.getString("NO2")) <=53)
+                no2image.setImageResource(R.drawable.no2_good);
+            else if(Float.parseFloat(data.getString("NO2")) >= 54 && Float.parseFloat(data.getString("NO2")) <=100)
+                no2image.setImageResource(R.drawable.no2_moderate);
+            else if(Float.parseFloat(data.getString("NO2")) >= 101 && Float.parseFloat(data.getString("NO2")) <=360)
+                no2image.setImageResource(R.drawable.no2_usg);
+            else if(Float.parseFloat(data.getString("NO2")) >= 361 && Float.parseFloat(data.getString("NO2")) <=649)
+                no2image.setImageResource(R.drawable.no2_unhealthy);
+            else if(Float.parseFloat(data.getString("NO2")) >= 650 && Float.parseFloat(data.getString("NO2")) <=1249)
+                no2image.setImageResource(R.drawable.no2_vu);
+            else if(Float.parseFloat(data.getString("NO2")) >= 1250)
+                no2image.setImageResource(R.drawable.no2_hazardous);
+
             SO2.setText(data.getString("SO2"));
+            if(Float.parseFloat(data.getString("SO2")) >= 0 && Float.parseFloat(data.getString("SO2")) <=35)
+                so2image.setImageResource(R.drawable.so2_good);
+            else if(Float.parseFloat(data.getString("SO2")) >= 36 && Float.parseFloat(data.getString("SO2")) <=75)
+                so2image.setImageResource(R.drawable.so2_moderate);
+            else if(Float.parseFloat(data.getString("SO2")) >= 76 && Float.parseFloat(data.getString("SO2")) <=185)
+                so2image.setImageResource(R.drawable.so2_usg);
+            else if(Float.parseFloat(data.getString("SO2")) >= 186 && Float.parseFloat(data.getString("SO2")) <=304)
+                so2image.setImageResource(R.drawable.so2_unhealthy);
+            else if(Float.parseFloat(data.getString("SO2")) >= 305 && Float.parseFloat(data.getString("SO2")) <=604)
+                so2image.setImageResource(R.drawable.so2_vu);
+            else if(Float.parseFloat(data.getString("SO2")) >= 605)
+                so2image.setImageResource(R.drawable.so2_hazardous);
+
             O3.setText(data.getString("O3"));
+            if(Float.parseFloat(data.getString("O3")) >= 0 && Float.parseFloat(data.getString("O3")) <=54)
+                o3image.setImageResource(R.drawable.o3_good);
+            else if(Float.parseFloat(data.getString("O3")) >= 55 && Float.parseFloat(data.getString("O3")) <=70)
+                o3image.setImageResource(R.drawable.o3_moderate);
+            else if(Float.parseFloat(data.getString("O3")) >= 71 && Float.parseFloat(data.getString("O3")) <=85)
+                o3image.setImageResource(R.drawable.o3_usg);
+            else if(Float.parseFloat(data.getString("O3")) >= 86 && Float.parseFloat(data.getString("O3")) <=105)
+                o3image.setImageResource(R.drawable.o3_unhealthy);
+            else if(Float.parseFloat(data.getString("O3")) >= 106 && Float.parseFloat(data.getString("O3")) <=200)
+                o3image.setImageResource(R.drawable.o3_vu);
+            else if(Float.parseFloat(data.getString("O3")) >= 201)
+                o3image.setImageResource(R.drawable.o3_hazardous);
+
             PM25.setText(data.getString("PM25"));
+            if(Float.parseFloat(data.getString("PM25")) >= 0 && Float.parseFloat(data.getString("PM25")) <=12)
+                pm25image.setImageResource(R.drawable.pm25_good);
+            else if(Float.parseFloat(data.getString("PM25")) >= 12.1 && Float.parseFloat(data.getString("PM25")) <=35.4)
+                pm25image.setImageResource(R.drawable.pm25_moderate);
+            else if(Float.parseFloat(data.getString("PM25")) >= 35.5 && Float.parseFloat(data.getString("PM25")) <=55.4)
+                pm25image.setImageResource(R.drawable.pm25_usg);
+            else if(Float.parseFloat(data.getString("PM25")) >= 55.5 && Float.parseFloat(data.getString("PM25")) <=150.4)
+                pm25image.setImageResource(R.drawable.pm25_unhealthy);
+            else if(Float.parseFloat(data.getString("PM25")) >= 150.5 && Float.parseFloat(data.getString("PM25")) <=250.4)
+                pm25image.setImageResource(R.drawable.pm25_vu);
+            else if(Float.parseFloat(data.getString("PM25")) >= 250.5)
+                pm25image.setImageResource(R.drawable.pm25_hazardous);
+
             TEMP.setText(data.getString("temp"));
         } catch (JSONException e){
             e.printStackTrace();
@@ -267,6 +332,13 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
 
         maxhert = (TextView) view.findViewById(R.id.HMValue);
         minheart = (TextView) view.findViewById(R.id.MHValue);
+
+        coimage = (ImageView) view.findViewById(R.id.coimage);
+        no2image = (ImageView) view.findViewById(R.id.noimage);
+        so2image = (ImageView) view.findViewById(R.id.so2image);
+        o3image = (ImageView) view.findViewById(R.id.o3image);
+        pm25image = (ImageView) view.findViewById(R.id.pm25image);
+        tempimage = (ImageView) view.findViewById(R.id.tempimage);
 
         mapView = (MapView)view.findViewById(R.id.map);
         mapView.getMapAsync(this);
@@ -327,6 +399,12 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         CO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                CO.setTextColor(Color.RED);
+                NO2.setTextColor(Color.BLACK);
+                O3.setTextColor(Color.BLACK);
+                PM25.setTextColor(Color.BLACK);
+                SO2.setTextColor(Color.BLACK);
+                TEMP.setTextColor(Color.BLACK);
                 changeFragment(0);
             }
         });
@@ -335,6 +413,12 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         NO2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                CO.setTextColor(Color.BLACK);
+                NO2.setTextColor(Color.RED);
+                O3.setTextColor(Color.BLACK);
+                PM25.setTextColor(Color.BLACK);
+                SO2.setTextColor(Color.BLACK);
+                TEMP.setTextColor(Color.BLACK);
                 changeFragment(1);
             }
         });
@@ -343,6 +427,12 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         O3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                CO.setTextColor(Color.BLACK);
+                NO2.setTextColor(Color.BLACK);
+                O3.setTextColor(Color.RED);
+                PM25.setTextColor(Color.BLACK);
+                SO2.setTextColor(Color.BLACK);
+                TEMP.setTextColor(Color.BLACK);
                 changeFragment(2);
             }
         });
@@ -351,6 +441,12 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         PM25.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                CO.setTextColor(Color.BLACK);
+                NO2.setTextColor(Color.BLACK);
+                O3.setTextColor(Color.BLACK);
+                PM25.setTextColor(Color.RED);
+                SO2.setTextColor(Color.BLACK);
+                TEMP.setTextColor(Color.BLACK);
                 changeFragment(3);
             }
         });
@@ -359,6 +455,12 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         SO2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                CO.setTextColor(Color.BLACK);
+                NO2.setTextColor(Color.BLACK);
+                O3.setTextColor(Color.BLACK);
+                PM25.setTextColor(Color.BLACK);
+                SO2.setTextColor(Color.RED);
+                TEMP.setTextColor(Color.BLACK);
                 changeFragment(4);
             }
         });
@@ -367,6 +469,12 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         TEMP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                CO.setTextColor(Color.BLACK);
+                NO2.setTextColor(Color.BLACK);
+                O3.setTextColor(Color.BLACK);
+                PM25.setTextColor(Color.BLACK);
+                SO2.setTextColor(Color.BLACK);
+                TEMP.setTextColor(Color.RED);
                 changeFragment(5);
             }
         });

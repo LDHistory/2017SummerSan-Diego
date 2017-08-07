@@ -76,7 +76,7 @@ public class O3 extends Fragment {
 
         YAxis leftAxis = o3Chart.getAxisLeft();
         leftAxis.setTextColor(Color.WHITE);
-        leftAxis.setAxisMaximum(300f);
+        leftAxis.setAxisMaximum(605f);
         leftAxis.setAxisMinimum(0f);
         leftAxis.setDrawGridLines(true);
 

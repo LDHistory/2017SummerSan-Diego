@@ -76,7 +76,7 @@ public class TEMP extends Fragment {
 
         YAxis leftAxis = tempChart.getAxisLeft();
         leftAxis.setTextColor(Color.WHITE);
-        leftAxis.setAxisMaximum(300f);
+        leftAxis.setAxisMaximum(100f);
         leftAxis.setAxisMinimum(0f);
         leftAxis.setDrawGridLines(true);
 
