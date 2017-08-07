@@ -377,9 +377,12 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         TabHost tabHost1 = (TabHost)view.findViewById(R.id.tabHost1);
         tabHost1.setup();
 
-        TabHost.TabSpec spec3 = tabHost1.newTabSpec("Air")
-                .setContent(R.id.tab3).setIndicator("Air");
+        TabHost.TabSpec spec3 = tabHost1.newTabSpec("Realtime AQI")
+                .setContent(R.id.tab3).setIndicator("Realtime AQI");
         tabHost1.addTab(spec3);
+        TabHost.TabSpec spec5 = tabHost1.newTabSpec("Standard AQI")
+                .setContent(R.id.tab5).setIndicator("Standard AQI");
+        tabHost1.addTab(spec5);
         TabHost.TabSpec spec4 = tabHost1.newTabSpec("Heart")
                 .setContent(R.id.tab4).setIndicator("Heart");
         tabHost1.addTab(spec4);
