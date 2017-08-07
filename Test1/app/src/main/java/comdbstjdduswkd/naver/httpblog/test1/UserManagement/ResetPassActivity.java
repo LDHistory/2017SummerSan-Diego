@@ -47,22 +47,15 @@ public class ResetPassActivity extends AppCompatActivity {
                 if (!CheckCode.getText().toString().equals("") && !NewPassword.getText().toString().equals("")
                         && !ConfirmPass.getText().toString().equals("")) {
                     if (NewPassword.getText().toString().equals(ConfirmPass.getText().toString())) {
-                        if (!HttpIDCheck()) {
-                            Intent main = new Intent(ResetPassActivity.this, LoginActivity.class);
-                            startActivity(main);
-                            Toast.makeText(ResetPassActivity.this, "Successfully change your password!", Toast.LENGTH_LONG).show();
-                            finish();
+                            HttpIDCheck();
                         }
-                    } else
-                        Toast.makeText(ResetPassActivity.this, "Please, Check your Confirm Password.", Toast.LENGTH_LONG).show();
                 }else
                     Toast.makeText(ResetPassActivity.this, "Please, Write all information.", Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    public boolean HttpIDCheck() {
-        boolean check = false;
+    public void HttpIDCheck() {
         try {
             //--------------------------
             //   URL 설정하고 접속하기
@@ -104,19 +97,22 @@ public class ResetPassActivity extends AppCompatActivity {
             try {
                 JSONObject jsonObject = new JSONObject(SendResult);
                 if (jsonObject.getString("status").equals("true")) {
-                    check = true;
+                    Intent main = new Intent(ResetPassActivity.this, LoginActivity.class);
+                    startActivity(main);
+                    Toast.makeText(ResetPassActivity.this, "Successfully change your password!", Toast.LENGTH_LONG).show();
+                    finish();
                 }else {
                     Toast.makeText(ResetPassActivity.this, "Please, Check your code and Password.", Toast.LENGTH_LONG).show();
-                    check = false;
                 }
             } catch (JSONException e) {
+                Toast.makeText(ResetPassActivity.this, "Server connection error!", Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             }
         } catch (MalformedURLException e) {
+            Toast.makeText(ResetPassActivity.this, "Server connection error!", Toast.LENGTH_LONG).show();
             //
         } catch (IOException e) {
-            //
+            Toast.makeText(ResetPassActivity.this, "Server connection error!", Toast.LENGTH_LONG).show();
         } // try
-        return check;
     }
 }

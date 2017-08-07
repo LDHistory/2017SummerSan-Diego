@@ -115,7 +115,7 @@ public class ResetActivity extends AppCompatActivity {
                     startActivity(setpass);
                     finish();
                 }else if(jsonObject.getString("status").equals("false")){
-                    Toast.makeText(ResetActivity.this, "This email dosen't exist.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ResetActivity.this, "This email doesn't exist.", Toast.LENGTH_LONG).show();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

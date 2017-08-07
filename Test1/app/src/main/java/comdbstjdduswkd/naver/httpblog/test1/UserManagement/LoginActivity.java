@@ -171,7 +171,7 @@ public class LoginActivity extends AppCompatActivity {
                 Intent startup = new Intent(LoginActivity.this, MainActivity.class);
                 startup.putExtra("ID",ID);
                 startActivity(startup);
-            }else{
+            }else if(jsonObject.getString("status").equals("false")){
                 Toast.makeText(this, "Check your ID or Password !", Toast.LENGTH_SHORT).show();
             }
             //((TextView)(findViewById(R.id.text_result))).setText(myResult);
@@ -182,7 +182,7 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
             //
         } catch(Exception e){
-            Toast.makeText(this, "오류 발생", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Server connection error!", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
     }
