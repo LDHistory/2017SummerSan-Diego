@@ -67,6 +67,8 @@ public class MainActivity extends AppCompatActivity
     FragmentManager manager = getFragmentManager();
     RealTimeActivity real;
     HistoryActivity history;
+    LoginActivity login;
+
     CO cofragment;
     NO2 no2fragment;
     O3 o3fragment;
@@ -134,6 +136,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         real = new RealTimeActivity();
         history = new HistoryActivity();
+        login = new LoginActivity();
 
         cofragment = new CO();
         no2fragment = new NO2();
@@ -447,6 +450,9 @@ public class MainActivity extends AppCompatActivity
                         mDate = new Date(mNow);
                         wrapObject.put("apptime", mFormat.format(mDate));
 
+                        //Add user number
+                        wrapObject.put("user_num", login.usernum);
+
                         String jsonString = wrapObject.toString();
                         Log.v("json String print",""+jsonString);
                         jsonTransfer.execute("http://teamb-iot.calit2.net/slim-api/receive-air-data","["+jsonString+"]");
@@ -507,6 +513,26 @@ public class MainActivity extends AppCompatActivity
                 Log.e("hr detect",""+hr);
                 real.setHeart(hr);
                 real.addHEntry(hr);
+
+                //Send hr value to server
+                JsonTransfer jsonTransfer = new JsonTransfer();
+                JSONObject wrapObject = new JSONObject();
+                try {
+                    wrapObject.put("huser_num", login.usernum);
+                    wrapObject.put("macaddress", "00:22:D0:9C:F9:8E");
+                    wrapObject.put("heart_rate", hr);
+
+                    //Add real time year month date
+                    mNow = System.currentTimeMillis();
+                    mDate = new Date(mNow);
+                    wrapObject.put("appdate", mFormat.format(mDate));
+
+                    String jsonString = wrapObject.toString();
+                    Log.e("heart_test", jsonString);
+                    jsonTransfer.execute("http://teamb-iot.calit2.net/slim-api/receive-heart-data","["+jsonString+"]");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
                 //dataFragPolar.settvHR(Integer.toString(hr));
             }else if (PolarBleService.ACTION_BATTERY_DATA_AVAILABLE.equals(action)) {

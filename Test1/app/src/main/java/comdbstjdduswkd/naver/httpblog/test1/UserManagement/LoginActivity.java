@@ -37,6 +37,8 @@ public class LoginActivity extends AppCompatActivity {
     private CheckBox save;
     private String ID,PASS, status;
 
+    public static int usernum;
+
     SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
 
@@ -163,6 +165,8 @@ public class LoginActivity extends AppCompatActivity {
             status = builder.toString();                       // 전송결과를 전역 변수에 저장
             Log.e("ㅅㅅㅅㅅ",""+status);
             JSONObject jsonObject = new JSONObject(status);
+            usernum = jsonObject.getInt("num");
+            Log.e("test", "" + usernum);
             if(jsonObject.getString("status").equals("true")){
                 Intent startup = new Intent(LoginActivity.this, MainActivity.class);
                 startup.putExtra("ID",ID);
