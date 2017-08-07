@@ -118,7 +118,6 @@ public class ResetActivity extends AppCompatActivity {
                     Toast.makeText(ResetActivity.this, "This email dosen't exist.", Toast.LENGTH_LONG).show();
                 }
             } catch (JSONException e) {
-                Log.e("test", "1234");
                 e.printStackTrace();
             }
         } catch (MalformedURLException e) {

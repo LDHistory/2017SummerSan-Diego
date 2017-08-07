@@ -45,6 +45,8 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.StringTokenizer;
 
 import comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.CO;
@@ -80,6 +82,10 @@ public class MainActivity extends AppCompatActivity
     SharedPreferences.Editor editor;
     String saveaddr;
     boolean checkPW;
+
+    Date mDate;
+    long mNow;
+    SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
     private final String TAG = "YourActivity";
     PolarBleService mPolarBleService;
@@ -431,7 +437,16 @@ public class MainActivity extends AppCompatActivity
                         pm25fragment.addEntryPM25(wrapObject);
                         so2fragment.addEntrySO2(wrapObject);
                         tempfragemnt.addEntryTEMP(wrapObject);
+                        //Add realtime location value
+                        wrapObject.put("latitude", real.latitude);
+                        wrapObject.put("longitude", real.longitude);
                         //send AQI data(jsonObject) to server
+
+                        //Add real time year month date
+                        mNow = System.currentTimeMillis();
+                        mDate = new Date(mNow);
+                        wrapObject.put("apptime", mFormat.format(mDate));
+
                         String jsonString = wrapObject.toString();
                         Log.v("json String print",""+jsonString);
                         jsonTransfer.execute("http://teamb-iot.calit2.net/slim-api/receive-air-data","["+jsonString+"]");

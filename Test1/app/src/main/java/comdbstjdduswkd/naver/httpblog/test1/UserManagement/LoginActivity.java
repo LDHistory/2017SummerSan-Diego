@@ -110,6 +110,8 @@ public class LoginActivity extends AppCompatActivity {
                 }else {
                     editor.clear();
                     editor.commit();
+                    ID = id.getText().toString();
+                    PASS = pass.getText().toString();
                     if(ID.equals("") || PASS.equals("")){
                         Toast.makeText(LoginActivity.this, "Fill out your ID or Password!", Toast.LENGTH_SHORT).show();
                     }else {

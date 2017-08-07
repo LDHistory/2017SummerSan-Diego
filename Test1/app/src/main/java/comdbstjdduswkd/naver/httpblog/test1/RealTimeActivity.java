@@ -111,6 +111,8 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     View view;
     FragmentManager manager;
 
+    static double latitude, longitude;
+
     CO fragmentco;
     NO2 fragmentno2;
     O3 fragmento3;
@@ -788,6 +790,9 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                     Location location = new Location("");
                     location.setLatitude(LikelyLatLngs[0].latitude);
                     location.setLongitude(LikelyLatLngs[0].longitude);
+
+                    latitude = LikelyLatLngs[0].latitude;
+                    longitude = LikelyLatLngs[0].longitude;
 
                     setCurrentLocation(location, LikelyPlaceNames[0], LikelyAddresses[0]);
                 }
