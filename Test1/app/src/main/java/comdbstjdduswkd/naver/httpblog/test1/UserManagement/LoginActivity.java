@@ -165,12 +165,13 @@ public class LoginActivity extends AppCompatActivity {
             status = builder.toString();                       // 전송결과를 전역 변수에 저장
             Log.e("ㅅㅅㅅㅅ",""+status);
             JSONObject jsonObject = new JSONObject(status);
-            usernum = jsonObject.getInt("num");
-            Log.e("test", "" + usernum);
             if(jsonObject.getString("status").equals("true")){
+                usernum = jsonObject.getInt("num");
+                Log.e("test", "" + usernum);
                 Intent startup = new Intent(LoginActivity.this, MainActivity.class);
                 startup.putExtra("ID",ID);
                 startActivity(startup);
+                Log.e("test", "success");
             }else if(jsonObject.getString("status").equals("false")){
                 Toast.makeText(this, "Check your ID or Password !", Toast.LENGTH_SHORT).show();
             }

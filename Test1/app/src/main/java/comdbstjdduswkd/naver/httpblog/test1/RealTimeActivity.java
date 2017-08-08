@@ -902,6 +902,11 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                     location.setLatitude(LikelyLatLngs[0].latitude);
                     location.setLongitude(LikelyLatLngs[0].longitude);
 
+                    Log.e("test1", "" + LikelyLatLngs[0].latitude);
+                    Log.e("test1", "" + LikelyLatLngs[0].longitude);
+                    Log.e("test2", "" + LikelyLatLngs[1].latitude);
+                    Log.e("test2", "" + LikelyLatLngs[1].longitude);
+
                     latitude = LikelyLatLngs[0].latitude;
                     longitude = LikelyLatLngs[0].longitude;
 
