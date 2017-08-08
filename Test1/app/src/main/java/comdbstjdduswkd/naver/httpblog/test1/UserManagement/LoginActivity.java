@@ -144,6 +144,7 @@ public class LoginActivity extends AppCompatActivity {
             //--------------------------
             //   서버로 값 전송 (URL Tag protocol)
             //--------------------------
+
             StringBuffer buffer = new StringBuffer();
             buffer.append("email").append("=").append(ID).append("&");       // php 변수에 값 대입
             buffer.append("password").append("=").append(PASS); // php 변수 앞에 '$' 붙이지 않는다

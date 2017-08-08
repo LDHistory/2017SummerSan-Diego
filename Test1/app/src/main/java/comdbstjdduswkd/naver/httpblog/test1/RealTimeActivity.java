@@ -1,4 +1,5 @@
 package comdbstjdduswkd.naver.httpblog.test1;
+
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -70,6 +71,7 @@ import com.google.android.gms.location.places.PlaceLikelihood;
 import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
 */
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
@@ -120,8 +122,15 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     SO2 fragmentso2;
     TEMP fragmenttemp;
 
+    MainActivity main;
+
+    ArrayList<String> ArrList;
+    String bluetoothname[];
+    int count;
+    double lat[], lgt[];
+
     private LineChart coChart, hChart;
-    
+
     private GoogleMap googleMap = null;
     private MapView mapView = null;
 
@@ -133,13 +142,16 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     int min = 999;
 
     public void setCurrentLocation(Location location, String markerTitle, String markerSnippet) {
-        if ( currentMarker != null ) {
+        if (currentMarker != null) {
             currentMarker.remove();
         }
         this.googleMap.clear();
-        if ( location != null) {
+
+        setmarker();
+
+        if (location != null) {
             //현재위치의 위도 경도 가져옴
-            LatLng currentLocation = new LatLng( location.getLatitude(), location.getLongitude());
+            LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
             MarkerOptions markerOptions = new MarkerOptions();
             CircleOptions circle1KM = new CircleOptions().center(currentLocation) //원점
@@ -169,36 +181,82 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_LOCATION));
     }
 
-    public void setHeart(int bit){
-        try{
+    public void setmarker() {
+        if (main.readlocation != null) {
+            Log.i("readMessage", "" + main.readlocation);
+
+            ArrList = new ArrayList<String>();               //어레이 리스트 선언
+            bluetoothname = new String[50];
+            lat = new double[50];
+            lgt = new double[50];
+
+            JSONObject jObject = null;               //JSONData 문자열
+            try {
+                jObject = new JSONObject(main.readlocation);
+
+                JSONObject bluetoothcount = jObject.getJSONObject("count");
+                count = bluetoothcount.getInt("count(*)");
+
+                JSONArray location = jObject.getJSONArray("user_data");
+                for (int i = 0; i < location.length(); i++) {
+                    ArrList.add(location.getJSONObject(i).getString("lname"));
+                    ArrList.add(location.getJSONObject(i).getString("latitude"));
+                    ArrList.add(location.getJSONObject(i).getString("longitude"));
+
+                }
+                for (int j = 0; j < location.length(); j++) {
+                    Log.i("read", "" + String.valueOf(location.getJSONObject(j).getString("lname")));
+                    bluetoothname[j] = String.valueOf(location.getJSONObject(j).getString("lname"));
+                    Log.i("read", "" + String.valueOf(location.getJSONObject(j).getDouble("latitude")));
+                    lat[j] = location.getJSONObject(j).getDouble("latitude");
+                    Log.i("read", "" + String.valueOf(location.getJSONObject(j).getDouble("longitude")));
+                    lgt[j] = location.getJSONObject(j).getDouble("longitude");
+                }
+                Log.i("read", "" + count);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            for (int number = 0; number < count; number++) {
+                // 1. 마커 옵션 설정 (만드는 과정)
+                MarkerOptions makerOptions = new MarkerOptions();
+                makerOptions // LatLng에 대한 어레이를 만들어서 이용할 수도 있다.
+                        .position(new LatLng(lat[number], lgt[number]))
+                        .title(bluetoothname[number]); // 타이틀.
+                // 2. 마커 생성 (마커를 나타냄)
+                this.googleMap.addMarker(makerOptions);
+            }
+        }
+    }
+
+    public void setHeart(int bit) {
+        try {
             heartText.setText("" + bit);
             heart.setImageResource(R.drawable.human_nomal2);
 
             //set max, min
-            if(max <= bit) {
+            if (max <= bit) {
                 max = bit;
                 maxhert.setText("" + max);
             }
-            if(min >= bit){
+            if (min >= bit) {
                 min = bit;
                 minheart.setText("" + min);
             }
 
 
             //heartrate state image
-            if(bit >= 100){
+            if (bit >= 100) {
                 heart.setImageResource(R.drawable.human_fast2);
                 Glide.with(this).load(R.raw.heart_fast).into(heartBitget);
-            }
-            else if(bit >= 60){
+            } else if (bit >= 60) {
                 heart.setImageResource(R.drawable.human_nomal2);
                 Glide.with(this).load(R.raw.heart_normal).into(heartBitget);
-            }
-            else {
+            } else {
                 heart.setImageResource(R.drawable.human_slow2);
                 Glide.with(this).load(R.raw.heart_normal).into(heartBitget);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -218,7 +276,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                 }
 
                 //data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 40) + 30f), 0);
-                if(heartText != null) {
+                if (heartText != null) {
                     data.addEntry(new Entry(set.getEntryCount(), val), 0);
                     data.notifyDataChanged();
                 }
@@ -232,86 +290,86 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
 
                 hChart.moveViewToX(data.getEntryCount());
             }
-        }catch (Exception e){
-            Log.e("setHeart","value error");
+        } catch (Exception e) {
+            Log.e("setHeart", "value error");
             e.printStackTrace();
         }
     }
 
-    public void setAQI(JSONObject data){
-        try{
+    public void setAQI(JSONObject data) {
+        try {
             CO.setText(data.getString("CO"));
-            if(Float.parseFloat(data.getString("CO")) >= 0 && Float.parseFloat(data.getString("CO")) <=4.4)
+            if (Float.parseFloat(data.getString("CO")) >= 0 && Float.parseFloat(data.getString("CO")) <= 4.4)
                 coimage.setImageResource(R.drawable.co_good);
-            else if(Float.parseFloat(data.getString("CO")) >= 4.5 && Float.parseFloat(data.getString("CO")) <=9.4)
+            else if (Float.parseFloat(data.getString("CO")) >= 4.5 && Float.parseFloat(data.getString("CO")) <= 9.4)
                 coimage.setImageResource(R.drawable.co_moderate);
-            else if(Float.parseFloat(data.getString("CO")) >= 9.5 && Float.parseFloat(data.getString("CO")) <=12.4)
+            else if (Float.parseFloat(data.getString("CO")) >= 9.5 && Float.parseFloat(data.getString("CO")) <= 12.4)
                 coimage.setImageResource(R.drawable.co_usg);
-            else if(Float.parseFloat(data.getString("CO")) >= 12.5 && Float.parseFloat(data.getString("CO")) <=15.4)
+            else if (Float.parseFloat(data.getString("CO")) >= 12.5 && Float.parseFloat(data.getString("CO")) <= 15.4)
                 coimage.setImageResource(R.drawable.co_unhealthy);
-            else if(Float.parseFloat(data.getString("CO")) >= 15.5 && Float.parseFloat(data.getString("CO")) <=30.4)
+            else if (Float.parseFloat(data.getString("CO")) >= 15.5 && Float.parseFloat(data.getString("CO")) <= 30.4)
                 coimage.setImageResource(R.drawable.co_vu);
-            else if(Float.parseFloat(data.getString("CO")) >= 30.5)
+            else if (Float.parseFloat(data.getString("CO")) >= 30.5)
                 coimage.setImageResource(R.drawable.co_hazardous);
 
             NO2.setText(data.getString("NO2"));
-            if(Float.parseFloat(data.getString("NO2")) >= 0 && Float.parseFloat(data.getString("NO2")) <=53)
+            if (Float.parseFloat(data.getString("NO2")) >= 0 && Float.parseFloat(data.getString("NO2")) <= 53)
                 no2image.setImageResource(R.drawable.no2_good);
-            else if(Float.parseFloat(data.getString("NO2")) >= 54 && Float.parseFloat(data.getString("NO2")) <=100)
+            else if (Float.parseFloat(data.getString("NO2")) >= 54 && Float.parseFloat(data.getString("NO2")) <= 100)
                 no2image.setImageResource(R.drawable.no2_moderate);
-            else if(Float.parseFloat(data.getString("NO2")) >= 101 && Float.parseFloat(data.getString("NO2")) <=360)
+            else if (Float.parseFloat(data.getString("NO2")) >= 101 && Float.parseFloat(data.getString("NO2")) <= 360)
                 no2image.setImageResource(R.drawable.no2_usg);
-            else if(Float.parseFloat(data.getString("NO2")) >= 361 && Float.parseFloat(data.getString("NO2")) <=649)
+            else if (Float.parseFloat(data.getString("NO2")) >= 361 && Float.parseFloat(data.getString("NO2")) <= 649)
                 no2image.setImageResource(R.drawable.no2_unhealthy);
-            else if(Float.parseFloat(data.getString("NO2")) >= 650 && Float.parseFloat(data.getString("NO2")) <=1249)
+            else if (Float.parseFloat(data.getString("NO2")) >= 650 && Float.parseFloat(data.getString("NO2")) <= 1249)
                 no2image.setImageResource(R.drawable.no2_vu);
-            else if(Float.parseFloat(data.getString("NO2")) >= 1250)
+            else if (Float.parseFloat(data.getString("NO2")) >= 1250)
                 no2image.setImageResource(R.drawable.no2_hazardous);
 
             SO2.setText(data.getString("SO2"));
-            if(Float.parseFloat(data.getString("SO2")) >= 0 && Float.parseFloat(data.getString("SO2")) <=35)
+            if (Float.parseFloat(data.getString("SO2")) >= 0 && Float.parseFloat(data.getString("SO2")) <= 35)
                 so2image.setImageResource(R.drawable.so2_good);
-            else if(Float.parseFloat(data.getString("SO2")) >= 36 && Float.parseFloat(data.getString("SO2")) <=75)
+            else if (Float.parseFloat(data.getString("SO2")) >= 36 && Float.parseFloat(data.getString("SO2")) <= 75)
                 so2image.setImageResource(R.drawable.so2_moderate);
-            else if(Float.parseFloat(data.getString("SO2")) >= 76 && Float.parseFloat(data.getString("SO2")) <=185)
+            else if (Float.parseFloat(data.getString("SO2")) >= 76 && Float.parseFloat(data.getString("SO2")) <= 185)
                 so2image.setImageResource(R.drawable.so2_usg);
-            else if(Float.parseFloat(data.getString("SO2")) >= 186 && Float.parseFloat(data.getString("SO2")) <=304)
+            else if (Float.parseFloat(data.getString("SO2")) >= 186 && Float.parseFloat(data.getString("SO2")) <= 304)
                 so2image.setImageResource(R.drawable.so2_unhealthy);
-            else if(Float.parseFloat(data.getString("SO2")) >= 305 && Float.parseFloat(data.getString("SO2")) <=604)
+            else if (Float.parseFloat(data.getString("SO2")) >= 305 && Float.parseFloat(data.getString("SO2")) <= 604)
                 so2image.setImageResource(R.drawable.so2_vu);
-            else if(Float.parseFloat(data.getString("SO2")) >= 605)
+            else if (Float.parseFloat(data.getString("SO2")) >= 605)
                 so2image.setImageResource(R.drawable.so2_hazardous);
 
             O3.setText(data.getString("O3"));
-            if(Float.parseFloat(data.getString("O3")) >= 0 && Float.parseFloat(data.getString("O3")) <=54)
+            if (Float.parseFloat(data.getString("O3")) >= 0 && Float.parseFloat(data.getString("O3")) <= 54)
                 o3image.setImageResource(R.drawable.o3_good);
-            else if(Float.parseFloat(data.getString("O3")) >= 55 && Float.parseFloat(data.getString("O3")) <=70)
+            else if (Float.parseFloat(data.getString("O3")) >= 55 && Float.parseFloat(data.getString("O3")) <= 70)
                 o3image.setImageResource(R.drawable.o3_moderate);
-            else if(Float.parseFloat(data.getString("O3")) >= 71 && Float.parseFloat(data.getString("O3")) <=85)
+            else if (Float.parseFloat(data.getString("O3")) >= 71 && Float.parseFloat(data.getString("O3")) <= 85)
                 o3image.setImageResource(R.drawable.o3_usg);
-            else if(Float.parseFloat(data.getString("O3")) >= 86 && Float.parseFloat(data.getString("O3")) <=105)
+            else if (Float.parseFloat(data.getString("O3")) >= 86 && Float.parseFloat(data.getString("O3")) <= 105)
                 o3image.setImageResource(R.drawable.o3_unhealthy);
-            else if(Float.parseFloat(data.getString("O3")) >= 106 && Float.parseFloat(data.getString("O3")) <=200)
+            else if (Float.parseFloat(data.getString("O3")) >= 106 && Float.parseFloat(data.getString("O3")) <= 200)
                 o3image.setImageResource(R.drawable.o3_vu);
-            else if(Float.parseFloat(data.getString("O3")) >= 201)
+            else if (Float.parseFloat(data.getString("O3")) >= 201)
                 o3image.setImageResource(R.drawable.o3_hazardous);
 
             PM25.setText(data.getString("PM25"));
-            if(Float.parseFloat(data.getString("PM25")) >= 0 && Float.parseFloat(data.getString("PM25")) <=12)
+            if (Float.parseFloat(data.getString("PM25")) >= 0 && Float.parseFloat(data.getString("PM25")) <= 12)
                 pm25image.setImageResource(R.drawable.pm25_good);
-            else if(Float.parseFloat(data.getString("PM25")) >= 12.1 && Float.parseFloat(data.getString("PM25")) <=35.4)
+            else if (Float.parseFloat(data.getString("PM25")) >= 12.1 && Float.parseFloat(data.getString("PM25")) <= 35.4)
                 pm25image.setImageResource(R.drawable.pm25_moderate);
-            else if(Float.parseFloat(data.getString("PM25")) >= 35.5 && Float.parseFloat(data.getString("PM25")) <=55.4)
+            else if (Float.parseFloat(data.getString("PM25")) >= 35.5 && Float.parseFloat(data.getString("PM25")) <= 55.4)
                 pm25image.setImageResource(R.drawable.pm25_usg);
-            else if(Float.parseFloat(data.getString("PM25")) >= 55.5 && Float.parseFloat(data.getString("PM25")) <=150.4)
+            else if (Float.parseFloat(data.getString("PM25")) >= 55.5 && Float.parseFloat(data.getString("PM25")) <= 150.4)
                 pm25image.setImageResource(R.drawable.pm25_unhealthy);
-            else if(Float.parseFloat(data.getString("PM25")) >= 150.5 && Float.parseFloat(data.getString("PM25")) <=250.4)
+            else if (Float.parseFloat(data.getString("PM25")) >= 150.5 && Float.parseFloat(data.getString("PM25")) <= 250.4)
                 pm25image.setImageResource(R.drawable.pm25_vu);
-            else if(Float.parseFloat(data.getString("PM25")) >= 250.5)
+            else if (Float.parseFloat(data.getString("PM25")) >= 250.5)
                 pm25image.setImageResource(R.drawable.pm25_hazardous);
 
             TEMP.setText(data.getString("temp"));
-        } catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -322,6 +380,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.realtime_layout, container, false);
         manager = getFragmentManager();
+        main = new MainActivity();
 
         fragmentco = new CO();
         fragmentno2 = new NO2();
@@ -340,7 +399,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         pm25image = (ImageView) view.findViewById(R.id.pm25image);
         tempimage = (ImageView) view.findViewById(R.id.tempimage);
 
-        mapView = (MapView)view.findViewById(R.id.map);
+        mapView = (MapView) view.findViewById(R.id.map);
         mapView.getMapAsync(this);
         /* 자동완성기능 보류
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
@@ -363,7 +422,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         });
 */
         //하단 TabHost
-        TabHost tabHost = (TabHost)view.findViewById(R.id.tabHost2);
+        TabHost tabHost = (TabHost) view.findViewById(R.id.tabHost2);
         tabHost.setup();
 
         TabHost.TabSpec spec1 = tabHost.newTabSpec("Map")
@@ -374,7 +433,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         tabHost.addTab(spec2);
 
         //상단 TabHost
-        TabHost tabHost1 = (TabHost)view.findViewById(R.id.tabHost1);
+        TabHost tabHost1 = (TabHost) view.findViewById(R.id.tabHost1);
         tabHost1.setup();
 
         TabHost.TabSpec spec3 = tabHost1.newTabSpec("Realtime AQI")
@@ -388,9 +447,9 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         tabHost1.addTab(spec4);
 
         //새로 추가된 부분
-        heartText = (TextView)view.findViewById(R.id.heartValue);
-        heart =  (ImageView)view.findViewById(R.id.heart);
-        heartbit = (ImageView)view.findViewById(R.id.heartbit);
+        heartText = (TextView) view.findViewById(R.id.heartValue);
+        heart = (ImageView) view.findViewById(R.id.heart);
+        heartbit = (ImageView) view.findViewById(R.id.heartbit);
         //GIF File Object
         heartTartget = new GlideDrawableImageViewTarget(heart);
         heartBitget = new GlideDrawableImageViewTarget(heartbit);
@@ -398,7 +457,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         heart.setImageResource(R.drawable.human_nomal2);
         Glide.with(this).load(R.raw.heart_stop).into(heartBitget);
 
-        CO = (TextView)view.findViewById(R.id.co_text);
+        CO = (TextView) view.findViewById(R.id.co_text);
         CO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -412,7 +471,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
             }
         });
 
-        NO2 = (TextView)view.findViewById(R.id.no2_text);
+        NO2 = (TextView) view.findViewById(R.id.no2_text);
         NO2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -426,7 +485,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
             }
         });
 
-        O3 = (TextView)view.findViewById(R.id.o3_text);
+        O3 = (TextView) view.findViewById(R.id.o3_text);
         O3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -440,7 +499,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
             }
         });
 
-        PM25 = (TextView)view.findViewById(R.id.pm25);
+        PM25 = (TextView) view.findViewById(R.id.pm25);
         PM25.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -454,7 +513,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
             }
         });
 
-        SO2 = (TextView)view.findViewById(R.id.so2_text);
+        SO2 = (TextView) view.findViewById(R.id.so2_text);
         SO2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -468,7 +527,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
             }
         });
 
-        TEMP = (TextView)view.findViewById(R.id.temp_text);
+        TEMP = (TextView) view.findViewById(R.id.temp_text);
         TEMP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -691,7 +750,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     public void onStop() {
         super.onStop();
         mapView.onStop();
-        if ( googleApiClient != null && googleApiClient.isConnected())
+        if (googleApiClient != null && googleApiClient.isConnected())
             googleApiClient.disconnect();
     }
 
@@ -705,7 +764,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     public void onResume() {
         super.onResume();
         mapView.onResume();
-        if ( googleApiClient != null)
+        if (googleApiClient != null)
             googleApiClient.connect();
     }
 
@@ -713,7 +772,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     public void onPause() {
         super.onPause();
         mapView.onPause();
-        if ( googleApiClient != null && googleApiClient.isConnected()) {
+        if (googleApiClient != null && googleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
             googleApiClient.disconnect();
         }
@@ -725,8 +784,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         //액티비티가 처음 생성될 때 실행되는 함수
         MapsInitializer.initialize(getActivity().getApplicationContext());
 
-        if(mapView != null)
-        {
+        if (mapView != null) {
             mapView.onCreate(savedInstanceState);
         }
     }
@@ -750,24 +808,23 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
             // 사용권한체크
             int hasFineLocationPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
 
-            if ( hasFineLocationPermission == PackageManager.PERMISSION_DENIED) {
+            if (hasFineLocationPermission == PackageManager.PERMISSION_DENIED) {
                 //사용권한이 없을경우
                 //권한 재요청
                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
             } else {
                 //사용권한이 있는경우
-                if ( googleApiClient == null) {
+                if (googleApiClient == null) {
                     buildGoogleApiClient();
                 }
 
-                if ( ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-                {
+                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     googleMap.setMyLocationEnabled(true);
                 }
             }
         } else {
 
-            if ( googleApiClient == null) {
+            if (googleApiClient == null) {
                 buildGoogleApiClient();
             }
 
@@ -776,6 +833,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
 
 
     }
+
     private void buildGoogleApiClient() {
         googleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
@@ -797,7 +855,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if ( !checkLocationServicesStatus()) {
+        if (!checkLocationServicesStatus()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle("Disable Location Services");
             builder.setMessage("Location services are required to use the app.\n" +
@@ -811,7 +869,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                     startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE);
                 }
             });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     dialogInterface.cancel();
@@ -825,8 +883,8 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         locationRequest.setInterval(UPDATE_INTERVAL_MS);
         locationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_MS);
 
-        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if ( ActivityCompat.checkSelfPermission(getActivity(),
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(getActivity(),
                     Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
                 LocationServices.FusedLocationApi
@@ -844,11 +902,11 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
 
     @Override
     public void onConnectionSuspended(int cause) {
-        if ( cause ==  CAUSE_NETWORK_LOST )
+        if (cause == CAUSE_NETWORK_LOST)
             Log.e(TAG, "onConnectionSuspended(): Google Play services " +
                     "connection lost.  Cause: network lost.");
-        else if (cause == CAUSE_SERVICE_DISCONNECTED )
-            Log.e(TAG,"onConnectionSuspended():  Google Play services " +
+        else if (cause == CAUSE_SERVICE_DISCONNECTED)
+            Log.e(TAG, "onConnectionSuspended():  Google Play services " +
                     "connection lost.  Cause: service disconnected");
 
     }
@@ -902,18 +960,13 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                     location.setLatitude(LikelyLatLngs[0].latitude);
                     location.setLongitude(LikelyLatLngs[0].longitude);
 
-                    Log.e("test1", "" + LikelyLatLngs[0].latitude);
-                    Log.e("test1", "" + LikelyLatLngs[0].longitude);
-                    Log.e("test2", "" + LikelyLatLngs[1].latitude);
-                    Log.e("test2", "" + LikelyLatLngs[1].longitude);
-
                     latitude = LikelyLatLngs[0].latitude;
                     longitude = LikelyLatLngs[0].longitude;
 
                     setCurrentLocation(location, LikelyPlaceNames[0], LikelyAddresses[0]);
                 }
             });
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -923,16 +976,17 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         super.onLowMemory();
         mapView.onLowMemory();
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         mapView.onLowMemory();
 
-        if ( googleApiClient != null ) {
+        if (googleApiClient != null) {
             googleApiClient.unregisterConnectionCallbacks(this);
             googleApiClient.unregisterConnectionFailedListener(this);
 
-            if ( googleApiClient.isConnected()) {
+            if (googleApiClient.isConnected()) {
                 LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
                 googleApiClient.disconnect();
             }

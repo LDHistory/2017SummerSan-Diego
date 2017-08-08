@@ -2,6 +2,7 @@ package comdbstjdduswkd.naver.httpblog.test1.UserManagement;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -35,6 +37,8 @@ public class RegActivity extends AppCompatActivity {
 
     private Button RegSend, Regcancel, chkBtn;
     //private Spinner Year, Month, Day;
+    private EditText emailbox;
+    private TextView checkView;
     boolean checkflag;
     String email, pw, chkpw, fname, lname, regResult, IDcheckResult;
 
@@ -47,56 +51,33 @@ public class RegActivity extends AppCompatActivity {
         setContentView(R.layout.activity_reg);
 
         //+++++++++++++++++++Button Object++++++++++++++++++++++
-        chkBtn = (Button)findViewById(R.id.chkBtn);
         RegSend = (Button)findViewById(R.id.regsubmit);
         Regcancel = (Button)findViewById(R.id.regCancel);
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        /*
-        //+++++++++++++++++++Spinner Object++++++++++++++++++++++
-        Year = (Spinner)findViewById(R.id.year);
-        Month  = (Spinner)findViewById(R.id.month);
-        Day = (Spinner)findViewById(R.id.day);
-
-        final ArrayList<Integer> year = new ArrayList<>();
-        for(int i = 2016; i <= 2020; i++)
-            year.add(i);
-
-        final ArrayList<Integer> month = new ArrayList<>();
-        for(int j = 1; j <=12; j++)
-            month.add(j);
-
-        final ArrayList<Integer> day = new ArrayList<>();
-        for(int k = 1; k <= 31; k++)
-            day.add(k);
-
-        ArrayAdapter arrayYear, arrayMonth, arrayDay;
-        arrayYear = new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, year);
-        arrayMonth = new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, month);
-        arrayDay = new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, day);
-
-        Year.setAdapter(arrayYear);
-        Month.setAdapter(arrayMonth);
-        Day.setAdapter(arrayDay);
-        //++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        */
+        emailbox = (EditText)findViewById(R.id.inputemail);
+        checkView = (TextView)findViewById(R.id.checkView);
         //++++++++++++++++++++OnclickListner+++++++++++++++++++++++++
-        chkBtn.setOnClickListener(new View.OnClickListener(){
+        emailbox.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onClick(View v) {
-                checkflag = true;
-                email = ((EditText)findViewById(R.id.inputemail)).getText().toString();
-                if(!email.equals("")){
-                    if(!checkEmailFormat(email)){
-                        ((EditText)findViewById(R.id.inputemail)).setText("");
-                        Toast.makeText(RegActivity.this, "Please check E-mail format", Toast.LENGTH_SHORT).show();
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus){
+                    email = ((EditText)findViewById(R.id.inputemail)).getText().toString();
+                    if(!email.equals("")){
+                        if(!checkEmailFormat(email)){
+                            checkView.setText("Please check E-mail format");
+                            checkView.setTextColor(Color.parseColor("#FF0000"));
+                            checkflag = false;
+                        }else {
+                            HttpIDCheck();
+                        }
                     }else {
-                        HttpIDCheck();
-                        //if(IDcheckResult.equals(""))
+                        Toast.makeText(RegActivity.this, "Please check your E-mail", Toast.LENGTH_LONG).show();
+                        checkflag = false;
                     }
-                }else
-                    Toast.makeText(RegActivity.this, "Please check your E-mail", Toast.LENGTH_LONG).show();
+                }
             }
         });
+
         RegSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,7 +91,7 @@ public class RegActivity extends AppCompatActivity {
                 }else if(!pw.equals(chkpw)){
                     Toast.makeText(RegActivity.this, "Please check your password", Toast.LENGTH_LONG).show();
                 }else if(!checkflag){
-                    Toast.makeText(RegActivity.this, "Please click the CHECK button", Toast.LENGTH_LONG).show();
+                    Toast.makeText(RegActivity.this, "Please check your E-mail", Toast.LENGTH_LONG).show();
                 }else if(email.equals("") || pw.equals("") || fname.equals("") || !lname.equals("")){
                     Toast.makeText(RegActivity.this, "Please enter without empty spaces.", Toast.LENGTH_LONG).show();
                 }
@@ -166,10 +147,13 @@ public class RegActivity extends AppCompatActivity {
             try {
                 JSONObject jsonObject = new JSONObject(IDcheckResult);
                 if(jsonObject.getString("status").equals("true")){
-                    Toast.makeText(RegActivity.this, "You can use this E-mail :)", Toast.LENGTH_LONG).show();
+                    checkView.setTextColor(Color.parseColor("#1DDB16"));
+                    checkView.setText("Available E-mail :)");
+                    checkflag=true;
                 }else if(jsonObject.getString("status").equals("false")){
-                    Toast.makeText(RegActivity.this, "This E-mail is redundant!\n" +
-                            "you should use other E-mail", Toast.LENGTH_LONG).show();
+                    checkView.setTextColor(Color.parseColor("#FF0000"));
+                    checkView.setText("Duplicate! please enter another E-mail");
+                    checkflag=false;
                 }
                 //((TextView)(findViewById(R.id.text_result))).setText(myResult);
             }catch (JSONException e){

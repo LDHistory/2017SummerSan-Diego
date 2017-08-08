@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.StrictMode;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentActivity;
@@ -75,15 +76,19 @@ public class MainActivity extends AppCompatActivity
     PM25 pm25fragment;
     SO2 so2fragment;
     TEMP tempfragemnt;
-    String id,PWcheckResult;
+    String id, PWcheckResult;
+    public String jsonreadmessage;
 
-    int i=0;
+    int i = 0;
 
-    public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String MyPREFERENCES = "MyPrefs";
     SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
     String saveaddr;
     boolean checkPW;
+
+    public static int onlinestatus = 0;
+    public static String readlocation;
 
     Date mDate;
     long mNow;
@@ -91,8 +96,8 @@ public class MainActivity extends AppCompatActivity
 
     private final String TAG = "YourActivity";
     PolarBleService mPolarBleService;
-    String mpolarBleDeviceAddress = "00:22:D0:9C:F9:8E";	// your need to pass the address (주소를 전달해야한다.)
-    int batteryLevel=0;
+    String mpolarBleDeviceAddress = "00:22:D0:9C:F9:8E";    // your need to pass the address (주소를 전달해야한다.)
+    int batteryLevel = 0;
     // Intent request codes
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
     private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
@@ -115,12 +120,16 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Intent intent  = getIntent();
+        Intent intent = getIntent();
         id = intent.getStringExtra("ID");
-        Toast.makeText(this, ""+id, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "" + id, Toast.LENGTH_SHORT).show();
 
         //데이터 저장하기 위해 sharedpreferences 객체 구현
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
@@ -172,7 +181,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         //sharedpreferences
-        if(mBluetoothAdapter.isEnabled()) {
+        if (mBluetoothAdapter.isEnabled()) {
             saveaddr = sharedpreferences.getString(MyPREFERENCES, "null");
             if (!saveaddr.equals("null")) {
                 BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(saveaddr);
@@ -194,6 +203,7 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_CONNECT_DEVICE_SECURE:
@@ -229,6 +239,7 @@ public class MainActivity extends AppCompatActivity
                 }
         }
     }
+
     /**
      * Establish connection with other device
      *
@@ -246,6 +257,7 @@ public class MainActivity extends AppCompatActivity
         // Attempt to connect to the device
         mChatService.connect(device, secure);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -260,7 +272,7 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
-        if (id == R.id.Bt_connect && i==0) {
+        if (id == R.id.Bt_connect && i == 0) {
             i = 1;
             Toast.makeText(this, "Bluetooth is connected!!", Toast.LENGTH_SHORT).show();
             item.setIcon(R.drawable.bt_able);
@@ -274,7 +286,7 @@ public class MainActivity extends AppCompatActivity
                 // Otherwise, setup the chat session
             } else if (mChatService == null) {
                 saveaddr = sharedpreferences.getString(MyPREFERENCES, "null");
-                if(!saveaddr.equals("null")) {
+                if (!saveaddr.equals("null")) {
                     BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(saveaddr);
                     // Attempt to connect to the device
                     mChatService.connect(device, false);
@@ -283,10 +295,34 @@ public class MainActivity extends AppCompatActivity
                 //setupChat(); 보류
             }
             return true;
-        }else if(id == R.id.Bt_connect && i==1){
-            i=0;
-            if(mBluetoothAdapter.isEnabled()) {
-                mBluetoothAdapter.disable();
+        } else if (id == R.id.Bt_connect && i == 1) {
+            i = 0;
+            if (mBluetoothAdapter.isEnabled()) {
+                //mBluetoothAdapter.disable();
+                mChatService.connectionLost();
+                try {
+                    onlinestatus = 0;
+                    JsonTransfer jsonTransfer = new JsonTransfer();
+                    JSONObject wrapObject = new JSONObject(jsonreadmessage);
+
+                    //Add realtime location value
+                    wrapObject.put("latitude", real.latitude);
+                    wrapObject.put("longitude", real.longitude);
+
+                    //Add real time year month date
+                    mNow = System.currentTimeMillis();
+                    mDate = new Date(mNow);
+                    wrapObject.put("apptime", mFormat.format(mDate));
+
+                    //Add user number
+                    wrapObject.put("user_num", login.usernum);
+                    wrapObject.put("online_state", onlinestatus);
+                    String jsonString = wrapObject.toString();
+                    Log.i("onlinestatus2", jsonString);
+                    jsonTransfer.execute("http://teamb-iot.calit2.net/slim-api/receive-air-data", "[" + jsonString + "]");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 Toast.makeText(this, "Disconnect the Bluetooth connection..", Toast.LENGTH_SHORT).show();
             }
             item.setIcon(R.drawable.bt_disable);
@@ -320,7 +356,7 @@ public class MainActivity extends AppCompatActivity
                                 public void onClick(DialogInterface dialog, int which) {
                                     MainActivity.this.finish();
                                     Toast.makeText(MainActivity.this,
-                                            "Successfully sign out !",Toast.LENGTH_LONG).show();
+                                            "Successfully sign out !", Toast.LENGTH_LONG).show();
                                 }
                             })
                     .setNegativeButton("No", //Negative button function write
@@ -344,11 +380,11 @@ public class MainActivity extends AppCompatActivity
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    if(checkPWtoSever(editpw.getText().toString())) {
+                                    if (checkPWtoSever(editpw.getText().toString())) {
                                         finish();
                                         Toast.makeText(MainActivity.this,
                                                 "Successfully canceled your ID, goodbye", Toast.LENGTH_LONG).show();
-                                    }else{
+                                    } else {
                                         Toast.makeText(MainActivity.this,
                                                 "Check your password!!", Toast.LENGTH_LONG).show();
                                     }
@@ -400,6 +436,7 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
     }
+
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
@@ -430,7 +467,9 @@ public class MainActivity extends AppCompatActivity
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
+                    jsonreadmessage = readMessage;
                     try {
+                        onlinestatus = 1;
                         JsonTransfer jsonTransfer = new JsonTransfer();
                         JSONObject wrapObject = new JSONObject(readMessage);
                         real.setAQI(wrapObject);
@@ -452,10 +491,12 @@ public class MainActivity extends AppCompatActivity
 
                         //Add user number
                         wrapObject.put("user_num", login.usernum);
+                        wrapObject.put("online_state", onlinestatus);
 
                         String jsonString = wrapObject.toString();
-                        Log.v("json String print",""+jsonString);
-                        jsonTransfer.execute("http://teamb-iot.calit2.net/slim-api/receive-air-data","["+jsonString+"]");
+                        Log.i("json String print", "" + jsonString);
+                        jsonTransfer.execute("http://teamb-iot.calit2.net/slim-api/receive-air-data", "[" + jsonString + "]");
+                        readlocation = jsonTransfer.strJson;
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -479,10 +520,11 @@ public class MainActivity extends AppCompatActivity
             }
         }
     };
+
     protected void activatePolar() {
         Log.w(this.getClass().getName(), "** activatePolar()");
         Intent gattactivateClickerServiceIntent = new Intent(this, PolarBleService.class);
-        Log.e("ee",""+gattactivateClickerServiceIntent.toString());
+        Log.e("ee", "" + gattactivateClickerServiceIntent.toString());
         bindService(gattactivateClickerServiceIntent, mPolarBleServiceConnection, BIND_AUTO_CREATE);
         registerReceiver(mPolarBleUpdateReceiver, makePolarGattUpdateIntentFilter());
     }
@@ -490,12 +532,13 @@ public class MainActivity extends AppCompatActivity
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     protected void deactivatePolar() {
         Log.w(this.getClass().getName(), "deactivatePolar()");
-        if(mPolarBleService!=null){
+        if (mPolarBleService != null) {
             unbindService(mPolarBleServiceConnection);
         }
         unregisterReceiver(mPolarBleUpdateReceiver);
         mPolarBleService.disconnect();
     }
+
     private final BroadcastReceiver mPolarBleUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context ctx, Intent intent) {
@@ -509,8 +552,8 @@ public class MainActivity extends AppCompatActivity
                 String data = intent.getStringExtra(PolarBleService.EXTRA_DATA);
                 StringTokenizer tokens = new StringTokenizer(data, ";");
                 int hr = Integer.parseInt(tokens.nextToken());
-                Toast.makeText(MainActivity.this, ""+hr,Toast.LENGTH_LONG);
-                Log.e("hr detect",""+hr);
+                Toast.makeText(MainActivity.this, "" + hr, Toast.LENGTH_LONG);
+                Log.e("hr detect", "" + hr);
                 real.setHeart(hr);
                 real.addHEntry(hr);
 
@@ -529,16 +572,16 @@ public class MainActivity extends AppCompatActivity
 
                     String jsonString = wrapObject.toString();
                     Log.e("heart_test", jsonString);
-                    jsonTransfer.execute("http://teamb-iot.calit2.net/slim-api/receive-heart-data","["+jsonString+"]");
+                    jsonTransfer.execute("http://teamb-iot.calit2.net/slim-api/receive-heart-data", "[" + jsonString + "]");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
                 //dataFragPolar.settvHR(Integer.toString(hr));
-            }else if (PolarBleService.ACTION_BATTERY_DATA_AVAILABLE.equals(action)) {
+            } else if (PolarBleService.ACTION_BATTERY_DATA_AVAILABLE.equals(action)) {
                 String data = intent.getStringExtra(PolarBleService.EXTRA_DATA);
                 batteryLevel = Integer.parseInt(data);
-            }else if (PolarBleService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+            } else if (PolarBleService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 String data = intent.getStringExtra(PolarBleService.EXTRA_DATA);
                 StringTokenizer tokens = new StringTokenizer(data, ";");
                 int totalNN = Integer.parseInt(tokens.nextToken());
@@ -548,6 +591,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
     };
+
     private static IntentFilter makePolarGattUpdateIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(PolarBleService.ACTION_GATT_CONNECTED);
@@ -557,6 +601,7 @@ public class MainActivity extends AppCompatActivity
         intentFilter.addAction(PolarBleService.ACTION_BATTERY_DATA_AVAILABLE);
         return intentFilter;
     }
+
     private final ServiceConnection mPolarBleServiceConnection = new ServiceConnection() {
 
         @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -569,8 +614,9 @@ public class MainActivity extends AppCompatActivity
             }
             mPolarBleService.connect("00:22:D0:9C:F9:8E", false);
             // mPolarBleService.connect("00:22:D0:9C:F9:8E", false);
-            Log.e("mPolarBleService.init",": Sucscc");
+            Log.e("mPolarBleService.init", ": Sucscc");
         }
+
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             //if(app.runtimeLogging)
@@ -579,14 +625,42 @@ public class MainActivity extends AppCompatActivity
             mPolarBleService = null;
         }
     };
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.e(this.getClass().getName(), "onDestroy");
         deactivatePolar();
+        mChatService.connectionLost();
+        if(jsonreadmessage != null) {
+            try {
+                onlinestatus = 0;
+                JsonTransfer jsonTransfer = new JsonTransfer();
+                JSONObject wrapObject = new JSONObject(jsonreadmessage);
+
+                //Add realtime location value
+                wrapObject.put("latitude", real.latitude);
+                wrapObject.put("longitude", real.longitude);
+
+                //Add real time year month date
+                mNow = System.currentTimeMillis();
+                mDate = new Date(mNow);
+                wrapObject.put("apptime", mFormat.format(mDate));
+
+                //Add user number
+                wrapObject.put("user_num", login.usernum);
+                wrapObject.put("online_state", onlinestatus);
+                String jsonString = wrapObject.toString();
+                Log.i("onlinestatus2", jsonString);
+                jsonTransfer.execute("http://teamb-iot.calit2.net/slim-api/receive-air-data", "[" + jsonString + "]");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
-    public boolean checkPWtoSever(String pw){
+
+    public boolean checkPWtoSever(String pw) {
         try {
             //--------------------------
             //   URL 설정하고 접속하기
@@ -628,13 +702,13 @@ public class MainActivity extends AppCompatActivity
             PWcheckResult = builder.toString();                       // 전송결과를 전역 변수에 저장
             try {
                 JSONObject jsonObject = new JSONObject(PWcheckResult);
-                if(jsonObject.getString("status").equals("true")){
-                   checkPW = true;
-                }else if(jsonObject.getString("status").equals("false")){
-                   checkPW = false;
+                if (jsonObject.getString("status").equals("true")) {
+                    checkPW = true;
+                } else if (jsonObject.getString("status").equals("false")) {
+                    checkPW = false;
                 }
                 //((TextView)(findViewById(R.id.text_result))).setText(myResult);
-            }catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         } catch (MalformedURLException e) {
@@ -642,7 +716,7 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             //
         } // try
-        Log.e("pwcheck",""+checkPW);
+        Log.e("pwcheck", "" + checkPW);
         return checkPW;
     }
 }

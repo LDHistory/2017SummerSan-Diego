@@ -19,7 +19,7 @@ import java.net.URL;
 
 public class JsonTransfer extends AsyncTask<String, Void, String> {
 
-    static String strJson = "";
+    public static String strJson;
 
     @Override
     protected String doInBackground(String... params) {
@@ -56,6 +56,7 @@ public class JsonTransfer extends AsyncTask<String, Void, String> {
             //Toast.makeText(MainActivity.this, "전송 후 결과 받음", Toast.LENGTH_LONG).show();
             bufferedReader.close();
             result = sb.toString();
+            strJson = result;
         }catch (UnsupportedEncodingException e){
             e.printStackTrace();
         }catch (IOException e){
