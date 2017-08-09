@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -59,9 +60,11 @@ public class JsonTransfer extends AsyncTask<String, Void, String> {
             strJson = result;
         }catch (UnsupportedEncodingException e){
             e.printStackTrace();
-        }catch (IOException e){
+        } catch(FileNotFoundException e){
             e.printStackTrace();
-        }
+        } catch (IOException e){
+            e.printStackTrace();
+        }catch (Exception e){e.printStackTrace();}
         return result;
     }
 

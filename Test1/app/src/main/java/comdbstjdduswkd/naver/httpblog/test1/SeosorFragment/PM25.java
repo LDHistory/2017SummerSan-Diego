@@ -87,16 +87,15 @@ public class PM25 extends Fragment {
 
     private LineDataSet createSetPM25() {
         LineDataSet set = new LineDataSet(null, "PM2.5 Data");
-        //set.setAxisDependency(AxisDependency.LEFT);
+        set.setColor(Color.parseColor("#1DDB16"));
+        set.setValueTextColor(Color.parseColor("#1DDB16"));
+        set.setFillColor(Color.parseColor("#1DDB16"));
+        set.setCircleColor(Color.parseColor("#1DDB16"));
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setColor(ColorTemplate.getHoloBlue());
-        set.setCircleColor(Color.WHITE);
         set.setLineWidth(2f);
         set.setCircleRadius(4f);
         set.setFillAlpha(65);
-        set.setFillColor(ColorTemplate.getHoloBlue());
         set.setHighLightColor(Color.rgb(244, 117, 117));
-        set.setValueTextColor(Color.WHITE);
         set.setValueTextSize(9f);
         set.setDrawValues(false);
         return set;

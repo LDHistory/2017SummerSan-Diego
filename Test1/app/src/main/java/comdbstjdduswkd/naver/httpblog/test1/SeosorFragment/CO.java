@@ -87,16 +87,15 @@ public class CO extends Fragment {
 
     private LineDataSet createSetCO() {
         LineDataSet set = new LineDataSet(null, "CO Data");
-        //set.setAxisDependency(AxisDependency.LEFT);
+        set.setColor(Color.parseColor("#A566FF"));
+        set.setValueTextColor(Color.parseColor("#A566FF"));
+        set.setFillColor(Color.parseColor("#A566FF"));
+        set.setCircleColor(Color.parseColor("#A566FF"));
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setColor(ColorTemplate.getHoloBlue());
-        set.setCircleColor(Color.WHITE);
         set.setLineWidth(2f);
         set.setCircleRadius(4f);
         set.setFillAlpha(65);
-        set.setFillColor(ColorTemplate.getHoloBlue());
         set.setHighLightColor(Color.rgb(244, 117, 117));
-        set.setValueTextColor(Color.WHITE);
         set.setValueTextSize(9f);
         set.setDrawValues(false);
         return set;
@@ -113,8 +112,11 @@ public class CO extends Fragment {
                     setco = createSetCO();
                     dataco.addDataSet(setco);
                 }
-
                 dataco.addEntry(new Entry(setco.getEntryCount(), Float.parseFloat(jsonObject.getString("CO"))), 0);
+                if(dataco.getEntryCount()>10){
+                    dataco.removeDataSet(0);
+                }
+                Log.e("Entry Count",""+dataco.getEntryCount());
                 dataco.notifyDataChanged();
 
                 // let the chart know it's data has changed
@@ -129,4 +131,5 @@ public class CO extends Fragment {
             e.printStackTrace();
         }
     }
+
 }

@@ -2,18 +2,23 @@ package comdbstjdduswkd.naver.httpblog.test1;
 
 import android.app.DatePickerDialog;
 import android.app.Fragment;
-import android.graphics.Color;
+import android.app.FragmentManager;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.TabHost;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -23,10 +28,24 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import java.util.ArrayList;
 import java.util.Date;
 
+import comdbstjdduswkd.naver.httpblog.test1.History.History_CO;
+import comdbstjdduswkd.naver.httpblog.test1.History.History_NO2;
+import comdbstjdduswkd.naver.httpblog.test1.History.History_O3;
+import comdbstjdduswkd.naver.httpblog.test1.History.History_PM25;
+import comdbstjdduswkd.naver.httpblog.test1.History.History_SO2;
+
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class HistoryActivity extends Fragment {
     View view;
-    LineChart chart;
+    Button coBtn, no2Btn, so2Btn, o3Btn, pm25Btn;
+    History_CO hisCO;
+    History_NO2 hisNO2;
+    History_SO2 hisSO2;
+    History_O3 hisO3;
+    History_PM25 hisPM25;
+    FragmentManager manager;
+
+    public LineChart chart;
     Calendar Begindate = Calendar.getInstance();
     Calendar Enddate = Calendar.getInstance();
 
@@ -51,7 +70,60 @@ public class HistoryActivity extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_history, container, false);
-        chart = (LineChart)view.findViewById(R.id.chart1);
+        manager = getFragmentManager();
+
+        hisCO = new History_CO();
+        hisNO2 = new History_NO2();
+        hisSO2 = new History_SO2();
+        hisO3 = new History_O3();
+        hisPM25 = new History_PM25();
+
+        //chart = (LineChart)view.findViewById(R.id.lineChart);
+        coBtn = (Button)view.findViewById(R.id.coBtn);
+        coBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeFragment(0);
+            }
+        });
+        no2Btn = (Button)view.findViewById(R.id.no2Btn);
+        no2Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeFragment(1);
+            }
+        });
+        so2Btn = (Button)view.findViewById(R.id.so2Btn);
+        so2Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeFragment(4);
+            }
+        });
+        o3Btn = (Button)view.findViewById(R.id.o3Btn);
+        o3Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeFragment(2);
+            }
+        });
+        pm25Btn = (Button)view.findViewById(R.id.pm25Btn);
+        pm25Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeFragment(3);
+            }
+        });
+
+        TabHost tabHost1 = (TabHost)view.findViewById(R.id.tabHost3);
+        tabHost1.setup();
+        TabHost.TabSpec spec11 = tabHost1.newTabSpec("Air")
+                .setContent(R.id.tab11).setIndicator("Air");
+        tabHost1.addTab(spec11);
+        TabHost.TabSpec spec22 = tabHost1.newTabSpec("Heart")
+                .setContent(R.id.tab22).setIndicator("Heart");
+        tabHost1.addTab(spec22);
+
         SimpleDateFormat SimFormat = new SimpleDateFormat("MM-dd");
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -62,74 +134,116 @@ public class HistoryActivity extends Fragment {
         Date date = calendar2.getTime();
         String lastday = new SimpleDateFormat("yyyy-MM-dd").format(date); //7일전 날짜
 
+        TextView tv = (TextView)view.findViewById(R.id.textView5);
+        tv.setText("\n"+lastday+" ~ "+currtime+"\nThis is result for a week.");
 
-
-        ArrayList<Entry> valsComp[] = new ArrayList[3]; //파랑 값 담는 리스트
-        valsComp[0] = new ArrayList<Entry>();valsComp[1] = new ArrayList<Entry>();valsComp[2] = new ArrayList<Entry>();
-        ////파랑값 설정
-        valsComp[0].add(new Entry(100.0f, 0));
-        valsComp[0].add(new Entry(50.0f, 1));
-        valsComp[0].add(new Entry(75.0f, 2));
-        valsComp[0].add(new Entry(50.0f, 3));
-        valsComp[0].add(new Entry(50.0f, 4));
-        valsComp[0].add(new Entry(150.0f, 5));
-        valsComp[0].add(new Entry(90.0f, 6));
-
-        valsComp[1].add(new Entry(10.0f, 0));
-        valsComp[1].add(new Entry(530.0f, 1));
-        valsComp[1].add(new Entry(7.0f, 2));
-        valsComp[1].add(new Entry(159.0f, 3));
-        valsComp[1].add(new Entry(50.0f, 4));
-        valsComp[1].add(new Entry(80.0f, 5));
-        valsComp[1].add(new Entry(70.0f, 6));
-
-        valsComp[2].add(new Entry(90.0f, 0));
-        valsComp[2].add(new Entry(110.0f, 1));
-        valsComp[2].add(new Entry(156.0f, 2));
-        valsComp[2].add(new Entry(16.0f, 3));
-        valsComp[2].add(new Entry(45.0f, 4));
-        valsComp[2].add(new Entry(65.0f, 5));
-        valsComp[2].add(new Entry(98.0f, 6));
-
-        LineDataSet setComp1 = new LineDataSet(valsComp[0], "CO"); //파랑
-        setComp1.setAxisDependency(YAxis.AxisDependency.LEFT); //파랑
-
-        LineDataSet setComp2 = new LineDataSet(valsComp[1], "SO2"); //빨강
-        setComp2.setAxisDependency(YAxis.AxisDependency.LEFT ); //빨강
-        setComp2.setColor(Color.RED);setComp2.setValueTextColor(Color.RED);
-        setComp2.setFillColor(Color.RED);setComp2.setCircleColor(Color.RED);
-
-        LineDataSet setComp3 = new LineDataSet(valsComp[2], "NO2"); //빨강
-        setComp3.setAxisDependency(YAxis.AxisDependency.LEFT ); //빨강
-        setComp3.setColor(Color.GREEN);setComp3.setValueTextColor(Color.GREEN);
-        setComp3.setFillColor(Color.GREEN);setComp3.setCircleColor(Color.GREEN);
-
-        ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
-        dataSets.add(setComp1); ////파랑선을 그려준다.
-        dataSets.add(setComp2); //빨강
-        dataSets.add(setComp3); //초록
-
-        //Set Name of X values
-        ArrayList<String> xVals = new ArrayList<String>();
-        xVals.clear();
-        try {
-            for (int i = 0; i < 7; i++) {
-                //xVals.add(lastday.substring(5, lastday.length()));
-                xVals.add(SimFormat.format(calendar2.getTime()));
-
-                String x = "" + xVals.get(0) + "";
-                calendar2.add(Calendar.DAY_OF_MONTH, 1);
-            }
-            xVals.add(SimFormat.format(calendar2.getTime()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        //LineData data = new LineData(xVals, dataSets);
-
-        //데이터 설정 및 새로고침
-        //chart.setData(data);
-        //chart.invalidate();
+        //Fragment initialization
+        changeFragment(4);
+        changeFragment(3);
+        changeFragment(2);
+        changeFragment(1);
+        changeFragment(0);
+        hideFragment();
         return view;
     }
-
+    public void hideFragment(){
+        if(manager.findFragmentByTag("h_no2") != null && manager.findFragmentByTag("h_o3") != null
+                && manager.findFragmentByTag("h_pm25") != null && manager.findFragmentByTag("h_so2") != null) {
+            manager.beginTransaction().hide(manager.findFragmentByTag("h_no2")).commit();
+            manager.beginTransaction().hide(manager.findFragmentByTag("h_o3")).commit();
+            manager.beginTransaction().hide(manager.findFragmentByTag("h_pm25")).commit();
+            manager.beginTransaction().hide(manager.findFragmentByTag("h_so2")).commit();
+        }else{
+            Log.e("에러다 씨발","ㅇ");
+        }
+    }
+    public void changeFragment(int fNum) {
+        switch (fNum) {
+            case 0:
+                if (manager.findFragmentByTag("h_co") != null) {
+                    //if the fragment exists, show it.
+                    manager.beginTransaction().show(manager.findFragmentByTag("h_co")).commit();
+                } else {
+                    //if the fragment does not exist, add it to fragment manager.
+                    manager.beginTransaction().add(R.id.frame, hisCO, "h_co").commit();
+                }
+                if (manager.findFragmentByTag("h_no2") != null && manager.findFragmentByTag("h_o3") != null
+                        && manager.findFragmentByTag("h_pm25") != null && manager.findFragmentByTag("h_so2") != null) {
+                    //if the other fragment is visible, hide it.
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_no2")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_o3")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_pm25")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_so2")).commit();
+                }
+                break;
+            case 1:
+                if (manager.findFragmentByTag("h_no2") != null) {
+                    //if the fragment exists, show it.
+                    manager.beginTransaction().show(manager.findFragmentByTag("h_no2")).commit();
+                } else {
+                    //if the fragment does not exist, add it to fragment manager.
+                    manager.beginTransaction().add(R.id.frame, hisNO2, "h_no2").commit();
+                }
+                if (manager.findFragmentByTag("h_co") != null && manager.findFragmentByTag("h_o3") != null
+                        && manager.findFragmentByTag("h_pm25") != null && manager.findFragmentByTag("h_so2") != null) {
+                    //if the other fragment is visible, hide it.
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_co")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_o3")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_pm25")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_so2")).commit();
+                }
+                break;
+            case 2:
+                if (manager.findFragmentByTag("h_o3") != null) {
+                    //if the fragment exists, show it.
+                    manager.beginTransaction().show(manager.findFragmentByTag("h_o3")).commit();
+                } else {
+                    //if the fragment does not exist, add it to fragment manager.
+                    manager.beginTransaction().add(R.id.frame, hisO3, "h_o3").commit();
+                }
+                if (manager.findFragmentByTag("h_co") != null && manager.findFragmentByTag("h_no2") != null
+                        && manager.findFragmentByTag("h_pm25") != null && manager.findFragmentByTag("h_so2") != null) {
+                    //if the other fragment is visible, hide it.
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_co")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_no2")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_pm25")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_so2")).commit();
+                }
+                break;
+            case 3:
+                if (manager.findFragmentByTag("h_pm25") != null) {
+                    //if the fragment exists, show it.
+                    manager.beginTransaction().show(manager.findFragmentByTag("h_pm25")).commit();
+                } else {
+                    //if the fragment does not exist, add it to fragment manager.
+                    manager.beginTransaction().add(R.id.frame, hisPM25, "h_pm25").commit();
+                }
+                if (manager.findFragmentByTag("h_co") != null && manager.findFragmentByTag("h_no2") != null
+                        && manager.findFragmentByTag("h_o3") != null && manager.findFragmentByTag("h_so2") != null) {
+                    //if the other fragment is visible, hide it.
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_co")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_no2")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_o3")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_so2")).commit();
+                }
+                break;
+            case 4:
+                if (manager.findFragmentByTag("h_so2") != null) {
+                    //if the fragment exists, show it.
+                    manager.beginTransaction().show(manager.findFragmentByTag("h_so2")).commit();
+                } else {
+                    //if the fragment does not exist, add it to fragment manager.
+                    manager.beginTransaction().add(R.id.frame, hisSO2, "h_so2").commit();
+                }
+                if (manager.findFragmentByTag("h_co") != null && manager.findFragmentByTag("h_no2") != null
+                        && manager.findFragmentByTag("h_o3") != null && manager.findFragmentByTag("h_pm25") != null) {
+                    //if the other fragment is visible, hide it.
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_co")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_no2")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_o3")).commit();
+                    manager.beginTransaction().hide(manager.findFragmentByTag("h_pm25")).commit();
+                }
+                break;
+        }
+    }
 }

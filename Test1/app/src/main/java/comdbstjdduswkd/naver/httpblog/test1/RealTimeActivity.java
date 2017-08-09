@@ -229,27 +229,27 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         }
     }
 
-    public void setHeart(int bit) {
+    public void setHeart(int hr) {
         try {
-            heartText.setText("" + bit);
+            heartText.setText("" + hr);
             heart.setImageResource(R.drawable.human_nomal2);
 
             //set max, min
-            if (max <= bit) {
-                max = bit;
+            if (max <= hr) {
+                max = hr;
                 maxhert.setText("" + max);
             }
-            if (min >= bit) {
-                min = bit;
+            if (min >= hr) {
+                min = hr;
                 minheart.setText("" + min);
             }
 
 
             //heartrate state image
-            if (bit >= 100) {
+            if (hr >= 100) {
                 heart.setImageResource(R.drawable.human_fast2);
                 Glide.with(this).load(R.raw.heart_fast).into(heartBitget);
-            } else if (bit >= 60) {
+            } else if (hr >= 60) {
                 heart.setImageResource(R.drawable.human_nomal2);
                 Glide.with(this).load(R.raw.heart_normal).into(heartBitget);
             } else {
@@ -602,7 +602,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     private LineDataSet createSetH() {
         LineDataSet set = new LineDataSet(null, "HeartRate Data");
         //set.setAxisDependency(AxisDependency.LEFT);
-        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setAxisDependency(AxisDependency.LEFT);
         set.setColor(ColorTemplate.getHoloBlue());
         set.setCircleColor(Color.WHITE);
         set.setLineWidth(2f);

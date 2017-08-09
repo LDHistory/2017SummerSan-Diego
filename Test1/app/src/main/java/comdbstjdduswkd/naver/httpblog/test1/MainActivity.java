@@ -300,35 +300,37 @@ public class MainActivity extends AppCompatActivity
             if (mBluetoothAdapter.isEnabled()) {
                 //mBluetoothAdapter.disable();
                 mChatService.connectionLost();
-                try {
-                    onlinestatus = 0;
-                    JsonTransfer jsonTransfer = new JsonTransfer();
-                    JSONObject wrapObject = new JSONObject(jsonreadmessage);
+                if (jsonreadmessage != null) {
+                    try {
+                        onlinestatus = 0;
+                        JsonTransfer jsonTransfer = new JsonTransfer();
+                        JSONObject wrapObject = new JSONObject(jsonreadmessage);
 
-                    //Add realtime location value
-                    wrapObject.put("latitude", real.latitude);
-                    wrapObject.put("longitude", real.longitude);
+                        //Add realtime location value
+                        wrapObject.put("latitude", real.latitude);
+                        wrapObject.put("longitude", real.longitude);
 
-                    //Add real time year month date
-                    mNow = System.currentTimeMillis();
-                    mDate = new Date(mNow);
-                    wrapObject.put("apptime", mFormat.format(mDate));
+                        //Add real time year month date
+                        mNow = System.currentTimeMillis();
+                        mDate = new Date(mNow);
+                        wrapObject.put("apptime", mFormat.format(mDate));
 
-                    //Add user number
-                    wrapObject.put("user_num", login.usernum);
-                    wrapObject.put("online_state", onlinestatus);
-                    String jsonString = wrapObject.toString();
-                    Log.i("onlinestatus2", jsonString);
-                    jsonTransfer.execute("http://teamb-iot.calit2.net/slim-api/receive-air-data", "[" + jsonString + "]");
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                        //Add user number
+                        wrapObject.put("user_num", login.usernum);
+                        wrapObject.put("online_state", onlinestatus);
+                        String jsonString = wrapObject.toString();
+                        Log.i("onlinestatus2", jsonString);
+                        jsonTransfer.execute("http://teamb-iot.calit2.net/slim-api/receive-air-data", "[" + jsonString + "]");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
                 Toast.makeText(this, "Disconnect the Bluetooth connection..", Toast.LENGTH_SHORT).show();
+                //}
+                item.setIcon(R.drawable.bt_disable);
+                return true;
             }
-            item.setIcon(R.drawable.bt_disable);
-            return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -552,8 +554,10 @@ public class MainActivity extends AppCompatActivity
                 String data = intent.getStringExtra(PolarBleService.EXTRA_DATA);
                 StringTokenizer tokens = new StringTokenizer(data, ";");
                 int hr = Integer.parseInt(tokens.nextToken());
-                Toast.makeText(MainActivity.this, "" + hr, Toast.LENGTH_LONG);
+                int rr = Integer.parseInt(tokens.nextToken()); //high is better.
+
                 Log.e("hr detect", "" + hr);
+                Log.e("rr percent", ""+ rr);
                 real.setHeart(hr);
                 real.addHEntry(hr);
 
@@ -564,6 +568,7 @@ public class MainActivity extends AppCompatActivity
                     wrapObject.put("huser_num", login.usernum);
                     wrapObject.put("macaddress", "00:22:D0:9C:F9:8E");
                     wrapObject.put("heart_rate", hr);
+                    wrapObject.put("Rest_rate", rr);
 
                     //Add real time year month date
                     mNow = System.currentTimeMillis();

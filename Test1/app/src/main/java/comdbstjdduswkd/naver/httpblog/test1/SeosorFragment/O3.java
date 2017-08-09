@@ -87,16 +87,15 @@ public class O3 extends Fragment {
 
     private LineDataSet createSetO3() {
         LineDataSet set = new LineDataSet(null, "O3 Data");
-        //set.setAxisDependency(AxisDependency.LEFT);
+        set.setColor(Color.parseColor("#FFE400"));
+        set.setValueTextColor(Color.parseColor("#FFE400"));
+        set.setFillColor(Color.parseColor("#FFE400"));
+        set.setCircleColor(Color.parseColor("#FFE400"));
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setColor(ColorTemplate.getHoloBlue());
-        set.setCircleColor(Color.WHITE);
         set.setLineWidth(2f);
         set.setCircleRadius(4f);
         set.setFillAlpha(65);
-        set.setFillColor(ColorTemplate.getHoloBlue());
         set.setHighLightColor(Color.rgb(244, 117, 117));
-        set.setValueTextColor(Color.WHITE);
         set.setValueTextSize(9f);
         set.setDrawValues(false);
         return set;

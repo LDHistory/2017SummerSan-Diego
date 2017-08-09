@@ -6,105 +6,141 @@
     android:layout_height="match_parent"
     tools:context="comdbstjdduswkd.naver.httpblog.test1.HistoryActivity">
 
-    <Button
-        android:id="@+id/toBtn"
-        style="@android:style/Widget.DeviceDefault.Button.Inset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/fromBtn"
-        android:layout_below="@+id/fromBtn"
-        android:onClick="toClick"
-        android:text="To"
-        android:textColor="@android:color/black"
-        android:textSize="14sp"
-        android:layout_alignEnd="@+id/fromBtn" />
-
-    <TextView
-        android:id="@+id/fromView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/fromBtn"
-        android:layout_alignBottom="@+id/fromBtn"
-        android:layout_marginStart="14dp"
-        android:layout_toEndOf="@+id/fromBtn"
-        android:text="Choose the start time"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        android:textStyle="normal|bold" />
-
-    <TextView
-        android:id="@+id/toView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/toBtn"
-        android:layout_alignBottom="@+id/toBtn"
-        android:layout_alignStart="@+id/fromView"
-        android:layout_toStartOf="@+id/setButton"
-        android:text="Choose the end time"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        android:textStyle="normal|bold" />
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/textTitle"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:text="Enter the date range to view :"
-        android:textAlignment="textEnd"
-        android:textColor="@android:color/black"
-        android:textStyle="normal|bold" />
-
-    <Button
-        android:id="@+id/fromBtn"
-        style="@android:style/Widget.Material.Light.Button.Inset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="fromClick"
-        android:text="From"
-        android:textColor="@android:color/black"
-        android:textSize="14sp"
-        android:layout_below="@+id/textView5"
-        android:layout_alignStart="@+id/textView5" />
-
     <TextView
         android:id="@+id/textTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:background="@android:color/white"
         android:text="History Data"
         android:textAlignment="center"
         android:textColor="@android:color/black"
         android:textSize="25sp"
-        android:textStyle="normal|bold" />
+        android:textStyle="normal|bold"
+        android:layout_alignParentTop="true" />
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/chart1"
-        android:layout_width="368dp"
-        android:layout_height="330dp"
-        android:layout_alignParentStart="true"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="8dp"
-        android:layout_alignParentBottom="true" />
+    <TabHost
+        android:id="@+id/tabHost3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/textTitle"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SET"
-        android:layout_below="@+id/fromView"
-        android:layout_alignParentEnd="true" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/tab11"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:id="@+id/frame"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.34">
+
+                    </FrameLayout>
+
+                    <android.support.constraint.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.34">
+
+                        <TextView
+                            android:id="@+id/textView5"
+                            android:layout_width="350dp"
+                            android:layout_height="98dp"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="8dp"
+                            android:text="textView"
+                            android:textAlignment="center"
+                            android:textSize="20sp"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            tools:layout_editor_absoluteY="293dp" />
+
+                        <GridLayout
+                            android:layout_width="0dp"
+                            android:layout_height="56dp"
+                            android:layout_marginLeft="0dp"
+                            android:layout_marginRight="0dp"
+                            android:layout_marginTop="13dp"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/textView5">
+
+                            <Button
+                                android:id="@+id/coBtn"
+                                android:layout_width="72dp"
+                                android:layout_height="wrap_content"
+                                android:backgroundTint="#6799FF"
+                                android:onClick="coClick"
+                                android:text="CO"
+                                android:textColor="#FFFFFF" />
+
+                            <Button
+                                android:id="@+id/no2Btn"
+                                android:layout_width="72dp"
+                                android:layout_height="wrap_content"
+                                android:backgroundTint="#6799FF"
+                                android:text="NO2"
+                                android:textColor="#FFFFFF" />
+
+                            <Button
+                                android:id="@+id/so2Btn"
+                                android:layout_width="72dp"
+                                android:layout_height="wrap_content"
+                                android:backgroundTint="#6799FF"
+                                android:text="SO2"
+                                android:textColor="#FFFFFF" />
+
+                            <Button
+                                android:id="@+id/o3Btn"
+                                android:layout_width="72dp"
+                                android:layout_height="wrap_content"
+                                android:backgroundTint="#6799FF"
+                                android:text="O3"
+                                android:textColor="#FFFFFF" />
+
+                            <Button
+                                android:id="@+id/pm25Btn"
+                                android:layout_width="72dp"
+                                android:layout_height="wrap_content"
+                                android:backgroundTint="#6799FF"
+                                android:text="PM25"
+                                android:textColor="#FFFFFF" />
+                        </GridLayout>
+                    </android.support.constraint.ConstraintLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tab22"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+
+            </FrameLayout>
+        </LinearLayout>
+    </TabHost>
+
 </android.widget.RelativeLayout>
