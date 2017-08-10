@@ -2,13 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:weightSum="1">
+    android:layout_height="match_parent">
 
     <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/his_co_chart"
-        android:layout_width="330dp"
-        android:layout_height="210dp"
+        android:id="@+id/his_hr_chart"
+        android:layout_width="match_parent"
+        android:layout_height="270dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
@@ -16,8 +15,8 @@
         android:layout_below="@+id/textTitle"
         android:layout_margin="15dp"
         android:layout_marginTop="45dp"
+        android:layout_weight="0.00"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_weight="0.33" />
+        app:layout_constraintTop_toTopOf="parent" />
 </LinearLayout>
