@@ -301,6 +301,7 @@ public class MainActivity extends AppCompatActivity
             i = 0;
             if (mBluetoothAdapter.isEnabled()) {
                 //mBluetoothAdapter.disable();
+                sendMessage("stop\n");
                 mChatService.connectionLost();
                 if (jsonreadmessage != null) {
                     try {
@@ -493,41 +494,42 @@ public class MainActivity extends AppCompatActivity
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     String checkfirst = readMessage.substring(0, 1);
                     String receive = readMessage.substring(1);
-                    if(checkfirst.equals("r"))
+                    if(checkfirst.equals("r")) {
                         jsonreadmessage = receive;
-                    Log.i("receive", jsonreadmessage);
-                    try {
-                        onlinestatus = 1;
-                        JsonTransfer jsonTransfer = new JsonTransfer();
-                        JSONObject wrapObject = new JSONObject(jsonreadmessage);
-                        real.setAQI(wrapObject);
-                        cofragment.addEntryCO(wrapObject);
-                        no2fragment.addEntryNO2(wrapObject);
-                        o3fragment.addEntryO3(wrapObject);
-                        pm25fragment.addEntryPM25(wrapObject);
-                        so2fragment.addEntrySO2(wrapObject);
-                        tempfragemnt.addEntryTEMP(wrapObject);
-                        //Add realtime location value
-                        wrapObject.put("latitude", real.latitude);
-                        wrapObject.put("longitude", real.longitude);
-                        //send AQI data(jsonObject) to server
+                        try {
+                            onlinestatus = 1;
+                            JsonTransfer jsonTransfer = new JsonTransfer();
+                            JSONObject wrapObject = new JSONObject(jsonreadmessage);
+                            real.setAQI(wrapObject);
+                            cofragment.addEntryCO(wrapObject);
+                            no2fragment.addEntryNO2(wrapObject);
+                            o3fragment.addEntryO3(wrapObject);
+                            pm25fragment.addEntryPM25(wrapObject);
+                            so2fragment.addEntrySO2(wrapObject);
+                            tempfragemnt.addEntryTEMP(wrapObject);
+                            //Add realtime location value
+                            wrapObject.put("latitude", real.latitude);
+                            wrapObject.put("longitude", real.longitude);
+                            //send AQI data(jsonObject) to server
 
-                        //Add real time year month date
-                        mNow = System.currentTimeMillis();
-                        mDate = new Date(mNow);
-                        wrapObject.put("apptime", mFormat.format(mDate));
+                            //Add real time year month date
+                            mNow = System.currentTimeMillis();
+                            mDate = new Date(mNow);
+                            wrapObject.put("apptime", mFormat.format(mDate));
 
-                        //Add user number
-                        wrapObject.put("user_num", login.usernum);
-                        wrapObject.put("online_state", onlinestatus);
+                            //Add user number
+                            wrapObject.put("user_num", login.usernum);
+                            wrapObject.put("online_state", onlinestatus);
 
-                        String jsonString = wrapObject.toString();
-                        Log.i("json String print", "" + jsonString);
-                        jsonTransfer.execute("http://teamb-iot.calit2.net/slim-api/receive-air-data", "[" + jsonString + "]");
-                        readlocation = jsonTransfer.strJson;
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                            String jsonString = wrapObject.toString();
+                            Log.i("json String print", "" + jsonString);
+                            jsonTransfer.execute("http://teamb-iot.calit2.net/slim-api/receive-air-data", "[" + jsonString + "]");
+                            readlocation = jsonTransfer.strJson;
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }else if(checkfirst.equals("h"))
+                        Log.i("read", receive);
                     //print the sensor data
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
                     break;
@@ -661,6 +663,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        sendMessage("stop\n");
         Log.e(this.getClass().getName(), "onDestroy");
         deactivatePolar();
         mChatService.connectionLost();
