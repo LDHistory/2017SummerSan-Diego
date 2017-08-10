@@ -49,13 +49,14 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-                    <FrameLayout
+                    <LinearLayout
                         android:id="@+id/frame"
+                        android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="0.34">
 
-                    </FrameLayout>
+                    </LinearLayout>
 
                     <android.support.constraint.ConstraintLayout
                         android:layout_width="match_parent"

@@ -43,9 +43,8 @@ public class HistoryActivity extends Fragment {
     History_SO2 hisSO2;
     History_O3 hisO3;
     History_PM25 hisPM25;
-    FragmentManager manager;
+    private FragmentManager manager;
 
-    public LineChart chart;
     Calendar Begindate = Calendar.getInstance();
     Calendar Enddate = Calendar.getInstance();
 
@@ -78,7 +77,6 @@ public class HistoryActivity extends Fragment {
         hisO3 = new History_O3();
         hisPM25 = new History_PM25();
 
-        //chart = (LineChart)view.findViewById(R.id.lineChart);
         coBtn = (Button)view.findViewById(R.id.coBtn);
         coBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,18 +122,22 @@ public class HistoryActivity extends Fragment {
                 .setContent(R.id.tab22).setIndicator("Heart");
         tabHost1.addTab(spec22);
 
-        SimpleDateFormat SimFormat = new SimpleDateFormat("MM-dd");
         Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH,-1);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String currtime = dateFormat.format(calendar.getTime()); //현재시간을 문자열로 받아온다.
+        String yesterday = dateFormat.format(calendar.getTime()); //현재시간을 문자열로 받아온다.
+
+        Calendar calendar1 = Calendar.getInstance();
+        String today = dateFormat.format(calendar1.getTime());
 
         Calendar calendar2 = Calendar.getInstance();
         calendar2.add(Calendar.DAY_OF_MONTH, -7);
         Date date = calendar2.getTime();
         String lastday = new SimpleDateFormat("yyyy-MM-dd").format(date); //7일전 날짜
 
+
         TextView tv = (TextView)view.findViewById(R.id.textView5);
-        tv.setText("\n"+lastday+" ~ "+currtime+"\nThis is result for a week.");
+        tv.setText("\n"+lastday+" ~ "+yesterday+"\nThis is result for a week.\nToday : "+today);
 
         //Fragment initialization
         changeFragment(4);
@@ -143,20 +145,9 @@ public class HistoryActivity extends Fragment {
         changeFragment(2);
         changeFragment(1);
         changeFragment(0);
-        hideFragment();
         return view;
     }
-    public void hideFragment(){
-        if(manager.findFragmentByTag("h_no2") != null && manager.findFragmentByTag("h_o3") != null
-                && manager.findFragmentByTag("h_pm25") != null && manager.findFragmentByTag("h_so2") != null) {
-            manager.beginTransaction().hide(manager.findFragmentByTag("h_no2")).commit();
-            manager.beginTransaction().hide(manager.findFragmentByTag("h_o3")).commit();
-            manager.beginTransaction().hide(manager.findFragmentByTag("h_pm25")).commit();
-            manager.beginTransaction().hide(manager.findFragmentByTag("h_so2")).commit();
-        }else{
-            Log.e("에러다 씨발","ㅇ");
-        }
-    }
+
     public void changeFragment(int fNum) {
         switch (fNum) {
             case 0:
@@ -166,10 +157,16 @@ public class HistoryActivity extends Fragment {
                 } else {
                     //if the fragment does not exist, add it to fragment manager.
                     manager.beginTransaction().add(R.id.frame, hisCO, "h_co").commit();
+                    if(manager.findFragmentByTag("h_no2") != null) {
+                        Log.e("h_no2가", "null이 아님");
+                    }else  if(manager.findFragmentByTag("h_no2") == null){
+                        Log.e("h_no2가", "null 임");
+                    }
                 }
                 if (manager.findFragmentByTag("h_no2") != null && manager.findFragmentByTag("h_o3") != null
                         && manager.findFragmentByTag("h_pm25") != null && manager.findFragmentByTag("h_so2") != null) {
                     //if the other fragment is visible, hide it.
+                    Log.e("dd","실행됨");
                     manager.beginTransaction().hide(manager.findFragmentByTag("h_no2")).commit();
                     manager.beginTransaction().hide(manager.findFragmentByTag("h_o3")).commit();
                     manager.beginTransaction().hide(manager.findFragmentByTag("h_pm25")).commit();

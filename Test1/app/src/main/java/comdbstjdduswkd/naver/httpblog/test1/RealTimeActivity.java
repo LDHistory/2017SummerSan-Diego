@@ -111,7 +111,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     private LatLng[] LikelyLatLngs = null;
 
     View view;
-    FragmentManager manager;
+    private FragmentManager manager;
 
     static double latitude, longitude;
 

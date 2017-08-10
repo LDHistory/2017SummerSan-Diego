@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity
     private String mConnectedDeviceName = null;
     //Array adapter for the conversation thread
     private ArrayAdapter<String> mConversationArrayAdapter;
+    private StringBuffer mOutStringBuffer;
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -153,6 +154,7 @@ public class MainActivity extends AppCompatActivity
         pm25fragment = new PM25();
         so2fragment = new SO2();
         tempfragemnt = new TEMP();
+        mOutStringBuffer = new StringBuffer("");
 
         //manager.beginTransaction().replace(R.id.content_main, real).commit(); //if push the button, change the frame
         changeFragment(0);
@@ -439,10 +441,29 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void sendMessage(String message) {
+        // Check that we're actually connected before trying anything
+        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+            Toast.makeText(MainActivity.this, "You are not connected.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Check that there's actually something to send
+        if (message.length() > 0) {
+            // Get the message bytes and tell the BluetoothChatService to write
+            byte[] send = message.getBytes();
+            mChatService.write(send);
+            Log.i("send", "Successful send!");
+
+            // Reset out string buffer to zero and clear the edit text field
+            mOutStringBuffer.setLength(0);
+            //mOutEditText.setText(mOutStringBuffer);
+        }
+    }
+
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-
 
     //블루투스 채팅 핸들러 메인 부분
     private final Handler mHandler = new Handler() {
@@ -453,6 +474,7 @@ public class MainActivity extends AppCompatActivity
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
                         case BluetoothChatService.STATE_CONNECTED:
+                            MainActivity.this.sendMessage("start\n");
                             break;
                         case BluetoothChatService.STATE_CONNECTING:
                             break;
@@ -469,11 +491,15 @@ public class MainActivity extends AppCompatActivity
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    jsonreadmessage = readMessage;
+                    String checkfirst = readMessage.substring(0, 1);
+                    String receive = readMessage.substring(1);
+                    if(checkfirst.equals("r"))
+                        jsonreadmessage = receive;
+                    Log.i("receive", jsonreadmessage);
                     try {
                         onlinestatus = 1;
                         JsonTransfer jsonTransfer = new JsonTransfer();
-                        JSONObject wrapObject = new JSONObject(readMessage);
+                        JSONObject wrapObject = new JSONObject(jsonreadmessage);
                         real.setAQI(wrapObject);
                         cofragment.addEntryCO(wrapObject);
                         no2fragment.addEntryNO2(wrapObject);
