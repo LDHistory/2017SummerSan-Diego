@@ -74,7 +74,7 @@ import comdbstjdduswkd.naver.httpblog.test1.UserManagement.RegActivity;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    String filePath = Environment.getExternalStorageDirectory()+ File.separator+
+    String filePath = Environment.getExternalStorageDirectory() + File.separator +
             "data/data/teamb/";
 
     ArrayList<String> historyArrList;
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity
         editor = sharedpreferences.edit();
 
         list = new ArrayList<Map<String, Object>>();
-        hmap = new HashMap<String, Object>();
+        //hmap = new HashMap<String, Object>();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -519,7 +519,7 @@ public class MainActivity extends AppCompatActivity
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     String checkfirst = readMessage.substring(0, 1);
-                    String receive = readMessage.substring(1);
+                    String receive = readMessage.substring(1, readMessage.length() - 1);
                     if (checkfirst.equals("r")) {
                         jsonreadmessage = receive;
                         try {
@@ -554,30 +554,8 @@ public class MainActivity extends AppCompatActivity
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        if(arraycheck == true){
-                            try{
-                                CSVWriter cw = new CSVWriter(new OutputStreamWriter
-                                        (new FileOutputStream(filePath + "test.csv"), "EUC-KR"), ',', '"');
-                                try{
-                                    for(Map<String, Object> m : list){
-                                        cw.writeNext(new String[] {String.valueOf(m.get("MAC")), String.valueOf(m.get("time")),
-                                                String.valueOf(m.get("temp")), String.valueOf(m.get("CO")), String.valueOf(m.get("NO2")),
-                                                String.valueOf(m.get("SO2")), String.valueOf(m.get("O3")), String.valueOf(m.get("PM25"))});
-                                    }
-                                } catch (Exception e){
-                                    e.printStackTrace();
-                                } finally {
-                                    list.clear();
-                                    arraycheck = false;
-                                    Log.i("Make CSV", "Successful");
-                                    cw.close();
-                                }
-                            } catch (Exception e){
-                                e.printStackTrace();
-                            }
-                        }
                     } else if (checkfirst.equals("h")) {
-                        if(!readMessage.equals("h")) {
+                        if (!receive.equals("en")) {
                             //Log.i("read", readMessage);
                             Log.i("read2", receive);
                             arraycheck = true;
@@ -585,24 +563,35 @@ public class MainActivity extends AppCompatActivity
                             String tokenArray[] = receive.split(",");
                             String name[] = {"MAC", "time", "temp", "CO", "NO2", "SO2", "O3", "PM25"};
 
-                            for(int i = 0; i < tokenArray.length; i++)
-                                Log.i(name[i], "" + hmap.put(name[i], i));
-                            /*for(int i = 0; i < tokenArray.length; i++) {
-                                    Log.i(name[i], "" + hmap.put(name[i], tokenArray[i]));
+                            hmap = new HashMap<String, Object>();
+                            for (int i = 0; i < tokenArray.length; i++) {
+                                Log.i(name[i], "" + hmap.put(name[i], tokenArray[i]));
                             }
-                            /*while (tokens.hasMoreTokens()) {
-                                Log.i("MAC", "" + hmap.put("MAC", tokens.nextToken()));
-                                Log.i("time", "" + hmap.put("time", tokens.nextToken()));
-                                Log.i("temp", "" + hmap.put("temp", tokens.nextToken()));
-                                Log.i("CO", "" + hmap.put("CO", tokens.nextToken()));
-                                Log.i("NO2", "" + hmap.put("NO2", tokens.nextToken()));
-                                Log.i("SO2", "" + hmap.put("SO2", tokens.nextToken()));
-                                Log.i("O3", "" + hmap.put("O3", tokens.nextToken()));
-                                Log.i("PM25", "" + hmap.put("PM25", tokens.nextToken()));
-                            }*/
                             list.add(hmap);
                             //Log.i("CSV", "" + list.get(testvalue));
                             testvalue++;
+                        } else if (receive.equals("en")) {
+                            try {
+                                CSVWriter cw = new CSVWriter(new OutputStreamWriter
+                                        (new FileOutputStream(filePath + "test.csv"), "EUC-KR"), ',', '"');
+                                try {
+                                    for (Map<String, Object> m : list) {
+                                        cw.writeNext(new String[]{String.valueOf(m.get("MAC")), String.valueOf(m.get("time")),
+                                                String.valueOf(m.get("temp")), String.valueOf(m.get("CO")), String.valueOf(m.get("NO2")),
+                                                String.valueOf(m.get("SO2")), String.valueOf(m.get("O3")), String.valueOf(m.get("PM25"))});
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                } finally {
+                                    list.clear();
+                                    arraycheck = false;
+                                    Log.i("Make CSV", "Successful");
+                                    cw.close();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
                         }
                     }
 
