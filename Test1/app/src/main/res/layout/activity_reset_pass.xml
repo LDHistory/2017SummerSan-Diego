@@ -69,6 +69,8 @@
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
         android:text="Change"
+        android:backgroundTint="#4f8cfe"
+        android:textColor="@android:color/background_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

@@ -13,6 +13,8 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="8dp"
         android:text="sign up"
+        android:backgroundTint="#4f8cfe"
+        android:textColor="@android:color/background_light"
         app:layout_constraintLeft_toRightOf="@+id/login"
         app:layout_constraintTop_toBottomOf="@+id/saveaccount"
         app:layout_constraintRight_toLeftOf="@+id/pwreset"
@@ -24,6 +26,8 @@
         android:layout_height="wrap_content"
         android:text="PW Rest"
         android:layout_marginRight="50dp"
+        android:backgroundTint="#4f8cfe"
+        android:textColor="@android:color/background_light"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/saveaccount" />
@@ -34,6 +38,8 @@
         android:layout_height="wrap_content"
         android:text="Login"
         android:layout_marginLeft="50dp"
+        android:backgroundTint="#4f8cfe"
+        android:textColor="@android:color/background_light"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/saveaccount" />

@@ -6,8 +6,8 @@
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/his_pm25_chart"
-        android:layout_width="330dp"
-        android:layout_height="210dp"
+        android:layout_width="match_parent"
+        android:layout_height="290dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"

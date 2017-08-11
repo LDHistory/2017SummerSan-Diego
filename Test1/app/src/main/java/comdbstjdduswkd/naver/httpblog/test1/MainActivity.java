@@ -15,6 +15,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -35,10 +36,14 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.opencsv.CSVWriter;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -47,7 +52,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.CO;
@@ -64,6 +73,12 @@ import comdbstjdduswkd.naver.httpblog.test1.UserManagement.RegActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    String filePath = Environment.getExternalStorageDirectory()+ File.separator+
+            "data/data/teamb/";
+
+    ArrayList<String> historyArrList;
+    boolean arraycheck = false;
 
     FragmentManager manager = getFragmentManager();
     RealTimeActivity real;
@@ -90,9 +105,14 @@ public class MainActivity extends AppCompatActivity
     public static int onlinestatus = 0;
     public static String readlocation;
 
+    int testvalue = 0;
+
     Date mDate;
     long mNow;
     SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+    Map<String, Object> hmap = null;
+    ArrayList<Map<String, Object>> list;
 
     private final String TAG = "YourActivity";
     PolarBleService mPolarBleService;
@@ -136,6 +156,9 @@ public class MainActivity extends AppCompatActivity
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         editor = sharedpreferences.edit();
 
+        list = new ArrayList<Map<String, Object>>();
+        hmap = new HashMap<String, Object>();
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -144,6 +167,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        historyArrList = new ArrayList<String>();
+
         real = new RealTimeActivity();
         history = new HistoryActivity();
         login = new LoginActivity();
@@ -494,7 +520,7 @@ public class MainActivity extends AppCompatActivity
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     String checkfirst = readMessage.substring(0, 1);
                     String receive = readMessage.substring(1);
-                    if(checkfirst.equals("r")) {
+                    if (checkfirst.equals("r")) {
                         jsonreadmessage = receive;
                         try {
                             onlinestatus = 1;
@@ -528,8 +554,58 @@ public class MainActivity extends AppCompatActivity
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                    }else if(checkfirst.equals("h"))
-                        Log.i("read", receive);
+                        if(arraycheck == true){
+                            try{
+                                CSVWriter cw = new CSVWriter(new OutputStreamWriter
+                                        (new FileOutputStream(filePath + "test.csv"), "EUC-KR"), ',', '"');
+                                try{
+                                    for(Map<String, Object> m : list){
+                                        cw.writeNext(new String[] {String.valueOf(m.get("MAC")), String.valueOf(m.get("time")),
+                                                String.valueOf(m.get("temp")), String.valueOf(m.get("CO")), String.valueOf(m.get("NO2")),
+                                                String.valueOf(m.get("SO2")), String.valueOf(m.get("O3")), String.valueOf(m.get("PM25"))});
+                                    }
+                                } catch (Exception e){
+                                    e.printStackTrace();
+                                } finally {
+                                    list.clear();
+                                    arraycheck = false;
+                                    Log.i("Make CSV", "Successful");
+                                    cw.close();
+                                }
+                            } catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                    } else if (checkfirst.equals("h")) {
+                        if(!readMessage.equals("h")) {
+                            //Log.i("read", readMessage);
+                            Log.i("read2", receive);
+                            arraycheck = true;
+                            StringTokenizer tokens = new StringTokenizer(receive, ",");
+                            String tokenArray[] = receive.split(",");
+                            String name[] = {"MAC", "time", "temp", "CO", "NO2", "SO2", "O3", "PM25"};
+
+                            for(int i = 0; i < tokenArray.length; i++)
+                                Log.i(name[i], "" + hmap.put(name[i], i));
+                            /*for(int i = 0; i < tokenArray.length; i++) {
+                                    Log.i(name[i], "" + hmap.put(name[i], tokenArray[i]));
+                            }
+                            /*while (tokens.hasMoreTokens()) {
+                                Log.i("MAC", "" + hmap.put("MAC", tokens.nextToken()));
+                                Log.i("time", "" + hmap.put("time", tokens.nextToken()));
+                                Log.i("temp", "" + hmap.put("temp", tokens.nextToken()));
+                                Log.i("CO", "" + hmap.put("CO", tokens.nextToken()));
+                                Log.i("NO2", "" + hmap.put("NO2", tokens.nextToken()));
+                                Log.i("SO2", "" + hmap.put("SO2", tokens.nextToken()));
+                                Log.i("O3", "" + hmap.put("O3", tokens.nextToken()));
+                                Log.i("PM25", "" + hmap.put("PM25", tokens.nextToken()));
+                            }*/
+                            list.add(hmap);
+                            //Log.i("CSV", "" + list.get(testvalue));
+                            testvalue++;
+                        }
+                    }
+
                     //print the sensor data
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
                     break;
@@ -582,12 +658,12 @@ public class MainActivity extends AppCompatActivity
                 String data = intent.getStringExtra(PolarBleService.EXTRA_DATA);
                 StringTokenizer tokens = new StringTokenizer(data, ";");
                 int hr = Integer.parseInt(tokens.nextToken());
-                int rr = Integer.parseInt(tokens.nextToken()); //high is better.
-
-                Log.e("hr detect", "" + hr);
-                Log.e("rr percent", ""+ rr);
                 real.setHeart(hr);
                 real.addHEntry(hr);
+
+                int rr = Integer.parseInt(tokens.nextToken()); //high is better.
+                if (rr != 0)
+                    real.setHeartrr(rr);
 
                 //Send hr value to server
                 JsonTransfer jsonTransfer = new JsonTransfer();
@@ -667,7 +743,7 @@ public class MainActivity extends AppCompatActivity
         Log.e(this.getClass().getName(), "onDestroy");
         deactivatePolar();
         mChatService.connectionLost();
-        if(jsonreadmessage != null) {
+        if (jsonreadmessage != null) {
             try {
                 onlinestatus = 0;
                 JsonTransfer jsonTransfer = new JsonTransfer();

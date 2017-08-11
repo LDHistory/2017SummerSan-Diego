@@ -39,6 +39,7 @@ import comdbstjdduswkd.naver.httpblog.test1.PolarHealth.History_RR;
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class HistoryActivity extends Fragment {
     View view;
+    public static TextView tv,tv2;
     Button coBtn, no2Btn, so2Btn, o3Btn, pm25Btn, hrBtn, rrBtn;
     History_CO hisCO;
     History_NO2 hisNO2;
@@ -160,8 +161,11 @@ public class HistoryActivity extends Fragment {
         String lastday = new SimpleDateFormat("yyyy-MM-dd").format(date); //7일전 날짜
 
 
-        TextView tv = (TextView)view.findViewById(R.id.textView5);
+        tv = (TextView)view.findViewById(R.id.textView5);
         tv.setText("\n"+lastday+" ~ "+yesterday+"\nThis is result for a week.\nToday : "+today);
+
+        tv2 = (TextView)view.findViewById(R.id.textView15);
+        tv2.setText("\n"+lastday+" ~ "+yesterday+"\nThis is result for a week.\nToday : "+today);
 
         //Fragment initialization
         changeFragment(4);

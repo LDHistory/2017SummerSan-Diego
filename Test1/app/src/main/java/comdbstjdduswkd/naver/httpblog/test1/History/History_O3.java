@@ -37,8 +37,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import comdbstjdduswkd.naver.httpblog.test1.HistoryActivity;
 import comdbstjdduswkd.naver.httpblog.test1.R;
 
+import static comdbstjdduswkd.naver.httpblog.test1.HistoryActivity.tv;
 import static comdbstjdduswkd.naver.httpblog.test1.UserManagement.LoginActivity.usernum;
 
 /**
@@ -57,120 +59,123 @@ public class History_O3 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_his_o3, container, false);
-        avgO3 = new ArrayList<>();
-        his_o3Chart = (LineChart) view.findViewById(R.id.his_o3_chart);
-        XAxis xA = his_o3Chart.getXAxis();
-        xA.setPosition(XAxis.XAxisPosition.BOTTOM);
-
-        SimpleDateFormat SimFormat = new SimpleDateFormat("MM-dd");
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String currtime = dateFormat.format(calendar.getTime()); //현재시간을 문자열로 받아온다.
-
-        Calendar calendar2 = Calendar.getInstance();
-        calendar2.add(Calendar.DAY_OF_MONTH, -7);
-        Date date = calendar2.getTime();
-        String lastday = new SimpleDateFormat("yyyy-MM-dd").format(date); //7일전 날짜
-
-        //Set Name of X values
-        xVals = new ArrayList<String>();
-        xVals.clear();
         try {
-            for (int i = 0; i < 7; i++) {
-                xVals.add(SimFormat.format(calendar2.getTime()));
-                calendar2.add(Calendar.DAY_OF_MONTH, 1);
-            }
-            xVals.add(SimFormat.format(calendar2.getTime()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            avgO3 = new ArrayList<>();
+            his_o3Chart = (LineChart) view.findViewById(R.id.his_o3_chart);
+            XAxis xA = his_o3Chart.getXAxis();
+            xA.setPosition(XAxis.XAxisPosition.BOTTOM);
 
-        final HashMap<Integer, String> numMap = new HashMap<>();
-        numMap.put(1, xVals.get(0));
-        numMap.put(2, xVals.get(1));
-        numMap.put(3, xVals.get(2));
-        numMap.put(4, xVals.get(3));
-        numMap.put(5, xVals.get(4));
-        numMap.put(6, xVals.get(5));
-        numMap.put(7, xVals.get(6));
+            SimpleDateFormat SimFormat = new SimpleDateFormat("MM-dd");
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String currtime = dateFormat.format(calendar.getTime()); //현재시간을 문자열로 받아온다.
 
-        XAxis xAxis = his_o3Chart.getXAxis();
-        xAxis.setValueFormatter(new IAxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                return numMap.get((int) value);
-            }
-        });
-        ArrayList<Entry> list = new ArrayList<Entry>();
+            Calendar calendar2 = Calendar.getInstance();
+            calendar2.add(Calendar.DAY_OF_MONTH, -7);
+            Date date = calendar2.getTime();
+            String lastday = new SimpleDateFormat("yyyy-MM-dd").format(date); //7일전 날짜
 
-        try {
-            Log.e("URL접속", "");
-            //--------------------------
-            //   URL 설정하고 접속하기
-            //--------------------------
-            URL url = new URL("http://teamb-iot.calit2.net/slim-api/air-data-show/" + usernum);       // URL 설정
-            HttpURLConnection http = (HttpURLConnection) url.openConnection();   // 접속
-            //--------------------------
-            //   전송 모드 설정 - 기본적인 설정이다
-            //--------------------------
-            http.setDefaultUseCaches(false);
-            http.setDoInput(true);                         // 서버에서 읽기 모드 지정
-            http.setRequestMethod("GET");
-
-            // 서버에게 웹에서 <Form>으로 값이 넘어온 것과 같은 방식으로 처리하라는 걸 알려준다
-            http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
-            //--------------------------
-            //   서버에서 전송받기
-            //--------------------------
-            InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "EUC-KR");
-            BufferedReader reader = new BufferedReader(tmp);
-            StringBuilder builder = new StringBuilder();
-            String str;
-            while ((str = reader.readLine()) != null) {       // 서버에서 라인단위로 보내줄 것이므로 라인단위로 읽는다
-                builder.append(str + "\n");                     // View에 표시하기 위해 라인 구분자 추가
-            }
-            queryResult = builder.toString();                       // 전송결과를 전역 변수에 저장
+            //Set Name of X values
+            xVals = new ArrayList<String>();
+            xVals.clear();
             try {
-                JSONArray jsonArray = new JSONArray(queryResult);
-                Log.e("asdf", "" + jsonArray.get(0).toString());
                 for (int i = 0; i < 7; i++) {
-                    avgO3.add(Float.parseFloat(jsonArray.getJSONObject(i).getString("o3")));
-                    Log.e("avgCo", "index : " + i + "  value : " + avgO3.get(i));
+                    xVals.add(SimFormat.format(calendar2.getTime()));
+                    calendar2.add(Calendar.DAY_OF_MONTH, 1);
                 }
-
-            } catch (JSONException e) {
+                xVals.add(SimFormat.format(calendar2.getTime()));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-        } catch (MalformedURLException e) {
-            //
-        } catch (IOException e) {
-            //
+
+            final HashMap<Integer, String> numMap = new HashMap<>();
+            numMap.put(1, xVals.get(0));
+            numMap.put(2, xVals.get(1));
+            numMap.put(3, xVals.get(2));
+            numMap.put(4, xVals.get(3));
+            numMap.put(5, xVals.get(4));
+            numMap.put(6, xVals.get(5));
+            numMap.put(7, xVals.get(6));
+
+            XAxis xAxis = his_o3Chart.getXAxis();
+            xAxis.setValueFormatter(new IAxisValueFormatter() {
+                @Override
+                public String getFormattedValue(float value, AxisBase axis) {
+                    return numMap.get((int) value);
+                }
+            });
+            ArrayList<Entry> list = new ArrayList<Entry>();
+
+            try {
+                Log.e("URL접속", "");
+                //--------------------------
+                //   URL 설정하고 접속하기
+                //--------------------------
+                URL url = new URL("http://teamb-iot.calit2.net/slim-api/air-data-show/" + usernum);       // URL 설정
+                HttpURLConnection http = (HttpURLConnection) url.openConnection();   // 접속
+                //--------------------------
+                //   전송 모드 설정 - 기본적인 설정이다
+                //--------------------------
+                http.setDefaultUseCaches(false);
+                http.setDoInput(true);                         // 서버에서 읽기 모드 지정
+                http.setRequestMethod("GET");
+
+                // 서버에게 웹에서 <Form>으로 값이 넘어온 것과 같은 방식으로 처리하라는 걸 알려준다
+                http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
+                //--------------------------
+                //   서버에서 전송받기
+                //--------------------------
+                InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "EUC-KR");
+                BufferedReader reader = new BufferedReader(tmp);
+                StringBuilder builder = new StringBuilder();
+                String str;
+                while ((str = reader.readLine()) != null) {       // 서버에서 라인단위로 보내줄 것이므로 라인단위로 읽는다
+                    builder.append(str + "\n");                     // View에 표시하기 위해 라인 구분자 추가
+                }
+                queryResult = builder.toString();                       // 전송결과를 전역 변수에 저장
+                try {
+                    JSONArray jsonArray = new JSONArray(queryResult);
+                    Log.e("asdf", "" + jsonArray.get(0).toString());
+                    for (int i = 0; i < 7; i++) {
+                        avgO3.add(Float.parseFloat(jsonArray.getJSONObject(i).getString("o3")));
+                        Log.e("avgCo", "index : " + i + "  value : " + avgO3.get(i));
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } catch (MalformedURLException e) {
+                //
+            } catch (IOException e) {
+                //
+            }
+
+            list.add(new Entry(1, avgO3.get(0)));
+            list.add(new Entry(2, avgO3.get(1)));
+            list.add(new Entry(3, avgO3.get(2)));
+            list.add(new Entry(4, avgO3.get(3)));
+            list.add(new Entry(5, avgO3.get(4)));
+            list.add(new Entry(6, avgO3.get(5)));
+            list.add(new Entry(7, avgO3.get(6)));
+
+            LineDataSet setComp1 = new LineDataSet(list, "O3");
+            setComp1.setLineWidth(2f);
+            setComp1.setAxisDependency(YAxis.AxisDependency.LEFT);
+            setComp1.setColor(Color.parseColor("#FFE400"));
+            setComp1.setValueTextColor(Color.parseColor("#FFE400"));
+            setComp1.setFillColor(Color.parseColor("#FFE400"));
+            setComp1.setCircleColor(Color.parseColor("#FFE400"));
+
+            ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+
+            dataSets.add(setComp1); ////파랑선을 그려준다.
+
+            LineData data = new LineData(dataSets);
+            his_o3Chart.setData(data); //set data
+            his_o3Chart.invalidate(); //refresh data
+        }catch (Exception e){
+            tv.setText("Can't Received from server");
         }
-
-        list.add(new Entry(1, avgO3.get(0)));
-        list.add(new Entry(2, avgO3.get(1)));
-        list.add(new Entry(3, avgO3.get(2)));
-        list.add(new Entry(4, avgO3.get(3)));
-        list.add(new Entry(5, avgO3.get(4)));
-        list.add(new Entry(6, avgO3.get(5)));
-        list.add(new Entry(7, avgO3.get(6)));
-
-        LineDataSet setComp1 = new LineDataSet(list, "O3");
-        setComp1.setLineWidth(2f);
-        setComp1.setAxisDependency(YAxis.AxisDependency.LEFT);
-        setComp1.setColor(Color.parseColor("#FFE400"));
-        setComp1.setValueTextColor(Color.parseColor("#FFE400"));
-        setComp1.setFillColor(Color.parseColor("#FFE400"));
-        setComp1.setCircleColor(Color.parseColor("#FFE400"));
-
-        ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
-
-        dataSets.add(setComp1); ////파랑선을 그려준다.
-
-        LineData data = new LineData(dataSets);
-        his_o3Chart.setData(data); //set data
-        his_o3Chart.invalidate(); //refresh data
-
         return view;
     }
 }

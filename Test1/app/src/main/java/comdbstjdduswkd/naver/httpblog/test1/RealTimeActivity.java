@@ -134,12 +134,14 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     private GoogleMap googleMap = null;
     private MapView mapView = null;
 
-    TextView heartText, CO, NO2, SO2, O3, PM25, TEMP, maxhert, minheart;
+    TextView heartText, CO, NO2, SO2, O3, PM25, TEMP, maxhert, minheart, maxrr, minrr;
     ImageView heart, heartbit, coimage, no2image, so2image, o3image, pm25image, tempimage;
     GlideDrawableImageViewTarget heartTartget, heartBitget;
 
-    int max = 0;
-    int min = 999;
+    int heartmax = 0;
+    int heartmin = 999;
+    int rrmax = 0;
+    int rrmin = 999;
 
     public void setCurrentLocation(Location location, String markerTitle, String markerSnippet) {
         if (currentMarker != null) {
@@ -229,21 +231,32 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         }
     }
 
+    public void setHeartrr(int rr){
+        //set rr max, min
+        if (rrmax < rr){
+            rrmax = rr;
+            maxrr.setText("" + rrmax);
+        }
+        if(rrmin >= rr){
+            rrmin = rr;
+            minrr.setText("" + rrmin);
+        }
+    }
+
     public void setHeart(int hr) {
         try {
             heartText.setText("" + hr);
             heart.setImageResource(R.drawable.human_nomal2);
 
-            //set max, min
-            if (max <= hr) {
-                max = hr;
-                maxhert.setText("" + max);
+            //set heart max, min
+            if (heartmax <= hr) {
+                heartmax = hr;
+                maxhert.setText("" + heartmax);
             }
-            if (min >= hr) {
-                min = hr;
-                minheart.setText("" + min);
+            if (heartmin >= hr) {
+                heartmin = hr;
+                minheart.setText("" + heartmin);
             }
-
 
             //heartrate state image
             if (hr >= 100) {
@@ -391,6 +404,8 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
 
         maxhert = (TextView) view.findViewById(R.id.HMValue);
         minheart = (TextView) view.findViewById(R.id.MHValue);
+        maxrr = (TextView) view.findViewById(R.id.RMValue);
+        minrr = (TextView) view.findViewById(R.id.MRValue);
 
         coimage = (ImageView) view.findViewById(R.id.coimage);
         no2image = (ImageView) view.findViewById(R.id.noimage);
@@ -436,8 +451,8 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         TabHost tabHost1 = (TabHost) view.findViewById(R.id.tabHost1);
         tabHost1.setup();
 
-        TabHost.TabSpec spec3 = tabHost1.newTabSpec("Realtime AQI")
-                .setContent(R.id.tab3).setIndicator("Realtime AQI");
+        TabHost.TabSpec spec3 = tabHost1.newTabSpec("Instantanelus Data")
+                .setContent(R.id.tab3).setIndicator("Instantanelus Data");
         tabHost1.addTab(spec3);
         TabHost.TabSpec spec5 = tabHost1.newTabSpec("Standard AQI")
                 .setContent(R.id.tab5).setIndicator("Standard AQI");

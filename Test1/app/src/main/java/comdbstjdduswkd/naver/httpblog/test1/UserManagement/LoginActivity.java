@@ -175,6 +175,8 @@ public class LoginActivity extends AppCompatActivity {
                 Log.e("test", "success");
             }else if(jsonObject.getString("status").equals("false")){
                 Toast.makeText(this, "Check your ID or Password !", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(i);
             }
             //((TextView)(findViewById(R.id.text_result))).setText(myResult);
         } catch (MalformedURLException e) {
