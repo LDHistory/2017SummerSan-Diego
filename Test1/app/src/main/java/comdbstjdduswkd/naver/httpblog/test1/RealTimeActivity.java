@@ -64,20 +64,13 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-/*
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.Places;
-import com.google.android.gms.location.places.PlaceLikelihood;
-import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
-*/
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.CO;
 import comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.NO2;
@@ -129,6 +122,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     SO2 fragmentso2;
     TEMP fragmenttemp;
 
+    AQIcalculate aqIcalculate;
     MainActivity main;
     //////////////////////////////////////////////////////////////
 
@@ -154,12 +148,17 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     ImageView heart, heartbit, coimage, no2image, so2image, o3image, pm25image, tempimage;
     GlideDrawableImageViewTarget heartTartget, heartBitget;
     ///////////////////////////////////////////////////////////////////////////////////////////////
-
+    Boolean co_clicked, no2_clicked, so2_clicked, o3_clicked, pm25_clicked;
     //Initialize the value of heart rate to use max and min value.
     int heartmax = 0;
     int heartmin = 999;
     int rrmax = 0;
     int rrmin = 999;
+
+    //To use Immediately AQI...
+    ArrayList<Float> aqico, aqino2, aqiso2, aqio3, aqipm25;
+    float avgco = 0, avgno2 = 0, avgso2 = 0, avgo3 = 0, avgpm25 = 0;
+    public static float indexco = 0, indexno2 = 0, indexso2 = 0, indexo3 = 0, indexpm25 = 0;
 
     public void setCurrentLocation(Location location, String markerTitle, String markerSnippet) {
         if (currentMarker != null) {
@@ -173,22 +172,10 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
             //Get the value of the current latitude
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
-            MarkerOptions markerOptions = new MarkerOptions();
-            CircleOptions circle1KM = new CircleOptions().center(currentLocation) //Circle point
-                    .radius(200)      // Radius unit : m
-                    .strokeWidth(0f)
-                    .fillColor(Color.parseColor("#110000ff")); //Background
-            markerOptions.position(currentLocation);
-            markerOptions.title(markerTitle);
-            markerOptions.snippet(markerSnippet);
-            markerOptions.draggable(true);
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker1));
-            currentMarker = this.googleMap.addMarker(markerOptions);
-            this.googleMap.addCircle(circle1KM);
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
             return;
         }
-
+        /*
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(DEFAULT_LOCATION);
         markerOptions.title(markerTitle);
@@ -196,7 +183,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         markerOptions.draggable(true);
         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker1));
         currentMarker = this.googleMap.addMarker(markerOptions);
-
+*/
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_LOCATION));
     }
 
@@ -214,20 +201,31 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                 count = bluetoothcount.getInt("count(*)");
 
                 JSONArray location = jObject.getJSONArray("user_data");
-
+                this.googleMap.clear();
                 //Print mark and circle
                 for (int j = 0; j < location.length(); j++) {
                     bluetoothname[j] = String.valueOf(location.getJSONObject(j).getString("MAC"));
                     lat[j] = location.getJSONObject(j).getDouble("latitude");
                     lgt[j] = location.getJSONObject(j).getDouble("longitude");
-                    otherLocation[j] = new LatLng(lat[j], lgt[j]);
-                    otherCircle[j] = new CircleOptions().center(otherLocation[j]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#5551F05D"));
-                    this.googleMap.addCircle(otherCircle[j]);
                     d_co[j] = location.getJSONObject(j).getDouble("CO");
                     d_so2[j] = location.getJSONObject(j).getDouble("SO2");
                     d_no2[j] = location.getJSONObject(j).getDouble("NO2");
                     d_o3[j] = location.getJSONObject(j).getDouble("O3");
                     d_pm25[j] = location.getJSONObject(j).getDouble("PM25");
+                    otherLocation[j] = new LatLng(lat[j], lgt[j]);
+                    if(co_clicked)
+                        paintCircle_CO();
+                    else if(no2_clicked)
+                        paintCircle_NO2();
+                    else if(so2_clicked)
+                        paintCircle_SO2();
+                    else if(o3_clicked)
+                        paintCircle_O3();
+                    else if(pm25_clicked)
+                        paintCircle_PM25();
+                    //otherCircle[j] = new CircleOptions().center(otherLocation[j]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#5551F05D"));
+                    this.googleMap.addCircle(otherCircle[j]);
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -329,81 +327,127 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
 
     //To change the AQI image, then this method will be call.
     public void setAQI(JSONObject data) {
+        DecimalFormat df = new DecimalFormat(".0");
         try {
             //AQI index of CO value
-            CO.setText(data.getString("CO"));
-            if (Float.parseFloat(data.getString("CO")) >= 0 && Float.parseFloat(data.getString("CO")) <= 4.4)
-                coimage.setImageResource(R.drawable.co_good);
-            else if (Float.parseFloat(data.getString("CO")) >= 4.5 && Float.parseFloat(data.getString("CO")) <= 9.4)
-                coimage.setImageResource(R.drawable.co_moderate);
-            else if (Float.parseFloat(data.getString("CO")) >= 9.5 && Float.parseFloat(data.getString("CO")) <= 12.4)
-                coimage.setImageResource(R.drawable.co_usg);
-            else if (Float.parseFloat(data.getString("CO")) >= 12.5 && Float.parseFloat(data.getString("CO")) <= 15.4)
-                coimage.setImageResource(R.drawable.co_unhealthy);
-            else if (Float.parseFloat(data.getString("CO")) >= 15.5 && Float.parseFloat(data.getString("CO")) <= 30.4)
-                coimage.setImageResource(R.drawable.co_vu);
-            else if (Float.parseFloat(data.getString("CO")) >= 30.5)
-                coimage.setImageResource(R.drawable.co_hazardous);
+            aqico.add(Float.valueOf(data.getString("CO")));
+            if(aqico.size() == 20) {
+                for (int i = 0; i < aqico.size(); i++) {
+                    avgco += aqico.get(i);
+                }
+                avgco = avgco / 20;
+                indexco = aqIcalculate.CO(avgco);
+                CO.setText("" + df.format(indexco));
+                if (indexco >= 0 && indexco <= 4.4)
+                    coimage.setImageResource(R.drawable.co_good);
+                else if (indexco >= 4.5 && indexco <= 9.4)
+                    coimage.setImageResource(R.drawable.co_moderate);
+                else if (indexco >= 9.5 && indexco <= 12.4)
+                    coimage.setImageResource(R.drawable.co_usg);
+                else if (indexco >= 12.5 && indexco <= 15.4)
+                    coimage.setImageResource(R.drawable.co_unhealthy);
+                else if (indexco >= 15.5 && indexco <= 30.4)
+                    coimage.setImageResource(R.drawable.co_vu);
+                else if (indexco >= 30.5)
+                    coimage.setImageResource(R.drawable.co_hazardous);
+                aqico.remove(0);
+            }
 
             //AQI index of NO2 value
-            NO2.setText(data.getString("NO2"));
-            if (Float.parseFloat(data.getString("NO2")) >= 0 && Float.parseFloat(data.getString("NO2")) <= 53)
-                no2image.setImageResource(R.drawable.no2_good);
-            else if (Float.parseFloat(data.getString("NO2")) >= 54 && Float.parseFloat(data.getString("NO2")) <= 100)
-                no2image.setImageResource(R.drawable.no2_moderate);
-            else if (Float.parseFloat(data.getString("NO2")) >= 101 && Float.parseFloat(data.getString("NO2")) <= 360)
-                no2image.setImageResource(R.drawable.no2_usg);
-            else if (Float.parseFloat(data.getString("NO2")) >= 361 && Float.parseFloat(data.getString("NO2")) <= 649)
-                no2image.setImageResource(R.drawable.no2_unhealthy);
-            else if (Float.parseFloat(data.getString("NO2")) >= 650 && Float.parseFloat(data.getString("NO2")) <= 1249)
-                no2image.setImageResource(R.drawable.no2_vu);
-            else if (Float.parseFloat(data.getString("NO2")) >= 1250)
-                no2image.setImageResource(R.drawable.no2_hazardous);
+            aqino2.add(Float.valueOf(data.getString("NO2")));
+            if(aqino2.size() == 20) {
+                for (int i = 0; i < aqino2.size(); i++) {
+                    avgno2 += aqino2.get(i);
+                }
+                avgno2 = avgno2 / 20;
+                indexno2 = aqIcalculate.NO2(avgno2);
+                NO2.setText("" + df.format(indexno2));
+                if (indexno2 >= 0 && indexno2 <= 53)
+                    no2image.setImageResource(R.drawable.no2_good);
+                else if (indexno2 >= 54 && indexno2 <= 100)
+                    no2image.setImageResource(R.drawable.no2_moderate);
+                else if (indexno2 >= 101 && indexno2 <= 360)
+                    no2image.setImageResource(R.drawable.no2_usg);
+                else if (indexno2 >= 361 && indexno2 <= 649)
+                    no2image.setImageResource(R.drawable.no2_unhealthy);
+                else if (indexno2 >= 650 && indexno2 <= 1249)
+                    no2image.setImageResource(R.drawable.no2_vu);
+                else if (indexno2 >= 1250)
+                    no2image.setImageResource(R.drawable.no2_hazardous);
+                aqino2.remove(0);
+            }
 
             //AQI index of SO2 value
-            SO2.setText(data.getString("SO2"));
-            if (Float.parseFloat(data.getString("SO2")) >= 0 && Float.parseFloat(data.getString("SO2")) <= 35)
-                so2image.setImageResource(R.drawable.so2_good);
-            else if (Float.parseFloat(data.getString("SO2")) >= 36 && Float.parseFloat(data.getString("SO2")) <= 75)
-                so2image.setImageResource(R.drawable.so2_moderate);
-            else if (Float.parseFloat(data.getString("SO2")) >= 76 && Float.parseFloat(data.getString("SO2")) <= 185)
-                so2image.setImageResource(R.drawable.so2_usg);
-            else if (Float.parseFloat(data.getString("SO2")) >= 186 && Float.parseFloat(data.getString("SO2")) <= 304)
-                so2image.setImageResource(R.drawable.so2_unhealthy);
-            else if (Float.parseFloat(data.getString("SO2")) >= 305 && Float.parseFloat(data.getString("SO2")) <= 604)
-                so2image.setImageResource(R.drawable.so2_vu);
-            else if (Float.parseFloat(data.getString("SO2")) >= 605)
-                so2image.setImageResource(R.drawable.so2_hazardous);
+            aqiso2.add(Float.valueOf(data.getString("SO2")));
+            if(aqiso2.size() == 20) {
+                for (int i = 0; i < aqiso2.size(); i++) {
+                    avgso2 += aqiso2.get(i);
+                }
+                avgso2 = avgso2 / 20;
+                indexso2 = aqIcalculate.SO2(avgso2);
+                SO2.setText("" + df.format(indexso2));
+                if (indexso2 >= 0 && indexso2 <= 35)
+                    so2image.setImageResource(R.drawable.so2_good);
+                else if (indexso2 >= 36 && indexso2 <= 75)
+                    so2image.setImageResource(R.drawable.so2_moderate);
+                else if (indexso2 >= 76 && indexso2 <= 185)
+                    so2image.setImageResource(R.drawable.so2_usg);
+                else if (indexso2 >= 186 && indexso2 <= 304)
+                    so2image.setImageResource(R.drawable.so2_unhealthy);
+                else if (indexso2 >= 305 && indexso2 <= 604)
+                    so2image.setImageResource(R.drawable.so2_vu);
+                else if (indexso2 >= 605)
+                    so2image.setImageResource(R.drawable.so2_hazardous);
+                aqiso2.remove(0);
+            }
 
             //AQI index of O3 value
-            O3.setText(data.getString("O3"));
-            if (Float.parseFloat(data.getString("O3")) >= 0 && Float.parseFloat(data.getString("O3")) <= 54)
-                o3image.setImageResource(R.drawable.o3_good);
-            else if (Float.parseFloat(data.getString("O3")) >= 55 && Float.parseFloat(data.getString("O3")) <= 70)
-                o3image.setImageResource(R.drawable.o3_moderate);
-            else if (Float.parseFloat(data.getString("O3")) >= 71 && Float.parseFloat(data.getString("O3")) <= 85)
-                o3image.setImageResource(R.drawable.o3_usg);
-            else if (Float.parseFloat(data.getString("O3")) >= 86 && Float.parseFloat(data.getString("O3")) <= 105)
-                o3image.setImageResource(R.drawable.o3_unhealthy);
-            else if (Float.parseFloat(data.getString("O3")) >= 106 && Float.parseFloat(data.getString("O3")) <= 200)
-                o3image.setImageResource(R.drawable.o3_vu);
-            else if (Float.parseFloat(data.getString("O3")) >= 201)
-                o3image.setImageResource(R.drawable.o3_hazardous);
+            aqio3.add(Float.valueOf(data.getString("O3")));
+            if (aqio3.size() == 20) {
+                for (int i = 0; i < aqio3.size(); i++) {
+                    avgo3 += aqio3.get(i);
+                }
+                avgo3 = avgo3 / 20;
+                indexo3 = aqIcalculate.O3(avgo3);
+                O3.setText("" + df.format(indexo3));
+                if (indexo3 >= 0 && indexo3 <= 54)
+                    o3image.setImageResource(R.drawable.o3_good);
+                else if (indexo3 >= 55 && indexo3 <= 70)
+                    o3image.setImageResource(R.drawable.o3_moderate);
+                else if (indexo3 >= 71 && indexo3 <= 85)
+                    o3image.setImageResource(R.drawable.o3_usg);
+                else if (indexo3 >= 86 && indexo3 <= 105)
+                    o3image.setImageResource(R.drawable.o3_unhealthy);
+                else if (indexo3 >= 106 && indexo3 <= 200)
+                    o3image.setImageResource(R.drawable.o3_vu);
+                else if (indexo3 >= 201)
+                    o3image.setImageResource(R.drawable.o3_hazardous);
+                aqio3.remove(0);
+            }
 
             //AQI index of PM25 value
-            PM25.setText(data.getString("PM25"));
-            if (Float.parseFloat(data.getString("PM25")) >= 0 && Float.parseFloat(data.getString("PM25")) <= 12)
-                pm25image.setImageResource(R.drawable.pm25_good);
-            else if (Float.parseFloat(data.getString("PM25")) >= 12.1 && Float.parseFloat(data.getString("PM25")) <= 35.4)
-                pm25image.setImageResource(R.drawable.pm25_moderate);
-            else if (Float.parseFloat(data.getString("PM25")) >= 35.5 && Float.parseFloat(data.getString("PM25")) <= 55.4)
-                pm25image.setImageResource(R.drawable.pm25_usg);
-            else if (Float.parseFloat(data.getString("PM25")) >= 55.5 && Float.parseFloat(data.getString("PM25")) <= 150.4)
-                pm25image.setImageResource(R.drawable.pm25_unhealthy);
-            else if (Float.parseFloat(data.getString("PM25")) >= 150.5 && Float.parseFloat(data.getString("PM25")) <= 250.4)
-                pm25image.setImageResource(R.drawable.pm25_vu);
-            else if (Float.parseFloat(data.getString("PM25")) >= 250.5)
-                pm25image.setImageResource(R.drawable.pm25_hazardous);
+            aqipm25.add(Float.valueOf(data.getString("PM25")));
+            if (aqipm25.size() == 20) {
+                for (int i = 0; i < aqipm25.size(); i++) {
+                    avgpm25 += aqipm25.get(i);
+                }
+                avgpm25 = avgpm25 / 20;
+                indexpm25 = aqIcalculate.PM25(avgpm25);
+                PM25.setText("" + df.format(indexpm25));
+                if (indexpm25 >= 0 && indexpm25 <= 12)
+                    pm25image.setImageResource(R.drawable.pm25_good);
+                else if (indexpm25 >= 12.1 && indexpm25 <= 35.4)
+                    pm25image.setImageResource(R.drawable.pm25_moderate);
+                else if (indexpm25 >= 35.5 && indexpm25 <= 55.4)
+                    pm25image.setImageResource(R.drawable.pm25_usg);
+                else if (indexpm25 >= 55.5 && indexpm25 <= 150.4)
+                    pm25image.setImageResource(R.drawable.pm25_unhealthy);
+                else if (indexpm25 >= 150.5 && indexpm25 <= 250.4)
+                    pm25image.setImageResource(R.drawable.pm25_vu);
+                else if (indexpm25 >= 250.5)
+                    pm25image.setImageResource(R.drawable.pm25_hazardous);
+                aqipm25.remove(0);
+            }
 
             TEMP.setText(data.getString("temp"));
         } catch (JSONException e) {
@@ -419,6 +463,23 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         manager = getFragmentManager();
         main = new MainActivity();
 
+        aqico = new ArrayList<Float>();
+        aqino2 = new ArrayList<Float>();
+        aqiso2 = new ArrayList<Float>();
+        aqio3 = new ArrayList<Float>();
+        aqipm25 = new ArrayList<Float>();
+
+        for(int i=0;i<19;i++){
+            aqico.add(4.4f);
+            aqino2.add(54f);
+            aqio3.add(54f);
+            aqiso2.add(35f);
+            aqipm25.add(12f);
+        }
+
+        aqIcalculate = new AQIcalculate();
+
+        co_clicked=true; so2_clicked=false; no2_clicked =false; o3_clicked=false; pm25_clicked=false;
         fragmentco = new CO();
         fragmentno2 = new NO2();
         fragmento3 = new O3();
@@ -441,12 +502,15 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         mapView = (MapView) view.findViewById(R.id.map);
         mapView.getMapAsync(this);
 
-        bluetoothname = new String[50];
-        lat = new double[50]; lgt = new double[50];
-        d_co = new double[50]; d_no2 = new double[50]; d_o3 = new double[50];
-        d_so2 = new double[50]; d_pm25 = new double[50];
-        otherLocation = new LatLng[50];
-        otherCircle = new CircleOptions[50];
+        bluetoothname = new String[10];
+        lat = new double[10]; lgt = new double[10];
+        d_co = new double[10]; d_no2 = new double[10]; d_o3 = new double[10];
+        d_so2 = new double[10]; d_pm25 = new double[10];
+        otherLocation = new LatLng[10];
+        otherCircle = new CircleOptions[10];
+        for(int i=0;i<10;i++){
+            otherCircle[i]=new CircleOptions();
+        }
 
         //Under the taphost
         TabHost tabHost = (TabHost) view.findViewById(R.id.tabHost2);
@@ -466,9 +530,6 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         TabHost.TabSpec spec3 = tabHost1.newTabSpec("Instantanelus Data")
                 .setContent(R.id.tab3).setIndicator("Instantanelus Data");
         tabHost1.addTab(spec3);
-        TabHost.TabSpec spec5 = tabHost1.newTabSpec("Standard AQI")
-                .setContent(R.id.tab5).setIndicator("Standard AQI");
-        tabHost1.addTab(spec5);
         TabHost.TabSpec spec4 = tabHost1.newTabSpec("Heart")
                 .setContent(R.id.tab4).setIndicator("Heart");
         tabHost1.addTab(spec4);
@@ -490,6 +551,8 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         CO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                co_clicked=true;
+                so2_clicked=false; no2_clicked=false; o3_clicked=false; pm25_clicked=false;
                 CO.setTextColor(Color.RED);
                 NO2.setTextColor(Color.BLACK);
                 O3.setTextColor(Color.BLACK);
@@ -497,8 +560,8 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                 SO2.setTextColor(Color.BLACK);
                 TEMP.setTextColor(Color.BLACK);
                 paintCircle_CO();
+                searchCurrentPlaces();
                 changeFragment(0);
-
             }
         });
 
@@ -506,6 +569,8 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         NO2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                no2_clicked=true;
+                so2_clicked=false; co_clicked=false; o3_clicked=false; pm25_clicked=false;
                 CO.setTextColor(Color.BLACK);
                 NO2.setTextColor(Color.RED);
                 O3.setTextColor(Color.BLACK);
@@ -513,6 +578,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                 SO2.setTextColor(Color.BLACK);
                 TEMP.setTextColor(Color.BLACK);
                 paintCircle_NO2();
+                searchCurrentPlaces();
                 changeFragment(1);
             }
         });
@@ -521,6 +587,8 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         O3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                o3_clicked=true;
+                so2_clicked=false; no2_clicked=false; co_clicked=false; pm25_clicked=false;
                 CO.setTextColor(Color.BLACK);
                 NO2.setTextColor(Color.BLACK);
                 O3.setTextColor(Color.RED);
@@ -528,6 +596,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                 SO2.setTextColor(Color.BLACK);
                 TEMP.setTextColor(Color.BLACK);
                 paintCircle_O3();
+                searchCurrentPlaces();
                 changeFragment(2);
             }
         });
@@ -536,6 +605,8 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         PM25.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                pm25_clicked=true;
+                so2_clicked=false; no2_clicked=false; o3_clicked=false; co_clicked=false;
                 CO.setTextColor(Color.BLACK);
                 NO2.setTextColor(Color.BLACK);
                 O3.setTextColor(Color.BLACK);
@@ -543,6 +614,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                 SO2.setTextColor(Color.BLACK);
                 TEMP.setTextColor(Color.BLACK);
                 paintCircle_PM25();
+                searchCurrentPlaces();
                 changeFragment(3);
             }
         });
@@ -551,6 +623,8 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         SO2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                so2_clicked=true;
+                co_clicked=false; no2_clicked=false; o3_clicked=false; pm25_clicked=false;
                 CO.setTextColor(Color.BLACK);
                 NO2.setTextColor(Color.BLACK);
                 O3.setTextColor(Color.BLACK);
@@ -558,6 +632,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                 SO2.setTextColor(Color.RED);
                 TEMP.setTextColor(Color.BLACK);
                 paintCircle_SO2();
+                searchCurrentPlaces();
                 changeFragment(4);
             }
         });
@@ -625,105 +700,118 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         rightAxish.setEnabled(false);
 
         //Fragment initialization
-        changeFragment(5);
-        changeFragment(4);
-        changeFragment(3);
-        changeFragment(2);
-        changeFragment(1);
+        //changeFragment(5);
+        //changeFragment(4);
+        //changeFragment(3);
+        //changeFragment(2);
+        //changeFragment(1);
         changeFragment(0);
         return view;
     }
 
     private void paintCircle_CO() {
-        for(int i=0;i<count-1;i++){
+        for(int i=0;i<10;i++){
             if(0<=d_co[i] && d_co[i]<4.5)
-                otherCircle[i] = new CircleOptions().center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#5551F05D"));
-                //otherCircle[j] = new CircleOptions().center(otherLocation[j]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#5551F05D"));
-                //otherCircle[i].fillColor(Color.parseColor("#51F05D"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#5551F05D"));
             else if(4.5<=d_co[i] && d_co[i]<9.5)
-                otherCircle[i].fillColor(Color.parseColor("#EBF458"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55EBF458"));
+                //otherCircle[i].fillColor(Color.parseColor("#EBF458"));
             else if(9.5<=d_co[i] && d_co[i]<12.5)
-                otherCircle[i].fillColor(Color.parseColor("#F4BC57"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F4BC57"));
+                //otherCircle[i].fillColor(Color.parseColor("#F4BC57"));
             else if(12.5<=d_co[i] && d_co[i]<15.5)
-                otherCircle[i].fillColor(Color.parseColor("#FE5656"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55FE5656"));
+                //otherCircle[i].fillColor(Color.parseColor("#FE5656"));
             else if(15.5<=d_co[i] && d_co[i]<30.5)
-                otherCircle[i].fillColor(Color.parseColor("#F45BDD"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F45BDD"));
+                //otherCircle[i].fillColor(Color.parseColor("#F45BDD"));
             else
-                otherCircle[i].fillColor(Color.parseColor("#F4578A"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F4578A"));
+            //otherCircle[i].fillColor(Color.parseColor("#F4578A"));
         }
     }
 
     private void paintCircle_NO2() {
-        for(int i=0;i<count-1;i++){
-            if(0<=d_no2[i] && d_no2[i]<54)
-                otherCircle[i] = new CircleOptions().center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#5551F05D"));
+        for(int i=0;i<10;i++){
+            if(0<=d_no2[i] && d_no2[i]<54) {
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#5551F05D"));
                 //otherCircle[i].fillColor(Color.parseColor("#51F05D"));
-            else if(54<=d_no2[i] && d_no2[i]<101)
-                otherCircle[i] = new CircleOptions().center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55EBF458"));
+            }
+            else if(54<=d_no2[i] && d_no2[i]<101) {
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55EBF458"));
                 //otherCircle[i].fillColor(Color.parseColor("#EBF458"));
-            else if(101<=d_no2[i] && d_no2[i]<361)
-                otherCircle[i] = new CircleOptions().center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F4BC57"));
+            }
+            else if(101<=d_no2[i] && d_no2[i]<361) {
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F4BC57"));
                 //otherCircle[i].fillColor(Color.parseColor("#F4BC57"));
+            }
             else if(361<=d_no2[i] && d_no2[i]<650)
-                otherCircle[i] = new CircleOptions().center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55FE5656"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55FE5656"));
                 //otherCircle[i].fillColor(Color.parseColor("#FE5656"));
             else if(650<=d_no2[i] && d_no2[i]<1250)
-                otherCircle[i] = new CircleOptions().center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F45BDD"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F45BDD"));
                 //otherCircle[i].fillColor(Color.parseColor("#F45BDD"));
             else
-                otherCircle[i] = new CircleOptions().center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F4578A"));
-                //otherCircle[i].fillColor(Color.parseColor("#F4578A"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F4578A"));
+            //otherCircle[i].fillColor(Color.parseColor("#F4578A"));
         }
     }
 
     private void paintCircle_SO2() {
-        for(int i=0;i<count-1;i++){
+        for(int i=0;i<10;i++){
             if(0<=d_so2[i] && d_so2[i]<36)
-                otherCircle[i].fillColor(Color.parseColor("#51F05D"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#5551F05D"));
+                //otherCircle[i].fillColor(Color.parseColor("#51F05D"));
             else if(36<=d_so2[i] && d_so2[i]<76)
-                otherCircle[i].fillColor(Color.parseColor("#EBF458"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55EBF458"));
+                //otherCircle[i].fillColor(Color.parseColor("#EBF458"));
             else if(76<=d_so2[i] && d_so2[i]<186)
-                otherCircle[i].fillColor(Color.parseColor("#F4BC57"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F4BC57"));
+                //otherCircle[i].fillColor(Color.parseColor("#F4BC57"));
             else if(186<=d_so2[i] && d_so2[i]<305)
-                otherCircle[i].fillColor(Color.parseColor("#FE5656"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55FE5656"));
+                //otherCircle[i].fillColor(Color.parseColor("#FE5656"));
             else if(305<=d_so2[i] && d_so2[i]<605)
-                otherCircle[i].fillColor(Color.parseColor("#F45BDD"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F45BDD"));
+                //otherCircle[i].fillColor(Color.parseColor("#F45BDD"));
             else
-                otherCircle[i].fillColor(Color.parseColor("#F4578A"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F4578A"));
+            //otherCircle[i].fillColor(Color.parseColor("#F4578A"));
         }
     }
 
     private void paintCircle_O3() {
-        for(int i=0;i<count-1;i++){
+        for(int i=0;i<10;i++){
             if(0<=d_o3[i] && d_o3[i]<55)
-                otherCircle[i].fillColor(Color.parseColor("#51F05D"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#5551F05D"));
+                //otherCircle[i].fillColor(Color.parseColor("#51F05D"));
             else if(55<=d_o3[i] && d_o3[i]<71)
-                otherCircle[i].fillColor(Color.parseColor("#EBF458"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55EBF458"));
             else if(71<=d_o3[i] && d_o3[i]<86)
-                otherCircle[i].fillColor(Color.parseColor("#F4BC57"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F4BC57"));
             else if(86<=d_o3[i] && d_o3[i]<106)
-                otherCircle[i].fillColor(Color.parseColor("#FE5656"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55FE5656"));
             else if(106<=d_o3[i] && d_o3[i]<201)
-                otherCircle[i].fillColor(Color.parseColor("#F45BDD"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F45BDD"));
             else
-                otherCircle[i].fillColor(Color.parseColor("#F4578A"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F4578A"));
         }
     }
 
     private void paintCircle_PM25() {
-        for(int i=0;i<count-1;i++){
+        for(int i=0;i<10;i++){
             if(0<=d_o3[i] && d_o3[i]<12)
-                otherCircle[i].fillColor(Color.parseColor("#51F05D"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#5551F05D"));
             else if(55<=d_o3[i] && d_o3[i]<35.5)
-                otherCircle[i].fillColor(Color.parseColor("#EBF458"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55EBF458"));
             else if(71<=d_o3[i] && d_o3[i]<55.5)
-                otherCircle[i].fillColor(Color.parseColor("#F4BC57"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F4BC57"));
             else if(86<=d_o3[i] && d_o3[i]<150.5)
-                otherCircle[i].fillColor(Color.parseColor("#FE5656"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55FE5656"));
             else if(106<=d_o3[i] && d_o3[i]<250.5)
-                otherCircle[i].fillColor(Color.parseColor("#F45BDD"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F45BDD"));
             else
-                otherCircle[i].fillColor(Color.parseColor("#F4578A"));
+                otherCircle[i].center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F4578A"));
         }
     }
     //sensor LineDateSet
@@ -760,7 +848,8 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     public void changeFragment(int fNum) {
         switch (fNum) {
             case 0:
-                if (manager.findFragmentByTag("co") != null) {
+                manager.beginTransaction().replace(R.id.tab2, fragmentco).commitAllowingStateLoss();
+                /*if (manager.findFragmentByTag("co") != null) {
                     //if the fragment exists, show it.
                     manager.beginTransaction().show(manager.findFragmentByTag("co")).commit();
                 } else {
@@ -776,10 +865,11 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                     manager.beginTransaction().hide(manager.findFragmentByTag("pm25")).commit();
                     manager.beginTransaction().hide(manager.findFragmentByTag("so2")).commit();
                     manager.beginTransaction().hide(manager.findFragmentByTag("temp")).commit();
-                }
+                }*/
                 break;
             case 1:
-                if (manager.findFragmentByTag("no2") != null) {
+                manager.beginTransaction().replace(R.id.tab2, fragmentno2).commitAllowingStateLoss();
+                /*if (manager.findFragmentByTag("no2") != null) {
                     //if the fragment exists, show it.
                     manager.beginTransaction().show(manager.findFragmentByTag("no2")).commit();
                 } else {
@@ -795,10 +885,11 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                     manager.beginTransaction().hide(manager.findFragmentByTag("pm25")).commit();
                     manager.beginTransaction().hide(manager.findFragmentByTag("so2")).commit();
                     manager.beginTransaction().hide(manager.findFragmentByTag("temp")).commit();
-                }
+                }*/
                 break;
             case 2:
-                if (manager.findFragmentByTag("o3") != null) {
+                manager.beginTransaction().replace(R.id.tab2, fragmento3).commitAllowingStateLoss();
+                /*if (manager.findFragmentByTag("o3") != null) {
                     //if the fragment exists, show it.
                     manager.beginTransaction().show(manager.findFragmentByTag("o3")).commit();
                 } else {
@@ -814,10 +905,11 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                     manager.beginTransaction().hide(manager.findFragmentByTag("pm25")).commit();
                     manager.beginTransaction().hide(manager.findFragmentByTag("so2")).commit();
                     manager.beginTransaction().hide(manager.findFragmentByTag("temp")).commit();
-                }
+                }*/
                 break;
             case 3:
-                if (manager.findFragmentByTag("pm25") != null) {
+                manager.beginTransaction().replace(R.id.tab2, fragmentpm25).commitAllowingStateLoss();
+                /*if (manager.findFragmentByTag("pm25") != null) {
                     //if the fragment exists, show it.
                     manager.beginTransaction().show(manager.findFragmentByTag("pm25")).commit();
                 } else {
@@ -833,10 +925,11 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                     manager.beginTransaction().hide(manager.findFragmentByTag("o3")).commit();
                     manager.beginTransaction().hide(manager.findFragmentByTag("so2")).commit();
                     manager.beginTransaction().hide(manager.findFragmentByTag("temp")).commit();
-                }
+                }*/
                 break;
             case 4:
-                if (manager.findFragmentByTag("so2") != null) {
+                manager.beginTransaction().replace(R.id.tab2, fragmentso2).commitAllowingStateLoss();
+                /*if (manager.findFragmentByTag("so2") != null) {
                     //if the fragment exists, show it.
                     manager.beginTransaction().show(manager.findFragmentByTag("so2")).commit();
                 } else {
@@ -852,10 +945,11 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                     manager.beginTransaction().hide(manager.findFragmentByTag("o3")).commit();
                     manager.beginTransaction().hide(manager.findFragmentByTag("pm25")).commit();
                     manager.beginTransaction().hide(manager.findFragmentByTag("temp")).commit();
-                }
+                }*/
                 break;
             case 5:
-                if (manager.findFragmentByTag("temp") != null) {
+                manager.beginTransaction().replace(R.id.tab2, fragmenttemp).commitAllowingStateLoss();
+                /*if (manager.findFragmentByTag("temp") != null) {
                     //if the fragment exists, show it.
                     manager.beginTransaction().show(manager.findFragmentByTag("temp")).commit();
                 } else {
@@ -871,7 +965,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                     manager.beginTransaction().hide(manager.findFragmentByTag("o3")).commit();
                     manager.beginTransaction().hide(manager.findFragmentByTag("pm25")).commit();
                     manager.beginTransaction().hide(manager.findFragmentByTag("so2")).commit();
-                }
+                }*/
                 break;
         }
     }

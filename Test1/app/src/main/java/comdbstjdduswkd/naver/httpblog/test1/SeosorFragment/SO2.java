@@ -22,6 +22,7 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import org.json.JSONObject;
 
 import comdbstjdduswkd.naver.httpblog.test1.R;
+import comdbstjdduswkd.naver.httpblog.test1.RealTimeActivity;
 
 /**
  * Created by DONGHEE on 2017-07-30.
@@ -31,10 +32,14 @@ public class SO2 extends Fragment {
     private static LineChart so2Chart;
     View view;
 
+    RealTimeActivity real;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_so2, container, false);
+
+        real = new RealTimeActivity();
 
         so2Chart = (LineChart) view.findViewById(R.id.so2);
 
@@ -101,7 +106,7 @@ public class SO2 extends Fragment {
         return set;
     }
 
-    public void addEntrySO2(JSONObject jsonObject) {
+    public void addEntrySO2() {
         try {
             LineData dataco = so2Chart.getData();
             if (dataco != null) {
@@ -113,7 +118,7 @@ public class SO2 extends Fragment {
                     dataco.addDataSet(setco);
                 }
 
-                dataco.addEntry(new Entry(setco.getEntryCount(), Float.parseFloat(jsonObject.getString("SO2"))), 0);
+                dataco.addEntry(new Entry(setco.getEntryCount(), real.indexso2), 0);
                 dataco.notifyDataChanged();
 
                 // let the chart know it's data has changed

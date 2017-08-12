@@ -45,7 +45,6 @@ public class UploadCSV extends AsyncTask<String, Void, String> {
             twoHyphens = "--";
         }
 
-        // boundary생성, 여기서는 고정값이지만 되도록이면 실행할때마다 다른값을 할당하자.
         String lineEnd = "\r\n";
         String boundary = "androidupload";
         File targetFile = null;
@@ -77,7 +76,6 @@ public class UploadCSV extends AsyncTask<String, Void, String> {
         String delimiter = twoHyphens + boundary + lineEnd; // --androidupload\r\n
         StringBuffer postDataBuilder = new StringBuffer();
 
-        // 파일이 존재할 때에만 생성
         if (fileName != null) {
             postDataBuilder.append(delimiter);
             postDataBuilder.append("Content-Disposition: form-data; name=\"" + key + "\";filename=\"" + fileName + "\"" + lineEnd);

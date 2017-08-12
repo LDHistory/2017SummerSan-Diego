@@ -22,6 +22,7 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import org.json.JSONObject;
 
 import comdbstjdduswkd.naver.httpblog.test1.R;
+import comdbstjdduswkd.naver.httpblog.test1.RealTimeActivity;
 
 /**
  * Created by DONGHEE on 2017-07-30.
@@ -31,10 +32,14 @@ public class PM25 extends Fragment {
     private static LineChart pm25Chart;
     View view;
 
+    RealTimeActivity real;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_pm25, container, false);
+
+        real = new RealTimeActivity();
 
         pm25Chart = (LineChart) view.findViewById(R.id.pm25);
 
@@ -101,7 +106,7 @@ public class PM25 extends Fragment {
         return set;
     }
 
-    public void addEntryPM25(JSONObject jsonObject) {
+    public void addEntryPM25() {
         try {
             LineData dataco = pm25Chart.getData();
             if (dataco != null) {
@@ -113,7 +118,7 @@ public class PM25 extends Fragment {
                     dataco.addDataSet(setco);
                 }
 
-                dataco.addEntry(new Entry(setco.getEntryCount(), Float.parseFloat(jsonObject.getString("PM25"))), 0);
+                dataco.addEntry(new Entry(setco.getEntryCount(), real.indexpm25), 0);
                 dataco.notifyDataChanged();
 
                 // let the chart know it's data has changed

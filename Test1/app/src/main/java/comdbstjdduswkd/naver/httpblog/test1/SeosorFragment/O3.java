@@ -22,6 +22,7 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import org.json.JSONObject;
 
 import comdbstjdduswkd.naver.httpblog.test1.R;
+import comdbstjdduswkd.naver.httpblog.test1.RealTimeActivity;
 
 /**
  * Created by DONGHEE on 2017-07-30.
@@ -31,10 +32,14 @@ public class O3 extends Fragment {
     private static LineChart o3Chart;
     View view;
 
+    RealTimeActivity real;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_o3, container, false);
+
+        real = new RealTimeActivity();
 
         o3Chart = (LineChart) view.findViewById(R.id.o3);
 
@@ -101,7 +106,7 @@ public class O3 extends Fragment {
         return set;
     }
 
-    public void addEntryO3(JSONObject jsonObject) {
+    public void addEntryO3() {
         try {
             LineData dataco = o3Chart.getData();
             if (dataco != null) {
@@ -113,7 +118,7 @@ public class O3 extends Fragment {
                     dataco.addDataSet(setco);
                 }
 
-                dataco.addEntry(new Entry(setco.getEntryCount(), Float.parseFloat(jsonObject.getString("O3"))), 0);
+                dataco.addEntry(new Entry(setco.getEntryCount(), real.indexo3), 0);
                 dataco.notifyDataChanged();
 
                 // let the chart know it's data has changed

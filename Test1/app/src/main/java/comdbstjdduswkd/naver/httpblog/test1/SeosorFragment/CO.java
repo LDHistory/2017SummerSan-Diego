@@ -22,6 +22,7 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import org.json.JSONObject;
 
 import comdbstjdduswkd.naver.httpblog.test1.R;
+import comdbstjdduswkd.naver.httpblog.test1.RealTimeActivity;
 
 /**
  * Created by DONGHEE on 2017-07-30.
@@ -31,10 +32,14 @@ public class CO extends Fragment {
     private static LineChart coChart;
     View view;
 
+    RealTimeActivity real;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_co, container, false);
+
+        real = new RealTimeActivity();
 
         coChart = (LineChart) view.findViewById(R.id.co);
 
@@ -101,7 +106,7 @@ public class CO extends Fragment {
         return set;
     }
 
-    public void addEntryCO(JSONObject jsonObject) {
+    public void addEntryCO() {
         try {
             LineData dataco = coChart.getData();
             if (dataco != null) {
@@ -112,7 +117,7 @@ public class CO extends Fragment {
                     setco = createSetCO();
                     dataco.addDataSet(setco);
                 }
-                dataco.addEntry(new Entry(setco.getEntryCount(), Float.parseFloat(jsonObject.getString("CO"))), 0);
+                dataco.addEntry(new Entry(setco.getEntryCount(), real.indexco), 0);
                 if(dataco.getEntryCount()>10){
                     dataco.removeDataSet(0);
                 }

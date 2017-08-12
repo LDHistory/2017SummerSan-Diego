@@ -51,6 +51,7 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -144,6 +145,8 @@ public class MainActivity extends AppCompatActivity
     private ArrayAdapter<String> mConversationArrayAdapter;
     private StringBuffer mOutStringBuffer;
 
+    DecimalFormat df;
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         // TODO Auto-generated method stub
@@ -196,6 +199,8 @@ public class MainActivity extends AppCompatActivity
         so2fragment = new SO2();
         tempfragemnt = new TEMP();
         mOutStringBuffer = new StringBuffer("");
+
+        df = new DecimalFormat(".0");
 
         changeFragment(0);
 
@@ -541,27 +546,36 @@ public class MainActivity extends AppCompatActivity
                             JsonTransfer jsonTransfer = new JsonTransfer();
                             JSONObject wrapObject = new JSONObject(jsonreadmessage);
                             real.setAQI(wrapObject);
-                            cofragment.addEntryCO(wrapObject);
-                            no2fragment.addEntryNO2(wrapObject);
-                            o3fragment.addEntryO3(wrapObject);
-                            pm25fragment.addEntryPM25(wrapObject);
-                            so2fragment.addEntrySO2(wrapObject);
+                            cofragment.addEntryCO();
+                            no2fragment.addEntryNO2();
+                            o3fragment.addEntryO3();
+                            pm25fragment.addEntryPM25();
+                            so2fragment.addEntrySO2();
                             tempfragemnt.addEntryTEMP(wrapObject);
-                            //Add realtime location value
-                            wrapObject.put("latitude", real.latitude);
-                            wrapObject.put("longitude", real.longitude);
-                            //send AQI data(jsonObject) to server
 
+                            JSONObject sendObject = new JSONObject();
+                            sendObject.put("CO",df.format(real.indexco));
+                            sendObject.put("SO2",df.format(real.indexso2));
+                            sendObject.put("NO2",df.format(real.indexno2));
+                            sendObject.put("O3",df.format(real.indexo3));
+                            sendObject.put("PM25",df.format(real.indexpm25));
+                            sendObject.put("temp",wrapObject.getString("temp"));
+                            sendObject.put("time",wrapObject.getString("time"));
+                            sendObject.put("MAC",wrapObject.get("MAC"));
+                            //Add realtime location value
+                            sendObject.put("latitude", real.latitude);
+                            sendObject.put("longitude", real.longitude);
+                            //send AQI data(jsonObject) to server
                             //Add real time year month date
                             mNow = System.currentTimeMillis();
                             mDate = new Date(mNow);
-                            wrapObject.put("apptime", mFormat.format(mDate));
+                            sendObject.put("apptime", mFormat.format(mDate));
 
                             //Add user number
-                            wrapObject.put("user_num", login.usernum);
-                            wrapObject.put("online_state", onlinestatus);
+                            sendObject.put("user_num", login.usernum);
+                            sendObject.put("online_state", onlinestatus);
 
-                            String jsonString = wrapObject.toString();
+                            String jsonString = sendObject.toString();
                             Log.i("json String print", "" + jsonString);
                             jsonTransfer.execute("http://teamb-iot.calit2.net/slim-api/receive-air-data", "[" + jsonString + "]");
                             readlocation = jsonTransfer.strJson;
@@ -710,7 +724,7 @@ public class MainActivity extends AppCompatActivity
                     try {
                         CSVWriter cw = new CSVWriter(new OutputStreamWriter
                                 (new FileOutputStream(filePath + "heart_history.csv"), "EUC-KR"), ',', '"');
-                        try {
+                         try {
                             for (Map<String, Object> m : hlist) {
                                 cw.writeNext(new String[]{String.valueOf(m.get("hr")), String.valueOf(m.get("rr"))});
                             }
