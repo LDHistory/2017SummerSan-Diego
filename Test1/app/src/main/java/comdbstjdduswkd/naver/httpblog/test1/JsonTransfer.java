@@ -18,6 +18,9 @@ import java.net.URL;
  * Created by USER on 2017-08-02.
  */
 
+//////////////////////////////////////////////////////////////////////
+//     To connect with the server, This class is called.           //
+////////////////////////////////////////////////////////////////////
 public class JsonTransfer extends AsyncTask<String, Void, String> {
 
     public static String strJson;
@@ -28,7 +31,7 @@ public class JsonTransfer extends AsyncTask<String, Void, String> {
         String data = params[1];
         String result = null;
         try{
-            //Connect
+            //To connect with server, Setting this option
             urlConnection = (HttpURLConnection) ((new URL(params[0]).openConnection()));
             urlConnection.setDoOutput(true);
             urlConnection.setDoInput(true);
@@ -38,7 +41,7 @@ public class JsonTransfer extends AsyncTask<String, Void, String> {
             urlConnection.setRequestProperty("X-Requested-With","XMLHttpRequest");
             urlConnection.setRequestMethod("POST");
 
-            //Write
+            //Write the data from the server
             OutputStream outputStream = urlConnection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream,"UTF-8"));
             writer.write(data);
@@ -46,7 +49,7 @@ public class JsonTransfer extends AsyncTask<String, Void, String> {
             writer.close();
             outputStream.close();
 
-            //Read
+            //Read the data
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
             String line = null;
             StringBuilder sb = new StringBuilder();
@@ -54,9 +57,10 @@ public class JsonTransfer extends AsyncTask<String, Void, String> {
             while((line = bufferedReader.readLine()) != null){
                 sb.append(line);
             }
-            //Toast.makeText(MainActivity.this, "전송 후 결과 받음", Toast.LENGTH_LONG).show();
+
             bufferedReader.close();
             result = sb.toString();
+            //To use another class, Set the value in the global value
             strJson = result;
         }catch (UnsupportedEncodingException e){
             e.printStackTrace();
@@ -71,21 +75,6 @@ public class JsonTransfer extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        strJson = result;
-            /*
-            mainAct.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
 
-                    Toast.makeText(mainAct, "Received!", Toast.LENGTH_LONG).show();
-                    try {
-                        JSONArray json = new JSONArray(strJson);
-                        mainAct.textResult.setText(json.toString(1));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            */
     }
 }

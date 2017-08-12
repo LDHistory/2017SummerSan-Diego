@@ -35,12 +35,11 @@ import comdbstjdduswkd.naver.httpblog.test1.R;
 
 public class RegActivity extends AppCompatActivity {
 
-    private Button RegSend, Regcancel, chkBtn;
-    //private Spinner Year, Month, Day;
+    private Button RegSend, Regcancel;
     private EditText emailbox;
     private TextView checkView;
     boolean checkflag;
-    String email, pw, chkpw, fname, lname, regResult, IDcheckResult;
+    String email, pw, chkpw, fname, lname, IDcheckResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,41 +108,41 @@ public class RegActivity extends AppCompatActivity {
     public void HttpIDCheck(){
         try {
             //--------------------------
-            //   URL 설정하고 접속하기
+            //   set the URL and connect with server
             //--------------------------
-            URL url = new URL("http://teamb-iot.calit2.net/slim-api/check-email");       // URL 설정
-            HttpURLConnection http = (HttpURLConnection) url.openConnection();   // 접속
+            URL url = new URL("http://teamb-iot.calit2.net/slim-api/check-email");
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
             //--------------------------
-            //   전송 모드 설정 - 기본적인 설정이다
+            //   Set the transfer mode (basical settings)
             //--------------------------
             http.setDefaultUseCaches(false);
-            http.setDoInput(true);                         // 서버에서 읽기 모드 지정
-            http.setDoOutput(true);                       // 서버로 쓰기 모드 지정
-            http.setRequestMethod("POST");         // 전송 방식은 POST
+            http.setDoInput(true);
+            http.setDoOutput(true);
+            http.setRequestMethod("POST");         // The transmission method is POST
 
-            // 서버에게 웹에서 <Form>으로 값이 넘어온 것과 같은 방식으로 처리하라는 걸 알려준다
+            // Tell the server to process it the same way that the value passed from the Web to <Form>.
             http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
             //--------------------------
-            //   서버로 값 전송 (URL Tag protocol)
+            //   Sending values to the server. (URL Tag protocol)
             //--------------------------
             StringBuffer buffer = new StringBuffer();
-            buffer.append("email").append("=").append(email);                 // php 변수에 값 대입
+            buffer.append("email").append("=").append(email);                 // Assign values to php variables.
 
             OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "EUC-KR");
             PrintWriter writer = new PrintWriter(outStream);
             writer.write(buffer.toString());
             writer.flush();
             //--------------------------
-            //   서버에서 전송받기
+            //    Data received from server
             //--------------------------
             InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "EUC-KR");
             BufferedReader reader = new BufferedReader(tmp);
             StringBuilder builder = new StringBuilder();
             String str;
-            while ((str = reader.readLine()) != null) {       // 서버에서 라인단위로 보내줄 것이므로 라인단위로 읽는다
-                builder.append(str + "\n");                     // View에 표시하기 위해 라인 구분자 추가
+            while ((str = reader.readLine()) != null) {       // It will be sent line by line from the server, so read it line by line.
+                builder.append(str + "\n");                    // Add line separator for display in View.
             }
-            IDcheckResult = builder.toString();                       // 전송결과를 전역 변수에 저장
+            IDcheckResult = builder.toString();              // Store transmission results in global variables.
             try {
                 JSONObject jsonObject = new JSONObject(IDcheckResult);
                 if(jsonObject.getString("status").equals("true")){

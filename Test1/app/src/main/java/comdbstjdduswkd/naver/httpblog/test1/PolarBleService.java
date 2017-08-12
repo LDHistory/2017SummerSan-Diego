@@ -457,7 +457,8 @@ public class PolarBleService extends Service {
     }
 
     public boolean connect() {
-    	String address="00:07:80:78:9F:8B";
+    	//String address="00:07:80:78:9F:8B";
+        String address="00:22:D0:3D:2E:81";
     	
         if (mBluetoothAdapter == null || address == null) {
             //Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");

@@ -116,7 +116,6 @@ public class CO extends Fragment {
                 if(dataco.getEntryCount()>10){
                     dataco.removeDataSet(0);
                 }
-                Log.e("Entry Count",""+dataco.getEntryCount());
                 dataco.notifyDataChanged();
 
                 // let the chart know it's data has changed

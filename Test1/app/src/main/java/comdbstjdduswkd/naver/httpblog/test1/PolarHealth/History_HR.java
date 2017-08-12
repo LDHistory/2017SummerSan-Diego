@@ -70,12 +70,12 @@ public class History_HR extends Fragment {
             SimpleDateFormat SimFormat = new SimpleDateFormat("MM-dd");
             Calendar calendar = Calendar.getInstance();
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            String currtime = dateFormat.format(calendar.getTime()); //현재시간을 문자열로 받아온다.
+            String currtime = dateFormat.format(calendar.getTime()); //The current time is received as a string.
 
             Calendar calendar2 = Calendar.getInstance();
             calendar2.add(Calendar.DAY_OF_MONTH, -7);
             Date date = calendar2.getTime();
-            String lastday = new SimpleDateFormat("yyyy-MM-dd").format(date); //7일전 날짜
+            String lastday = new SimpleDateFormat("yyyy-MM-dd").format(date);   //Date 7 days ago
 
             //Set Name of X values
             xVals = new ArrayList<String>();
@@ -108,53 +108,43 @@ public class History_HR extends Fragment {
             });
 
             try {
-                Log.e("URL접속", "");
                 //--------------------------
-                //   URL 설정하고 접속하기
+                //   set the URL and connect with server
                 //--------------------------
-                URL url = new URL("http://teamb-iot.calit2.net/slim-api/air-data-show/" + usernum);       // URL 설정
+                URL url = new URL("http://teamb-iot.calit2.net/slim-api/history-heart-show/" + usernum);       // URL 설정
                 HttpURLConnection http = (HttpURLConnection) url.openConnection();   // 접속
                 //--------------------------
-                //   전송 모드 설정 - 기본적인 설정이다
+                //   Set the transfer mode (basical settings)
                 //--------------------------
                 http.setDefaultUseCaches(false);
                 http.setDoInput(true);                         // 서버에서 읽기 모드 지정
                 http.setRequestMethod("GET");
 
-                // 서버에게 웹에서 <Form>으로 값이 넘어온 것과 같은 방식으로 처리하라는 걸 알려준다
+                // Tell the server to process it the same way that the value passed from the Web to <Form>.
                 http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
                 //--------------------------
-                //   서버에서 전송받기
+                //   Data received from server
                 //--------------------------
                 InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "EUC-KR");
                 BufferedReader reader = new BufferedReader(tmp);
                 StringBuilder builder = new StringBuilder();
                 String str;
-                while ((str = reader.readLine()) != null) {       // 서버에서 라인단위로 보내줄 것이므로 라인단위로 읽는다
-                    builder.append(str + "\n");                     // View에 표시하기 위해 라인 구분자 추가
+                while ((str = reader.readLine()) != null) {         // It will be sent line by line from the server, so read it line by line.
+                    builder.append(str + "\n");                      // Add line separator for display in View.
                 }
-                queryResult = builder.toString();                       // 전송결과를 전역 변수에 저장
+                queryResult = builder.toString();                   // Store transmission results in global variables.
                 try {
                     JSONArray jsonArray = new JSONArray(queryResult);
-                    Log.e("HR Array", "" + jsonArray.get(0).toString());
                     for (int i = 0; i < 7; i++) {
-                        //avgHR.add(Integer.parseInt(jsonArray.getJSONObject(i).getString("avghr")));
-                        //maxHR.add(Integer.parseInt(jsonArray.getJSONObject(i).getString("maxhr")));
-                        //minHR.add(Integer.parseInt(jsonArray.getJSONObject(i).getString("minhr")));
-                        avgHR.add(Float.parseFloat(jsonArray.getJSONObject(i).getString("co")));
-                        maxHR.add(Float.parseFloat(jsonArray.getJSONObject(i).getString("no2")));
-                        minHR.add(Float.parseFloat(jsonArray.getJSONObject(i).getString("so2")));
-                        Log.e("avgHR", "index : " + i + "  value : " + avgHR.get(i));
-                        Log.e("maxHR", "index : " + i + "  value : " + maxHR.get(i));
-                        Log.e("minHR", "index : " + i + "  value : " + minHR.get(i));
+                        avgHR.add(Float.parseFloat(jsonArray.getJSONObject(i).getString("heart_rate")));
+                        maxHR.add(Float.parseFloat(jsonArray.getJSONObject(i).getString("heartmaxavg")));
+                        minHR.add(Float.parseFloat(jsonArray.getJSONObject(i).getString("heartminavg")));
                     }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Log.e("why","와이");
                 } catch (Exception e){
                     e.printStackTrace();
-                    Log.e("ec","닥쳐");
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();

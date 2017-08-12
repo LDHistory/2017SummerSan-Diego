@@ -69,21 +69,25 @@ import comdbstjdduswkd.naver.httpblog.test1.UDOO.BluetoothChatService;
 import comdbstjdduswkd.naver.httpblog.test1.UDOO.Constants;
 import comdbstjdduswkd.naver.httpblog.test1.UDOO.DeviceListActivity;
 import comdbstjdduswkd.naver.httpblog.test1.UserManagement.LoginActivity;
-import comdbstjdduswkd.naver.httpblog.test1.UserManagement.RegActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    //Setting the location of Extenal storage to save the csv file.
     String filePath = Environment.getExternalStorageDirectory() + File.separator +
             "data/data/teamb/";
 
+    //To save the bluetooth location, Declare the arraylist
     ArrayList<String> historyArrList;
-    boolean arraycheck = false;
 
+    ///////////////////////////////////////////////////////////////
+    //To use another class method and value, Declare the instance//
+    //////////////////////////////////////////////////////////////
     FragmentManager manager = getFragmentManager();
     RealTimeActivity real;
     HistoryActivity history;
     LoginActivity login;
+    UploadCSV upload;
 
     CO cofragment;
     NO2 no2fragment;
@@ -92,31 +96,40 @@ public class MainActivity extends AppCompatActivity
     SO2 so2fragment;
     TEMP tempfragemnt;
     String id, PWcheckResult;
+    //////////////////////////////////////////////////////////////
     public String jsonreadmessage;
 
+    //Check the option button on the navigation bar
+    //if option button is not activated, the i is 0
     int i = 0;
 
+    //To use SharedPreferences class, Declare the setting
     public static final String MyPREFERENCES = "MyPrefs";
     SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
+    //Save the address
     String saveaddr;
+    //Save the check pw
     boolean checkPW;
 
+    //To give the user onlinestatus to the server
     public static int onlinestatus = 0;
+    //To read the udoo board location
     public static String readlocation;
 
-    int testvalue = 0;
-
+    //To use the current time, Declare the setting
     Date mDate;
     long mNow;
     SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
+    //To save the history data from coming the udoo board, Declare the Map and ArrayList
     Map<String, Object> hmap = null;
     ArrayList<Map<String, Object>> list;
+    Map<String, Object> heartmap = null;
+    ArrayList<Map<String, Object>> hlist;
 
     private final String TAG = "YourActivity";
     PolarBleService mPolarBleService;
-    String mpolarBleDeviceAddress = "00:22:D0:9C:F9:8E";    // your need to pass the address (주소를 전달해야한다.)
     int batteryLevel = 0;
     // Intent request codes
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
@@ -152,12 +165,13 @@ public class MainActivity extends AppCompatActivity
         id = intent.getStringExtra("ID");
         Toast.makeText(this, "" + id, Toast.LENGTH_SHORT).show();
 
-        //데이터 저장하기 위해 sharedpreferences 객체 구현
+        //To save the data, Implement the shardpreferences objects.
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         editor = sharedpreferences.edit();
 
+        //Implement the ArrayList to make a csv file
         list = new ArrayList<Map<String, Object>>();
-        //hmap = new HashMap<String, Object>();
+        hlist = new ArrayList<Map<String, Object>>();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -173,6 +187,7 @@ public class MainActivity extends AppCompatActivity
         real = new RealTimeActivity();
         history = new HistoryActivity();
         login = new LoginActivity();
+        upload = new UploadCSV();
 
         cofragment = new CO();
         no2fragment = new NO2();
@@ -182,7 +197,6 @@ public class MainActivity extends AppCompatActivity
         tempfragemnt = new TEMP();
         mOutStringBuffer = new StringBuffer("");
 
-        //manager.beginTransaction().replace(R.id.content_main, real).commit(); //if push the button, change the frame
         changeFragment(0);
 
         // Get local Bluetooth adapter
@@ -202,9 +216,7 @@ public class MainActivity extends AppCompatActivity
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
         } else if (mChatService == null) {
-            //이상이 없으면 채팅세션을 설정한다.
-            //setupChat(); 보류
-            mChatService = new BluetoothChatService(this, mHandler); //setupChat에서 일부 발췌
+            mChatService = new BluetoothChatService(this, mHandler);
             Toast.makeText(this, "Ready for chat ! :)", Toast.LENGTH_SHORT).show();
         }
 
@@ -319,18 +331,18 @@ public class MainActivity extends AppCompatActivity
                     // Attempt to connect to the device
                     mChatService.connect(device, false);
                 }
-                //이상이 없으면 채팅세션을 설정한다.
-                //setupChat(); 보류
             }
             return true;
         } else if (id == R.id.Bt_connect && i == 1) {
             i = 0;
             if (mBluetoothAdapter.isEnabled()) {
                 //mBluetoothAdapter.disable();
+                //If app is disconnected with the sensor, this message will be sended to the sensor
                 sendMessage("stop\n");
                 mChatService.connectionLost();
                 if (jsonreadmessage != null) {
                     try {
+                        //If app is disconnected with the sensor, online status sets the 0 value
                         onlinestatus = 0;
                         JsonTransfer jsonTransfer = new JsonTransfer();
                         JSONObject wrapObject = new JSONObject(jsonreadmessage);
@@ -437,6 +449,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    //To save the life cycle of fragment...
     public void changeFragment(int fNum) {
         switch (fNum) {
             case 0:
@@ -491,8 +504,6 @@ public class MainActivity extends AppCompatActivity
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-
-    //블루투스 채팅 핸들러 메인 부분
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -501,6 +512,7 @@ public class MainActivity extends AppCompatActivity
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
                         case BluetoothChatService.STATE_CONNECTED:
+                            //If app is connected with the sensor, This message will be sended.
                             MainActivity.this.sendMessage("start\n");
                             break;
                         case BluetoothChatService.STATE_CONNECTING:
@@ -510,16 +522,18 @@ public class MainActivity extends AppCompatActivity
                             break;
                     }
                     break;
-                //메시지를 쓰는 부분
+                //Write message by using bluetooth
                 case Constants.MESSAGE_WRITE:
                     break;
-                //메시지를 읽는 부분
+                //Read message by using bluetooth
                 case Constants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     String checkfirst = readMessage.substring(0, 1);
                     String receive = readMessage.substring(1, readMessage.length() - 1);
+                    //if app receives the real-time data from udoo board, then under the code will operate.
+                    //"r" means real-time data
                     if (checkfirst.equals("r")) {
                         jsonreadmessage = receive;
                         try {
@@ -554,38 +568,44 @@ public class MainActivity extends AppCompatActivity
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        //if app receives the history data from udoo board, then under the code will operate.
+                        //"h" means history data
                     } else if (checkfirst.equals("h")) {
+                        //"en" means end of file
                         if (!receive.equals("en")) {
-                            //Log.i("read", readMessage);
                             Log.i("read2", receive);
-                            arraycheck = true;
                             StringTokenizer tokens = new StringTokenizer(receive, ",");
                             String tokenArray[] = receive.split(",");
-                            String name[] = {"MAC", "time", "temp", "CO", "NO2", "SO2", "O3", "PM25"};
+                            String name[] = {"MAC", "time", "temp", "NO2", "O3", "CO", "SO2", "PM25"};
 
-                            hmap = new HashMap<String, Object>();
-                            for (int i = 0; i < tokenArray.length; i++) {
-                                Log.i(name[i], "" + hmap.put(name[i], tokenArray[i]));
+                            //Save the value of history data on the hashMap
+                            try {
+                                hmap = new HashMap<String, Object>();
+                                for (int i = 0; i < 8; i++) {
+                                    hmap.put(name[i], tokenArray[i]);
+                                }
+                                list.add(hmap);
+                            } catch (Exception e){
+                                Toast.makeText(activity, "Making CSV Error! ", Toast.LENGTH_SHORT).show();
                             }
-                            list.add(hmap);
-                            //Log.i("CSV", "" + list.get(testvalue));
-                            testvalue++;
                         } else if (receive.equals("en")) {
+                            //Make a CSV file part
                             try {
                                 CSVWriter cw = new CSVWriter(new OutputStreamWriter
-                                        (new FileOutputStream(filePath + "test.csv"), "EUC-KR"), ',', '"');
+                                        (new FileOutputStream(filePath + "AQI_history.csv"), "EUC-KR"), ',', '"');
                                 try {
                                     for (Map<String, Object> m : list) {
                                         cw.writeNext(new String[]{String.valueOf(m.get("MAC")), String.valueOf(m.get("time")),
-                                                String.valueOf(m.get("temp")), String.valueOf(m.get("CO")), String.valueOf(m.get("NO2")),
-                                                String.valueOf(m.get("SO2")), String.valueOf(m.get("O3")), String.valueOf(m.get("PM25"))});
+                                                String.valueOf(m.get("temp")), String.valueOf(m.get("NO2")), String.valueOf(m.get("O3")),
+                                                String.valueOf(m.get("CO")), String.valueOf(m.get("SO2")), String.valueOf(m.get("PM25"))});
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 } finally {
                                     list.clear();
-                                    arraycheck = false;
                                     Log.i("Make CSV", "Successful");
+                                    Toast.makeText(activity, "Successfuly make csv file! ", Toast.LENGTH_SHORT).show();
+                                    upload.execute("air");
                                     cw.close();
                                 }
                             } catch (Exception e) {
@@ -642,16 +662,16 @@ public class MainActivity extends AppCompatActivity
             } else if (PolarBleService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 //dataFragPolar.stopAnimation();
             } else if (PolarBleService.ACTION_HR_DATA_AVAILABLE.equals(action)) {
-                //heartRate+";"+pnnPercentage+";"+pnnCount+";"+rrThreshold+";"+bioHarnessSessionData.totalNN
-                //String data = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);  //-> is it miss type? (i don't need that class)
                 String data = intent.getStringExtra(PolarBleService.EXTRA_DATA);
                 StringTokenizer tokens = new StringTokenizer(data, ";");
                 int hr = Integer.parseInt(tokens.nextToken());
+                int rr = Integer.parseInt(tokens.nextToken());
+                //To set the hr value on the text and chart...
                 real.setHeart(hr);
-                real.addHEntry(hr);
+                real.addHEntry(hr, rr);
 
-                int rr = Integer.parseInt(tokens.nextToken()); //high is better.
-                if (rr != 0)
+                if (rr != 0 && rr != 100)
+                    //To set the rr value on the text and chart...
                     real.setHeartrr(rr);
 
                 //Send hr value to server
@@ -659,9 +679,9 @@ public class MainActivity extends AppCompatActivity
                 JSONObject wrapObject = new JSONObject();
                 try {
                     wrapObject.put("huser_num", login.usernum);
-                    wrapObject.put("macaddress", "00:22:D0:9C:F9:8E");
+                    wrapObject.put("macaddress", "00:22:D0:3D:2E:81");
                     wrapObject.put("heart_rate", hr);
-                    wrapObject.put("Rest_rate", rr);
+                    wrapObject.put("rest_heart_rate", rr);
 
                     //Add real time year month date
                     mNow = System.currentTimeMillis();
@@ -673,6 +693,39 @@ public class MainActivity extends AppCompatActivity
                     jsonTransfer.execute("http://teamb-iot.calit2.net/slim-api/receive-heart-data", "[" + jsonString + "]");
                 } catch (JSONException e) {
                     e.printStackTrace();
+                }
+
+                //Save the value of history data on the hashMap
+                try {
+                    heartmap = new HashMap<String, Object>();
+                    heartmap.put("hr", hr);
+                    heartmap.put("rr", rr);
+                    hlist.add(heartmap);
+                } catch (Exception e) {
+                    Toast.makeText(MainActivity.this, "Making CSV Error! ", Toast.LENGTH_SHORT).show();
+                }
+
+                if(hlist.size() == 300){
+                    //Make a CSV file part
+                    try {
+                        CSVWriter cw = new CSVWriter(new OutputStreamWriter
+                                (new FileOutputStream(filePath + "heart_history.csv"), "EUC-KR"), ',', '"');
+                        try {
+                            for (Map<String, Object> m : hlist) {
+                                cw.writeNext(new String[]{String.valueOf(m.get("hr")), String.valueOf(m.get("rr"))});
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            hlist.clear();
+                            Log.i("Make CSV", "Successful");
+                            Toast.makeText(MainActivity.this, "Successfuly make heart csv file! ", Toast.LENGTH_SHORT).show();
+                            upload.execute("heart");
+                            cw.close();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 //dataFragPolar.settvHR(Integer.toString(hr));
@@ -710,8 +763,8 @@ public class MainActivity extends AppCompatActivity
                 Log.e(TAG, "Unable to initialize Bluetooth");
                 finish();
             }
-            mPolarBleService.connect("00:22:D0:9C:F9:8E", false);
-            // mPolarBleService.connect("00:22:D0:9C:F9:8E", false);
+            //mPolarBleService.connect("00:22:D0:9C:F9:8E", false);
+            mPolarBleService.connect("00:22:D0:3D:2E:81", false);
             Log.e("mPolarBleService.init", ": Sucscc");
         }
 
@@ -728,10 +781,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        //If activity is destoryed, then send the stop message to udoo board.
         sendMessage("stop\n");
         Log.e(this.getClass().getName(), "onDestroy");
         deactivatePolar();
         mChatService.connectionLost();
+        //If activity is destoyed, then send send the current user data to the web server.
         if (jsonreadmessage != null) {
             try {
                 onlinestatus = 0;
@@ -762,25 +817,25 @@ public class MainActivity extends AppCompatActivity
     public boolean checkPWtoSever(String pw) {
         try {
             //--------------------------
-            //   URL 설정하고 접속하기
+            //   Check the URL and Connect
             //--------------------------
-            URL url = new URL("http://teamb-iot.calit2.net/slim-api/appcancel-email");       // URL 설정
-            HttpURLConnection http = (HttpURLConnection) url.openConnection();   // 접속
+            URL url = new URL("http://teamb-iot.calit2.net/slim-api/appcancel-email");
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
             //--------------------------
-            //   전송 모드 설정 - 기본적인 설정이다
+            //   Transmission option
             //--------------------------
             http.setDefaultUseCaches(false);
-            http.setDoInput(true);                         // 서버에서 읽기 모드 지정
-            http.setDoOutput(true);                       // 서버로 쓰기 모드 지정
-            http.setRequestMethod("POST");         // 전송 방식은 POST
+            http.setDoInput(true);
+            http.setDoOutput(true);
+            http.setRequestMethod("POST");
 
-            // 서버에게 웹에서 <Form>으로 값이 넘어온 것과 같은 방식으로 처리하라는 걸 알려준다
+            // Tell the server to process it the same way that the value passed from the Web to <Form>.
             http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
             //--------------------------
-            //   서버로 값 전송 (URL Tag protocol)
+            //   Send the data to the server (URL Tag protocol)
             //--------------------------
             StringBuffer buffer = new StringBuffer();
-            buffer.append("email").append("=").append(id).append("&");                 // php 변수에 값 대입
+            buffer.append("email").append("=").append(id).append("&");
             buffer.append("password").append("=").append(pw);
 
 
@@ -789,16 +844,16 @@ public class MainActivity extends AppCompatActivity
             writer.write(buffer.toString());
             writer.flush();
             //--------------------------
-            //   서버에서 전송받기
+            //   Receive the data from server
             //--------------------------
             InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "EUC-KR");
             BufferedReader reader = new BufferedReader(tmp);
             StringBuilder builder = new StringBuilder();
             String str;
-            while ((str = reader.readLine()) != null) {       // 서버에서 라인단위로 보내줄 것이므로 라인단위로 읽는다
-                builder.append(str + "\n");                     // View에 표시하기 위해 라인 구분자 추가
+            while ((str = reader.readLine()) != null) {       //It will be sent line by line from the server, so read it line by line.
+                builder.append(str + "\n");                     //Add line separator for display in View.
             }
-            PWcheckResult = builder.toString();                       // 전송결과를 전역 변수에 저장
+            PWcheckResult = builder.toString();                       // Store transmission results in global variables.
             try {
                 JSONObject jsonObject = new JSONObject(PWcheckResult);
                 if (jsonObject.getString("status").equals("true")) {
@@ -806,7 +861,6 @@ public class MainActivity extends AppCompatActivity
                 } else if (jsonObject.getString("status").equals("false")) {
                     checkPW = false;
                 }
-                //((TextView)(findViewById(R.id.text_result))).setText(myResult);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

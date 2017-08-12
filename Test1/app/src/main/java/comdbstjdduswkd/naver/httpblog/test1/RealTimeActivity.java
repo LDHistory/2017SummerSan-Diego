@@ -94,6 +94,9 @@ import comdbstjdduswkd.naver.httpblog.test1.SeosorFragment.TEMP;
 public class RealTimeActivity extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //          To set the real time location, Declare this value                       //
+    /////////////////////////////////////////////////////////////////////////////////////
     private static final LatLng DEFAULT_LOCATION = new LatLng(32.882415, -117.234817);
     private static final String TAG = "googlemap_example";
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
@@ -109,12 +112,16 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     private String[] LikelyAddresses = null;
     private String[] LikelyAttributions = null;
     private LatLng[] LikelyLatLngs = null;
+    /////////////////////////////////////////////////////////////////////////////////////
 
     View view;
     private FragmentManager manager;
 
     static double latitude, longitude;
 
+    ///////////////////////////////////////////////////////////////
+    //To use another class method and value, Declare the instance//
+    //////////////////////////////////////////////////////////////
     CO fragmentco;
     NO2 fragmentno2;
     O3 fragmento3;
@@ -123,21 +130,32 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     TEMP fragmenttemp;
 
     MainActivity main;
+    //////////////////////////////////////////////////////////////
 
-    ArrayList<String> ArrList;
+    ////////////////////////////////////////////////////////
+    // To save the udoo board location, Declare the array//
+    ////////////////////////////////////////////////////////
     String bluetoothname[];
     int count;
-    double lat[], lgt[];
+    double lat[], lgt[], d_no2[], d_so2[], d_o3[], d_co[], d_pm25[];
+    LatLng otherLocation[];
+    CircleOptions otherCircle[];
+    ////////////////////////////////////////////////////////
 
-    private LineChart coChart, hChart;
+    //To use the chart of the heart information...
+    private LineChart hChart;
 
     private GoogleMap googleMap = null;
     private MapView mapView = null;
-
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                    Initialize the value                                     //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
     TextView heartText, CO, NO2, SO2, O3, PM25, TEMP, maxhert, minheart, maxrr, minrr;
     ImageView heart, heartbit, coimage, no2image, so2image, o3image, pm25image, tempimage;
     GlideDrawableImageViewTarget heartTartget, heartBitget;
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    //Initialize the value of heart rate to use max and min value.
     int heartmax = 0;
     int heartmin = 999;
     int rrmax = 0;
@@ -152,14 +170,14 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         setmarker();
 
         if (location != null) {
-            //현재위치의 위도 경도 가져옴
+            //Get the value of the current latitude
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
             MarkerOptions markerOptions = new MarkerOptions();
-            CircleOptions circle1KM = new CircleOptions().center(currentLocation) //원점
-                    .radius(200)      //반지름 단위 : m
-                    .strokeWidth(0f)  //선너비 0f : 선없음
-                    .fillColor(Color.parseColor("#110000ff")); //배경색
+            CircleOptions circle1KM = new CircleOptions().center(currentLocation) //Circle point
+                    .radius(200)      // Radius unit : m
+                    .strokeWidth(0f)
+                    .fillColor(Color.parseColor("#110000ff")); //Background
             markerOptions.position(currentLocation);
             markerOptions.title(markerTitle);
             markerOptions.snippet(markerSnippet);
@@ -176,61 +194,58 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         markerOptions.title(markerTitle);
         markerOptions.snippet(markerSnippet);
         markerOptions.draggable(true);
-        //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker1));
         currentMarker = this.googleMap.addMarker(markerOptions);
 
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_LOCATION));
     }
 
+    //To see the sensor location, This method must be called.
     public void setmarker() {
         if (main.readlocation != null) {
             Log.i("readMessage", "" + main.readlocation);
 
-            ArrList = new ArrayList<String>();               //어레이 리스트 선언
-            bluetoothname = new String[50];
-            lat = new double[50];
-            lgt = new double[50];
-
-            JSONObject jObject = null;               //JSONData 문자열
+            JSONObject jObject = null;
             try {
                 jObject = new JSONObject(main.readlocation);
 
+                //Count is the number of human who connect with the bluetooth
                 JSONObject bluetoothcount = jObject.getJSONObject("count");
                 count = bluetoothcount.getInt("count(*)");
 
                 JSONArray location = jObject.getJSONArray("user_data");
-                for (int i = 0; i < location.length(); i++) {
-                    ArrList.add(location.getJSONObject(i).getString("lname"));
-                    ArrList.add(location.getJSONObject(i).getString("latitude"));
-                    ArrList.add(location.getJSONObject(i).getString("longitude"));
 
-                }
+                //Print mark and circle
                 for (int j = 0; j < location.length(); j++) {
-                    Log.i("read", "" + String.valueOf(location.getJSONObject(j).getString("lname")));
-                    bluetoothname[j] = String.valueOf(location.getJSONObject(j).getString("lname"));
-                    Log.i("read", "" + String.valueOf(location.getJSONObject(j).getDouble("latitude")));
+                    bluetoothname[j] = String.valueOf(location.getJSONObject(j).getString("MAC"));
                     lat[j] = location.getJSONObject(j).getDouble("latitude");
-                    Log.i("read", "" + String.valueOf(location.getJSONObject(j).getDouble("longitude")));
                     lgt[j] = location.getJSONObject(j).getDouble("longitude");
+                    otherLocation[j] = new LatLng(lat[j], lgt[j]);
+                    otherCircle[j] = new CircleOptions().center(otherLocation[j]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#5551F05D"));
+                    this.googleMap.addCircle(otherCircle[j]);
+                    d_co[j] = location.getJSONObject(j).getDouble("CO");
+                    d_so2[j] = location.getJSONObject(j).getDouble("SO2");
+                    d_no2[j] = location.getJSONObject(j).getDouble("NO2");
+                    d_o3[j] = location.getJSONObject(j).getDouble("O3");
+                    d_pm25[j] = location.getJSONObject(j).getDouble("PM25");
                 }
-                Log.i("read", "" + count);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
+            //Repeat as many people as possible.
             for (int number = 0; number < count; number++) {
-                // 1. 마커 옵션 설정 (만드는 과정)
+                // Make a option of mark
                 MarkerOptions makerOptions = new MarkerOptions();
-                makerOptions // LatLng에 대한 어레이를 만들어서 이용할 수도 있다.
+                makerOptions
                         .position(new LatLng(lat[number], lgt[number]))
-                        .title(bluetoothname[number]); // 타이틀.
-                // 2. 마커 생성 (마커를 나타냄)
+                        .title(bluetoothname[number]); // Title name
+                // Print mark
                 this.googleMap.addMarker(makerOptions);
             }
         }
     }
 
+    //This method is function which print he rr max and min value.
     public void setHeartrr(int rr){
         //set rr max, min
         if (rrmax < rr){
@@ -243,6 +258,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         }
     }
 
+    //This method is function which print he hr max and min value.
     public void setHeart(int hr) {
         try {
             heartText.setText("" + hr);
@@ -274,23 +290,25 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         }
     }
 
-    public void addHEntry(Integer val) { //Set the heart data chart
+    public void addHEntry(Integer val, Integer rrVal) { //Set the heart data chart
         try {
             LineData data = hChart.getData();
 
             if (data != null) {
 
                 ILineDataSet set = data.getDataSetByIndex(0);
-                // set.addEntry(...); // can be called as well
+                ILineDataSet setrr = data.getDataSetByIndex(1);
 
                 if (set == null) {
                     set = createSetH();
+                    setrr = createSetRR();
                     data.addDataSet(set);
+                    data.addDataSet(setrr);
                 }
 
-                //data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 40) + 30f), 0);
                 if (heartText != null) {
                     data.addEntry(new Entry(set.getEntryCount(), val), 0);
+                    data.addEntry(new Entry(set.getEntryCount(), rrVal), 1);
                     data.notifyDataChanged();
                 }
 
@@ -309,8 +327,10 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         }
     }
 
+    //To change the AQI image, then this method will be call.
     public void setAQI(JSONObject data) {
         try {
+            //AQI index of CO value
             CO.setText(data.getString("CO"));
             if (Float.parseFloat(data.getString("CO")) >= 0 && Float.parseFloat(data.getString("CO")) <= 4.4)
                 coimage.setImageResource(R.drawable.co_good);
@@ -325,6 +345,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
             else if (Float.parseFloat(data.getString("CO")) >= 30.5)
                 coimage.setImageResource(R.drawable.co_hazardous);
 
+            //AQI index of NO2 value
             NO2.setText(data.getString("NO2"));
             if (Float.parseFloat(data.getString("NO2")) >= 0 && Float.parseFloat(data.getString("NO2")) <= 53)
                 no2image.setImageResource(R.drawable.no2_good);
@@ -339,6 +360,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
             else if (Float.parseFloat(data.getString("NO2")) >= 1250)
                 no2image.setImageResource(R.drawable.no2_hazardous);
 
+            //AQI index of SO2 value
             SO2.setText(data.getString("SO2"));
             if (Float.parseFloat(data.getString("SO2")) >= 0 && Float.parseFloat(data.getString("SO2")) <= 35)
                 so2image.setImageResource(R.drawable.so2_good);
@@ -353,6 +375,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
             else if (Float.parseFloat(data.getString("SO2")) >= 605)
                 so2image.setImageResource(R.drawable.so2_hazardous);
 
+            //AQI index of O3 value
             O3.setText(data.getString("O3"));
             if (Float.parseFloat(data.getString("O3")) >= 0 && Float.parseFloat(data.getString("O3")) <= 54)
                 o3image.setImageResource(R.drawable.o3_good);
@@ -367,6 +390,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
             else if (Float.parseFloat(data.getString("O3")) >= 201)
                 o3image.setImageResource(R.drawable.o3_hazardous);
 
+            //AQI index of PM25 value
             PM25.setText(data.getString("PM25"));
             if (Float.parseFloat(data.getString("PM25")) >= 0 && Float.parseFloat(data.getString("PM25")) <= 12)
                 pm25image.setImageResource(R.drawable.pm25_good);
@@ -416,27 +440,15 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
 
         mapView = (MapView) view.findViewById(R.id.map);
         mapView.getMapAsync(this);
-        /* 자동완성기능 보류
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                Location location = new Location("");
-                location.setLatitude(place.getLatLng().latitude);
-                location.setLongitude(place.getLatLng().longitude);
+        bluetoothname = new String[50];
+        lat = new double[50]; lgt = new double[50];
+        d_co = new double[50]; d_no2 = new double[50]; d_o3 = new double[50];
+        d_so2 = new double[50]; d_pm25 = new double[50];
+        otherLocation = new LatLng[50];
+        otherCircle = new CircleOptions[50];
 
-                setCurrentLocation(location, place.getName().toString(), place.getAddress().toString());
-            }
-
-            @Override
-            public void onError(Status status) {
-                Log.i(TAG, "An error occurred: " + status);
-            }
-        });
-*/
-        //하단 TabHost
+        //Under the taphost
         TabHost tabHost = (TabHost) view.findViewById(R.id.tabHost2);
         tabHost.setup();
 
@@ -447,7 +459,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                 .setContent(R.id.tab2).setIndicator(getString(R.string.tab2));
         tabHost.addTab(spec2);
 
-        //상단 TabHost
+        //Top the tabHost
         TabHost tabHost1 = (TabHost) view.findViewById(R.id.tabHost1);
         tabHost1.setup();
 
@@ -461,7 +473,6 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                 .setContent(R.id.tab4).setIndicator("Heart");
         tabHost1.addTab(spec4);
 
-        //새로 추가된 부분
         heartText = (TextView) view.findViewById(R.id.heartValue);
         heart = (ImageView) view.findViewById(R.id.heart);
         heartbit = (ImageView) view.findViewById(R.id.heartbit);
@@ -472,6 +483,9 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         heart.setImageResource(R.drawable.human_nomal2);
         Glide.with(this).load(R.raw.heart_stop).into(heartBitget);
 
+        /////////////////////////////////////////////////////////////////////////
+        //  if user click the each air data text, then change the text color.  //
+        ////////////////////////////////////////////////////////////////////////
         CO = (TextView) view.findViewById(R.id.co_text);
         CO.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -482,7 +496,9 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                 PM25.setTextColor(Color.BLACK);
                 SO2.setTextColor(Color.BLACK);
                 TEMP.setTextColor(Color.BLACK);
+                paintCircle_CO();
                 changeFragment(0);
+
             }
         });
 
@@ -496,6 +512,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                 PM25.setTextColor(Color.BLACK);
                 SO2.setTextColor(Color.BLACK);
                 TEMP.setTextColor(Color.BLACK);
+                paintCircle_NO2();
                 changeFragment(1);
             }
         });
@@ -510,6 +527,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                 PM25.setTextColor(Color.BLACK);
                 SO2.setTextColor(Color.BLACK);
                 TEMP.setTextColor(Color.BLACK);
+                paintCircle_O3();
                 changeFragment(2);
             }
         });
@@ -524,6 +542,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                 PM25.setTextColor(Color.RED);
                 SO2.setTextColor(Color.BLACK);
                 TEMP.setTextColor(Color.BLACK);
+                paintCircle_PM25();
                 changeFragment(3);
             }
         });
@@ -538,6 +557,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                 PM25.setTextColor(Color.BLACK);
                 SO2.setTextColor(Color.RED);
                 TEMP.setTextColor(Color.BLACK);
+                paintCircle_SO2();
                 changeFragment(4);
             }
         });
@@ -555,6 +575,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                 changeFragment(5);
             }
         });
+        ////////////////////////////////////////////////////////////////////////
 
         hChart = (LineChart) view.findViewById(R.id.hart_chart);
 
@@ -597,7 +618,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         YAxis leftAxish = hChart.getAxisLeft();
         leftAxish.setTextColor(Color.WHITE);
         leftAxish.setAxisMaximum(130f);
-        leftAxish.setAxisMinimum(50f);
+        leftAxish.setAxisMinimum(0f);
         leftAxish.setDrawGridLines(true);
 
         YAxis rightAxish = hChart.getAxisRight();
@@ -613,24 +634,129 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
         return view;
     }
 
+    private void paintCircle_CO() {
+        for(int i=0;i<count-1;i++){
+            if(0<=d_co[i] && d_co[i]<4.5)
+                otherCircle[i] = new CircleOptions().center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#5551F05D"));
+                //otherCircle[j] = new CircleOptions().center(otherLocation[j]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#5551F05D"));
+                //otherCircle[i].fillColor(Color.parseColor("#51F05D"));
+            else if(4.5<=d_co[i] && d_co[i]<9.5)
+                otherCircle[i].fillColor(Color.parseColor("#EBF458"));
+            else if(9.5<=d_co[i] && d_co[i]<12.5)
+                otherCircle[i].fillColor(Color.parseColor("#F4BC57"));
+            else if(12.5<=d_co[i] && d_co[i]<15.5)
+                otherCircle[i].fillColor(Color.parseColor("#FE5656"));
+            else if(15.5<=d_co[i] && d_co[i]<30.5)
+                otherCircle[i].fillColor(Color.parseColor("#F45BDD"));
+            else
+                otherCircle[i].fillColor(Color.parseColor("#F4578A"));
+        }
+    }
+
+    private void paintCircle_NO2() {
+        for(int i=0;i<count-1;i++){
+            if(0<=d_no2[i] && d_no2[i]<54)
+                otherCircle[i] = new CircleOptions().center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#5551F05D"));
+                //otherCircle[i].fillColor(Color.parseColor("#51F05D"));
+            else if(54<=d_no2[i] && d_no2[i]<101)
+                otherCircle[i] = new CircleOptions().center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55EBF458"));
+                //otherCircle[i].fillColor(Color.parseColor("#EBF458"));
+            else if(101<=d_no2[i] && d_no2[i]<361)
+                otherCircle[i] = new CircleOptions().center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F4BC57"));
+                //otherCircle[i].fillColor(Color.parseColor("#F4BC57"));
+            else if(361<=d_no2[i] && d_no2[i]<650)
+                otherCircle[i] = new CircleOptions().center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55FE5656"));
+                //otherCircle[i].fillColor(Color.parseColor("#FE5656"));
+            else if(650<=d_no2[i] && d_no2[i]<1250)
+                otherCircle[i] = new CircleOptions().center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F45BDD"));
+                //otherCircle[i].fillColor(Color.parseColor("#F45BDD"));
+            else
+                otherCircle[i] = new CircleOptions().center(otherLocation[i]).radius(200).strokeWidth(0f).fillColor(Color.parseColor("#55F4578A"));
+                //otherCircle[i].fillColor(Color.parseColor("#F4578A"));
+        }
+    }
+
+    private void paintCircle_SO2() {
+        for(int i=0;i<count-1;i++){
+            if(0<=d_so2[i] && d_so2[i]<36)
+                otherCircle[i].fillColor(Color.parseColor("#51F05D"));
+            else if(36<=d_so2[i] && d_so2[i]<76)
+                otherCircle[i].fillColor(Color.parseColor("#EBF458"));
+            else if(76<=d_so2[i] && d_so2[i]<186)
+                otherCircle[i].fillColor(Color.parseColor("#F4BC57"));
+            else if(186<=d_so2[i] && d_so2[i]<305)
+                otherCircle[i].fillColor(Color.parseColor("#FE5656"));
+            else if(305<=d_so2[i] && d_so2[i]<605)
+                otherCircle[i].fillColor(Color.parseColor("#F45BDD"));
+            else
+                otherCircle[i].fillColor(Color.parseColor("#F4578A"));
+        }
+    }
+
+    private void paintCircle_O3() {
+        for(int i=0;i<count-1;i++){
+            if(0<=d_o3[i] && d_o3[i]<55)
+                otherCircle[i].fillColor(Color.parseColor("#51F05D"));
+            else if(55<=d_o3[i] && d_o3[i]<71)
+                otherCircle[i].fillColor(Color.parseColor("#EBF458"));
+            else if(71<=d_o3[i] && d_o3[i]<86)
+                otherCircle[i].fillColor(Color.parseColor("#F4BC57"));
+            else if(86<=d_o3[i] && d_o3[i]<106)
+                otherCircle[i].fillColor(Color.parseColor("#FE5656"));
+            else if(106<=d_o3[i] && d_o3[i]<201)
+                otherCircle[i].fillColor(Color.parseColor("#F45BDD"));
+            else
+                otherCircle[i].fillColor(Color.parseColor("#F4578A"));
+        }
+    }
+
+    private void paintCircle_PM25() {
+        for(int i=0;i<count-1;i++){
+            if(0<=d_o3[i] && d_o3[i]<12)
+                otherCircle[i].fillColor(Color.parseColor("#51F05D"));
+            else if(55<=d_o3[i] && d_o3[i]<35.5)
+                otherCircle[i].fillColor(Color.parseColor("#EBF458"));
+            else if(71<=d_o3[i] && d_o3[i]<55.5)
+                otherCircle[i].fillColor(Color.parseColor("#F4BC57"));
+            else if(86<=d_o3[i] && d_o3[i]<150.5)
+                otherCircle[i].fillColor(Color.parseColor("#FE5656"));
+            else if(106<=d_o3[i] && d_o3[i]<250.5)
+                otherCircle[i].fillColor(Color.parseColor("#F45BDD"));
+            else
+                otherCircle[i].fillColor(Color.parseColor("#F4578A"));
+        }
+    }
     //sensor LineDateSet
     private LineDataSet createSetH() {
         LineDataSet set = new LineDataSet(null, "HeartRate Data");
-        //set.setAxisDependency(AxisDependency.LEFT);
+        set.setAxisDependency(AxisDependency.LEFT);
+        set.setColor(Color.RED);
+        set.setCircleColor(Color.RED);
+        set.setLineWidth(2f);
+        set.setCircleRadius(4f);
+        set.setFillAlpha(65);
+        set.setFillColor(ColorTemplate.getHoloBlue());
+        set.setHighLightColor(Color.RED);
+        set.setValueTextColor(Color.WHITE);
+        set.setValueTextSize(12f);
+        set.setDrawValues(false);
+        return set;
+    }
+    private LineDataSet createSetRR() {
+        LineDataSet set = new LineDataSet(null, "Rest Heart Rate Data");
         set.setAxisDependency(AxisDependency.LEFT);
         set.setColor(ColorTemplate.getHoloBlue());
-        set.setCircleColor(Color.WHITE);
+        set.setCircleColor(ColorTemplate.getHoloBlue());
         set.setLineWidth(2f);
         set.setCircleRadius(4f);
         set.setFillAlpha(65);
         set.setFillColor(ColorTemplate.getHoloBlue());
         set.setHighLightColor(Color.rgb(244, 117, 117));
         set.setValueTextColor(Color.WHITE);
-        set.setValueTextSize(9f);
+        set.setValueTextSize(12f);
         set.setDrawValues(false);
         return set;
     }
-
     public void changeFragment(int fNum) {
         switch (fNum) {
             case 0:
@@ -796,7 +922,6 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //액티비티가 처음 생성될 때 실행되는 함수
         MapsInitializer.initialize(getActivity().getApplicationContext());
 
         if (mapView != null) {
@@ -810,25 +935,24 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
 
         this.googleMap = googleMap;
 
-        //런타임 퍼미션 요청 대화상자나 GPS 활성 요청 대화상자 보이기전에 지도의 초기위치를 서울로 이동
         setCurrentLocation(null, "Unable to get location info", "Check location permissions and GPS activation");
 
-        //나침반이 나타나도록 설정
+        //Make compass appear
         googleMap.getUiSettings().setCompassEnabled(true);
-        // 매끄럽게 이동함
+        //Moved smoothly
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 
-        //  API 23 이상이면 런타임 퍼미션 처리 필요
+        //Requires runtime permission processing if API 23 or later
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // 사용권한체크
+            //Check permissions
             int hasFineLocationPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
 
             if (hasFineLocationPermission == PackageManager.PERMISSION_DENIED) {
-                //사용권한이 없을경우
-                //권한 재요청
+                //If you do not have permissions
+                //Authorization again
                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
             } else {
-                //사용권한이 있는경우
+                //If you have permission
                 if (googleApiClient == null) {
                     buildGoogleApiClient();
                 }
@@ -975,6 +1099,7 @@ public class RealTimeActivity extends Fragment implements OnMapReadyCallback, Go
                     location.setLatitude(LikelyLatLngs[0].latitude);
                     location.setLongitude(LikelyLatLngs[0].longitude);
 
+                    //To send the user location, Save the user location in the value
                     latitude = LikelyLatLngs[0].latitude;
                     longitude = LikelyLatLngs[0].longitude;
 
