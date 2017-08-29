@@ -1,3 +1,3 @@
-English Name : Daniel
-GitHub Account : ehd8266@naver.com
-E-Mail : ehd8266@naver.com
+This Project is IoT which is air pollution.
+We made a app that can connect with UDOO board and connect QI webserver.
+Thank you!
